@@ -2,10 +2,12 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using EcommerceRestApi.Models.Common;
+using EcommerceRestApi.Models;
 
 namespace EcommerceRestApi.Services.Base
 {
-    public class EntityBaseRepository<T> : IEntityBaseRepository<T> where T : class, IEntityBase, new()
+    public class EntityBaseRepository<T> : IEntityBaseRepository<T> where T : EntityBase, IEntityBase, new()
     {
         private readonly AppDbContext _context;
         public EntityBaseRepository(AppDbContext context)
@@ -21,8 +23,10 @@ namespace EcommerceRestApi.Services.Base
         public async Task DeleteAsync(int id)
         {
             var entity = await _context.Set<T>().FirstOrDefaultAsync(n => n.Id == id);
-            EntityEntry entityEntry = _context.Entry<T>(entity);
-            entityEntry.State = EntityState.Deleted;
+            //EntityEntry entityEntry = _context.Entry<T>(entity);
+            entity.IsActive = false;
+            entity.DateDeleted = DateTime.Now;
+            //entityEntry.State = EntityState.Deleted;
             await _context.SaveChangesAsync();
         }
 

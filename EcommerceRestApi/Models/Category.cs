@@ -12,12 +12,14 @@ namespace EcommerceRestApi.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Code { get; set; }
         [StringLength(20, MinimumLength = 10, ErrorMessage = "Code must be between 10 and 20 characters.")]
+        [Required]
+        public string Code { get; set; }
+        [StringLength(20, MinimumLength = 10, ErrorMessage = "Name must be between 10 and 20 characters.")]
         [Required]
         public string Name { get; set; }
 
-        [StringLength(500, MinimumLength = 10, ErrorMessage = "Name must be between 10 and 20 characters.")]
+        [StringLength(500, MinimumLength = 10, ErrorMessage = "About must be between no more than 500 characters long.")]
         public string About { get; set; } = default!;
 
         // One-to-Many: A Category has multiple Subcategories

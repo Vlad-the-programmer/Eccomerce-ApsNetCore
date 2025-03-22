@@ -1,3 +1,5 @@
+using EcommerceWebApp.ApiServices;
+using EcommerceWebApp.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
 
@@ -13,6 +15,17 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 });
 
+// Add services to the container.
+builder.Services.AddHttpContextAccessor(); // Register IHttpContextAccessor
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddHttpClient<IApiService, ApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:5001/"); // Base URL of the REST API
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
+builder.Services.AddScoped<CurrentUserService>(); // Register the CurrentUserService
 
 var app = builder.Build();
 

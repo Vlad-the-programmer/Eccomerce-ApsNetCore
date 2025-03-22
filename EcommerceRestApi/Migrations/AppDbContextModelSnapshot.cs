@@ -34,19 +34,23 @@ namespace EcommerceRestApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateDeleted")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateUpdated")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -57,6 +61,10 @@ namespace EcommerceRestApi.Migrations
 
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -186,7 +194,8 @@ namespace EcommerceRestApi.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
@@ -383,6 +392,9 @@ namespace EcommerceRestApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -591,6 +603,9 @@ namespace EcommerceRestApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -817,6 +832,9 @@ namespace EcommerceRestApi.Migrations
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -930,6 +948,44 @@ namespace EcommerceRestApi.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("Shipments");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.ShoppingCartItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShoppingCartId")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ShoppingCartItems");
                 });
 
             modelBuilder.Entity("EcommerceRestApi.Models.Subcategory", b =>
@@ -1317,6 +1373,17 @@ namespace EcommerceRestApi.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("EcommerceRestApi.Models.ShoppingCartItem", b =>
+                {
+                    b.HasOne("EcommerceRestApi.Models.Product", "Product")
+                        .WithMany("ShoppingCartItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("EcommerceRestApi.Models.Subcategory", b =>
                 {
                     b.HasOne("EcommerceRestApi.Models.Category", "Category")
@@ -1398,6 +1465,8 @@ namespace EcommerceRestApi.Migrations
                     b.Navigation("ProductCategories");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("ShoppingCartItems");
                 });
 
             modelBuilder.Entity("EcommerceRestApi.Models.Subcategory", b =>

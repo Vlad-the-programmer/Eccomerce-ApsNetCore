@@ -11,8 +11,6 @@ namespace EcommerceRestApi.Models.Common;
 [Index("Email", Name = "UQ__Users__A9D10534494A092D", IsUnique = true)]
 public partial class User : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
 
     [Required(ErrorMessage = "Username is required.")]
     [StringLength(20, ErrorMessage = "Username cannot exceed 20 characters.")]

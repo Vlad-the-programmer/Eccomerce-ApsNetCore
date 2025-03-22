@@ -4,13 +4,10 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
-        public LoginViewModel(string title) : base(title) { Message = ""; }
-        public LoginViewModel() : base("") { Message = ""; }
-
 
         [Display(Name = "EmailAddress")]
             [Required(ErrorMessage = "Email is Required")]
-            public string EmailAddress { get; set; }
+            public string Email { get; set; }
 
             [Required]
             [DataType(DataType.Password)]

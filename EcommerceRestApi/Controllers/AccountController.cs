@@ -1,86 +1,172 @@
-﻿using EcommerceRestApi.Helpers.Data.ViewModels;
+﻿using EcommerceRestApi.Helpers.Data.Functions;
+using EcommerceRestApi.Helpers.Data.ViewModels;
+using EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels;
 using EcommerceRestApi.Helpers.Static;
+using EcommerceRestApi.Models;
+using EcommerceRestApi.Models.Common;
 using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace EcommerceRestApi.Controllers
 {
-    public class AccountController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly AppDbContext _context;
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, AppDbContext context)
+        private readonly IUserService _service;
+
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            AppDbContext context,
+            IUserService service)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
+            _service = service;
         }
-        public IActionResult Login() => View(new LoginViewModel());
 
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel loginVM)
+        // POST: api/account/login
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginViewModel loginVM)
         {
-            if (!ModelState.IsValid) return View(loginVM);
-
-            var user = await _userManager.FindByEmailAsync(loginVM.EmailAddress);
-            if (user != null)
+            if (!ModelState.IsValid)
             {
-                var passwordCheck = await _userManager.CheckPasswordAsync(user, loginVM.Password);
-                if (passwordCheck)
-                {
-                    var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction("Index", "Products");
-                    }
-                }
-                TempData["Error"] = "Wrong credentials. Please, try again!";
-                return View(loginVM);
+                return BadRequest(new { Message = "Invalid input data." });
             }
 
-            TempData["Error"] = "Wrong credentials. Please, try again!";
-            return View(loginVM);
-        }
-        public IActionResult Register() => View(new RegisterViewModel());
+            var user = await _userManager.FindByEmailAsync(loginVM.Email);
+            if (user == null)
+            {
+                return Unauthorized(new { Message = "Invalid email or password." });
+            }
 
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel registerVM)
+            var passwordCheck = await _userManager.CheckPasswordAsync(user, loginVM.Password);
+            if (!passwordCheck)
+            {
+                return Unauthorized(new { Message = "Invalid email or password." });
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
+            if (!result.Succeeded)
+            {
+                return Unauthorized(new { Message = "Login failed. Please try again." });
+            }
+
+            return Ok(new { Message = "Login successful.",  User = user });
+        }
+
+        // POST: api/account/register
+        [HttpPost("register")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterViewModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Register([FromBody] RegisterViewModel registerVM)
         {
-            if (!ModelState.IsValid) return View(registerVM);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { Message = "Invalid input data." });
+            }
 
             var user = await _userManager.FindByEmailAsync(registerVM.Email);
             if (user != null)
             {
-                TempData["Error"] = "This email address is already in use";
-                return View(registerVM);
+                return Conflict(new { Message = "This email address is already in use." });
             }
 
-            var newUser = new ApplicationUser()
-            {
-                FullName = registerVM.FirstName + " " + registerVM.LastName,
-                Email = registerVM.Email,
-                UserName = registerVM.Email
-            };
+            var newUser = await DbFuncs.GetApplicationUserObjForRegister(registerVM, _context);
+
+
+            //await _context.Customers.AddAsync(newUser.Customers.First());
+
+
             var newUserResponse = await _userManager.CreateAsync(newUser, registerVM.Password);
+            if (!newUserResponse.Succeeded)
+            {
+                return BadRequest(new { Message = "User registration failed.", Errors = newUserResponse.Errors });
+            }
 
+            await _userManager.AddToRoleAsync(newUser, UserRoles.User);
 
-            if (newUserResponse.Succeeded)
-                await _userManager.AddToRoleAsync(newUser, UserRoles.User);
-
-            return View("RegisterCompleted");
+            return Ok(new { Message = "User registered successfully.", User = await _context.Users.FirstAsync(u => u.Id == newUser.Id) });
         }
-        [HttpPost]
+
+        [HttpGet("get-current-user")]
+        public async Task<IActionResult> GetCurrentAuthenticatedUser()
+        {
+            // 1. Get authenticated user details
+            if (User.Identity.IsAuthenticated)
+            {
+                ApplicationUser? user = await _userManager.GetUserAsync(User);
+                if (user != null)
+                {
+                    return Ok(user);
+                }
+            }
+            return NotFound();
+        }
+
+        // POST: api/account/logout
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Products");
+            return Ok(new { Message = "Logout successful." });
         }
 
-        public IActionResult AccessDenied(string ReturnUrl)
+        // PUT: api/products/5
+        [Authorize(Roles = UserRoles.User)]
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserUpdateVM))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Update(string id, [FromBody] UserUpdateVM model)
         {
-            return View();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+
+            await _service.UpdateUserAsync(id, model);
+            return NoContent();
+        }
+
+        // DELETE: api/account/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var user = await _service.GetUserByIDAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            await _service.DeleteUserAsync(id);
+            return NoContent();
+        }
+
+        // GET: api/account/access-denied
+        [HttpGet("access-denied")]
+        public IActionResult AccessDenied()
+        {
+            return Unauthorized(new { Message = "Access denied. You do not have permission to access this resource." });
         }
     }
 }

@@ -8,9 +8,6 @@ namespace EcommerceRestApi.Models;
 
 public partial class Payment : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
-
     public int? OrderId { get; set; } = null!;
 
     public int? PaymentMethodId { get; set; } = null;

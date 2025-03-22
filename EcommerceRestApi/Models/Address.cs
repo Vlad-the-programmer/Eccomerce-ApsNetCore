@@ -8,9 +8,6 @@ namespace EcommerceRestApi.Models;
 
 public partial class Address : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
-
     public int CustomerId { get; set; }
 
     public int? CountryId { get; set; }

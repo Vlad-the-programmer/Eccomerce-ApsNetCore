@@ -8,8 +8,6 @@ namespace EcommerceRestApi.Models;
 
 public partial class DeliveryMethod : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
 
     [StringLength(50)]
     [Unicode(false)]

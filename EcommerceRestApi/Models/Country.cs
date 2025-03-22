@@ -10,8 +10,6 @@ namespace EcommerceRestApi.Models;
 [Index("CountryName", Name = "UQ__Countrie__E056F201CC4E645C", IsUnique = true)]
 public partial class Country : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
 
     [StringLength(50)]
     [Unicode(false)]

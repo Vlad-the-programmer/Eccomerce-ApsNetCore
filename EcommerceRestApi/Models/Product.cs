@@ -10,8 +10,6 @@ namespace EcommerceRestApi.Models
 {
     public class Product : EntityBase
     {
-        [Key]
-        public int Id { get; set; }
 
         [Required]
         [StringLength(100, MinimumLength = 2, ErrorMessage = "Product name must be between 2 and 100 characters.")]
@@ -76,5 +74,8 @@ namespace EcommerceRestApi.Models
         
         [InverseProperty("Product")]
         public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+        [InverseProperty("Product")]
+        public virtual ICollection<ShoppingCartItem> ShoppingCartItems { get; set; } = new List<ShoppingCartItem>();
     }
 }

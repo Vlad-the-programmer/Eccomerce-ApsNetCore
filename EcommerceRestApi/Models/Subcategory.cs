@@ -10,8 +10,6 @@ namespace EcommerceRestApi.Models
 {
     public class Subcategory : EntityBase
     {
-        [Key]
-        public int Id { get; set;  }
 
         [Required]
         [StringLength(20, MinimumLength = 3, ErrorMessage = "Code must be between 3 and 20 characters.")]

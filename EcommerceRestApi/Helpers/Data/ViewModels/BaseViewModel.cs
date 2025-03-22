@@ -2,21 +2,10 @@
 {
     public class BaseViewModel
     {
-        public BaseViewModel(string title = "")
+        public BaseViewModel()
         {
-            Title = title;
-            User = new UserData();
+            //User = new ApplicationUser();
         }
-        public string Title { get; set; }
-        public UserData User { get; set; }
-    }
-    public class UserData
-    {
-        public string Name { get; set; }
-        public string Surname { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string Role { get; set; }
-        public string Address { get; set; }
+        //public ApplicationUser User { get; set; }
     }
 }

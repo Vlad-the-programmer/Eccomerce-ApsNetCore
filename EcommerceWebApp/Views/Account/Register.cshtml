@@ -53,7 +53,42 @@
                         <input asp-for="ConfirmPassword" class="form-control" />
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>
-
+                    <div class="form-group">
+                        <label asp-for="Nip" class="control-label"></label>
+                        <input asp-for="Nip" class="form-control" />
+                        <span asp-validation-for="Nip" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Street" class="control-label"></label>
+                        <input asp-for="Street" class="form-control" />
+                        <span asp-validation-for="Street" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="HouseNumber" class="control-label"></label>
+                        <input asp-for="HouseNumber" class="form-control" />
+                        <span asp-validation-for="HouseNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="FlatNumber" class="control-label"></label>
+                        <input asp-for="FlatNumber" class="form-control" />
+                        <span asp-validation-for="FlatNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="State" class="control-label"></label>
+                        <input asp-for="State" class="form-control" />
+                        <span asp-validation-for="State" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PostalCode" class="control-label"></label>
+                        <input asp-for="PostalCode" class="form-control" />
+                        <span asp-validation-for="PostalCode" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="SelectedCountry">Select Country:</label>
+                        <select asp-for="CountryName" asp-items="new SelectList(Model.Countries)" class="form-control">
+                            <option value="">-- Select a Country --</option>
+                        </select>
+                    </div>
                     <div class="form-group">
                         <input class="btn btn-outline-success float-right" type="submit" value="Sign up" />
                         <a class="btn btn-outline-secondary" asp-controller="Products" asp-action="Index">Cancel</a>

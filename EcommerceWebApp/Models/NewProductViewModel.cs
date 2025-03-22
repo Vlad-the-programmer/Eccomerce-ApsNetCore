@@ -3,8 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceWebApp.Models
 {
-    public class NewProductViewModel
+    public class NewProductViewModel: BaseViewModel
     {
+        public NewProductViewModel(): base("Create Product") { }
+        public int Id { get; set;  }
+
         [Display(Name = "Product name")]
         [Required(ErrorMessage = "Product name is Requred")]
         public string Name { get; set; }
@@ -42,5 +45,8 @@ namespace EcommerceWebApp.Models
         [Display(Name = "Select Product Category")]
         [Required(ErrorMessage = "Category is Requred")]
         public int CategoryId { get; set; }
+
+        [Display(Name = "Is Active")]
+        public bool IsActive { get; set; }
     }
 }

@@ -2,37 +2,24 @@
 
 namespace EcommerceWebApp.Models
 {
-    public class RegisterViewModel
+    public class RegisterViewModel: ApplicationUserViewModel
     {
-        [Display(Name = "Name")]
-        [Required(ErrorMessage = "Name is Required")]
-        public string FirstName { get; set; }
+            public List<string> Countries { get; set; }
 
-        [Display(Name = "Lastname")]
-        [Required(ErrorMessage = "Lastname is Required")]
-        public string LastName { get; set; }
-
-        //[Display(Name = "Username")]
-        //[Required(ErrorMessage = "Username is Required")]
-        //public string Username { get; set; }
-
-        [Display(Name = "Email")]
-        [Required(ErrorMessage = "Email is Required")]
-        public string Email { get; set; }
-
-        [Display(Name = "Phonenumber")]
-        [Required(ErrorMessage = "Phonenumber is Required")]
-        public string PhoneNumber { get; set; }
-
-        [Required]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
+            public RegisterViewModel() : base("Register")
+            {
+            }
+        public RegisterViewModel(List<string> countries) : base("Register")
+            {
+                Countries = countries;
+            }
 
 
-        [Display(Name = "Confirm Password")]
-        [Required(ErrorMessage = "Confirm Password is Required")]
-        [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "Password do not Match")]
-        public string ConfirmPassword { get; set; }
-    }
+            [Display(Name = "Confirm Password")]
+            [Required(ErrorMessage = "Confirm Password is Required")]
+            [DataType(DataType.Password)]
+            [Compare("Password", ErrorMessage = "Password do not Match")]
+            public string ConfirmPassword { get; set; }
+
+        }
 }

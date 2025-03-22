@@ -8,8 +8,6 @@ namespace EcommerceRestApi.Models;
 
 public partial class Review : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
 
     [Required(ErrorMessage = "Product ID is required.")]
     public int ProductId { get; set; }

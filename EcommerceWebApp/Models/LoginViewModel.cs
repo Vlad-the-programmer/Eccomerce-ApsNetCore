@@ -2,14 +2,18 @@
 
 namespace EcommerceWebApp.Models
 {
-    public class LoginViewModel
+    public class LoginViewModel: BaseViewModel
     {
-            [Display(Name = "EmailAddress")]
-            [Required(ErrorMessage = "Email is Required")]
-            public string EmailAddress { get; set; }
+        public LoginViewModel(): base("Login")
+        {
 
-            [Required]
-            [DataType(DataType.Password)]
-            public string Password { get; set; }
+        }
+        [Display(Name = "EmailAddress")]
+        [Required(ErrorMessage = "Email is Required")]
+        public string Email { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
     }
 }

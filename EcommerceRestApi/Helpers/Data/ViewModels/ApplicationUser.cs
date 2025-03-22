@@ -7,11 +7,20 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
 {
     public class ApplicationUser: IdentityUser
     {
-       [Display(Name = "Full Name")]
-       public string FullName { get; set; }
+        [Display(Name = "Full Name")]
+        public string FullName { get; set; } = default!;
 
-       [Display(Name = "Role")]
-       public string Role { get; set; }
+        [Display(Name = "First Name")]
+        [Required]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Last Name")]
+        [Required]
+        public string LastName { get; set; }
+
+        [Display(Name = "Role")]
+        [Required]
+        public string Role { get; set; }
         [Display(Name = "Is Admin")]
         public bool IsAdmin { get; set; }
         public bool IsActive { get; set; }

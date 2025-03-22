@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EcommerceRestApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+54fdb946f1a7f2eb1053864d4488db7b59acfa2b")]
 [assembly: System.Reflection.AssemblyProductAttribute("EcommerceRestApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EcommerceRestApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,4 +1,5 @@
-﻿using EcommerceRestApi.Helpers.Data.ViewModels;
+﻿using EcommerceRestApi.Helpers.Data.Functions;
+using EcommerceRestApi.Helpers.Data.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +48,7 @@ namespace EcommerceRestApi.Models.Context
 
         public virtual DbSet<Shipment> Shipments { get; set; }
 
-        //public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
 
         // Many  to many  relationships
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
@@ -322,16 +323,10 @@ namespace EcommerceRestApi.Models.Context
                 entity.HasOne(d => d.Order).WithMany(p => p.Shipments).HasConstraintName("FK__Shipments__Order__1EA48E88");
             });
 
-            //modelBuilder.Entity<User>(entity =>
-            //{
-            //    entity.HasKey(e => e.Id).HasName("PK__Users__3214EC07543D5F27");
-
-            //    entity.Property(e => e.DateCreated).HasDefaultValueSql("(getdate())");
-            //    entity.Property(e => e.DateDeleted).HasDefaultValueSql("(getdate())");
-            //    entity.Property(e => e.DateUpdated).HasDefaultValueSql("(getdate())");
-            //    entity.Property(e => e.IsActive).HasDefaultValue(true);
-
-            //});
+            modelBuilder.Entity<ShoppingCartItem>()
+               .HasOne(s => s.Product) // ShoppingCartItem has one Product
+               .WithMany(p => p.ShoppingCartItems) // Product has many ShoppingCartItems
+               .HasForeignKey(s => s.ProductId); // Foreign key is ProductId
 
             // Explicitly configure the primary key for IdentityUserLogin
             modelBuilder.Entity<IdentityUserLogin<string>>()

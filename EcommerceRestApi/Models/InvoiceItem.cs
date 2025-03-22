@@ -9,8 +9,6 @@ namespace EcommerceRestApi.Models;
 [Table("InvoiceItem")]
 public partial class InvoiceItem : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
 
     [Required(ErrorMessage = "InvoiceId is required.")]
     public int? InvoiceId { get; set; }

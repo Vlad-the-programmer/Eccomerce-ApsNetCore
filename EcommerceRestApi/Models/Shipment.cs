@@ -9,8 +9,6 @@ namespace EcommerceRestApi.Models;
 
 public partial class Shipment : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
 
     [Required(ErrorMessage = "Order ID is required.")]
     public int OrderId { get; set; }

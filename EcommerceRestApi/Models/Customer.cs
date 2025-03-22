@@ -9,8 +9,6 @@ namespace EcommerceRestApi.Models;
 
 public partial class Customer : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
 
     [Required(ErrorMessage = "User ID is required.")]
     public string UserId { get; set; }

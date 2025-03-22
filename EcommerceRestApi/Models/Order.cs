@@ -8,8 +8,6 @@ namespace EcommerceRestApi.Models;
 
 public partial class Order : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
 
     [Required(ErrorMessage = "Order code is required.")]
     [StringLength(50, ErrorMessage = "Order code cannot exceed 50 characters.")]

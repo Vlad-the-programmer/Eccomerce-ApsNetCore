@@ -1,10 +1,16 @@
 using EcommerceRestApi.Helpers.Data;
+using EcommerceRestApi.Helpers.Data.Functions;
 using EcommerceRestApi.Helpers.Data.ViewModels;
+using EcommerceRestApi.Helpers.Static;
+using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Services;
+using EcommerceRestApi.Services.Base;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,22 +27,48 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 //Services Configuration
-//builder.Services.AddScoped<ISuppliersService, SuppliersService>();
-//builder.Services.AddScoped<IBrandsService, BrandsService>();
-//builder.Services.AddScoped<ICompaniesService, CompaniesService>();
-//builder.Services.AddScoped<IProductsService, ProductsService>();
+builder.Services.AddScoped<ICountryService, CountryService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductsService, ProductsService>();
 //builder.Services.AddScoped<IOrdersService, OrdersService>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-//builder.Services.AddScoped(sc => ShoppingCart.GetShoppingCart(sc));
+builder.Services.AddScoped(sc => ShoppingCart.GetShoppingCart(sc));
 
 //authontication and authorization
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddAuthorization(options =>
+{
+    // Role-based authorization
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole(UserRoles.Admin));
+    options.AddPolicy("UserOnly", policy => policy.RequireRole(UserRoles.User));
 
+    //// Policy-based authorization (e.g., require a specific claim)
+    //options.AddPolicy("CanManageProducts", policy =>
+    //{
+    //    policy.RequireClaim("Permission", "ManageProducts");
+    //});
+});
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce API", Version = "v1" });
+
+    // Include XML comments in Swagger
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+    // Check if the XML file exists before including it
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
+    else
+    {
+        // Log a warning if the XML file is not found
+        Console.WriteLine($"XML documentation file not found at: {xmlPath}");
+    }
 });
 
 var app = builder.Build();
@@ -48,15 +80,9 @@ if (app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
     app.UseSwagger();
-    // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-    // specifying the Swagger JSON endpoint.
     app.UseSwaggerUI(c =>
     {
-        #if DEBUG
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyAPI");
-        #else
-            c.SwaggerEndpoint("/MyApp/swagger/v1/swagger.json", "MyAPI");
-        #endif
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyAPI");
         c.RoutePrefix = string.Empty;
 
         c.DisplayOperationId();

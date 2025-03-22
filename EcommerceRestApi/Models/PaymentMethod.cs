@@ -8,8 +8,6 @@ namespace EcommerceRestApi.Models;
 
 public partial class PaymentMethod : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
 
     [Required(ErrorMessage = "Payment Type is required.")]
     [StringLength(50, ErrorMessage = "Payment Type cannot exceed 50 characters.")]
