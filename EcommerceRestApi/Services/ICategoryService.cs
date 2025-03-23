@@ -7,6 +7,7 @@ namespace EcommerceRestApi.Services
 {
     public interface ICategoryService : IEntityBaseRepository<Category>
     {
+        Task<List<CategoryViewModel>> GetAllCategories();
         Task<Category> GetCategoryByIDAsync(int id);
 
         Task AddNewCategoryAsync(CategoryViewModel data);

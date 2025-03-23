@@ -18,7 +18,7 @@ namespace EcommerceRestApi.Helpers.Data.Functions
         //    return GetCountriesList().Select(c => c.CountryName).ToList();
         //}
 
-        public static List<Country> GetCountriesList(AppDbContext context)
+        public static List<CountryViewModel> GetCountriesList(AppDbContext context)
         {
             CountryService _countryService = new CountryService(context);
             return _countryService.GetCountriesList();
@@ -206,7 +206,7 @@ namespace EcommerceRestApi.Helpers.Data.Functions
                 using (var db = new AppDbContext())
                 {
                     var user = (from c in db.Users
-                                where c.Id == id
+                                where c.Id.Equals(id)
                                 select c).FirstOrDefault();
                     return user;
                 }

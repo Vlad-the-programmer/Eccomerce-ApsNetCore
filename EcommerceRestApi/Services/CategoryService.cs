@@ -39,6 +39,18 @@ namespace EcommerceRestApi.Services
             await _context.SaveChangesAsync();
         }
 
+        public Task<List<CategoryViewModel>> GetAllCategories()
+        {
+            return _context.Categories.Select(c => new CategoryViewModel()
+            {
+                Code = c.Code,
+                Name = c.Name,
+                About = c.About,
+                Id = c.Id,
+                SubcategoryId = c.Subcategories.FirstOrDefault() != null ? c.Subcategories.First().Id : 0,
+            }).ToListAsync();
+        }
+
         public async Task<Category> GetCategoryByIDAsync(int id)
         {
             var category = await _context.Categories

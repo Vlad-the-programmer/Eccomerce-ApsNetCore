@@ -8,6 +8,7 @@ namespace EcommerceWebApp.Models
 
             public RegisterViewModel() : base("Register")
             {
+                Countries = new List<string>();
             }
         public RegisterViewModel(List<string> countries) : base("Register")
             {

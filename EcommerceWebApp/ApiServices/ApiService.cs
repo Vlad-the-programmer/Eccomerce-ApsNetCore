@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using EcommerceWebApp.Models.AppViewModels;
+using System.Text;
+using System.Text.Json;
 
 namespace EcommerceWebApp.ApiServices
 {
@@ -9,6 +11,7 @@ namespace EcommerceWebApp.ApiServices
         public ApiService(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri("https://localhost:5001");
         }
 
         public async Task<string> GetDataAsync(string endpoint)
@@ -18,11 +21,18 @@ namespace EcommerceWebApp.ApiServices
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> PostDataAsync(string endpoint, string jsonContent)
+        public async Task<string> PostDataAsync(string endpoint, string jsonContent = "")
         {
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(endpoint, content);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorJson = await response.Content.ReadAsStringAsync();
+
+                var errorResponse = errorJson != "" ? JsonSerializer.Deserialize<ErrorViewModel>(errorJson) : null;
+
+                throw new HttpRequestException(errorResponse?.Message ?? "An error occurred.");
+            }
             return await response.Content.ReadAsStringAsync();
         }
     }

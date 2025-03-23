@@ -20,9 +20,9 @@ namespace EcommerceRestApi.Controllers
 
         // GET: api/countries
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllCountries()
         {
-            var countries = await _service.GetAllAsync();
+            var countries = _service.GetCountriesList();
             return Ok(countries);
         }
 

@@ -14,7 +14,7 @@
     ViewBag.CurrentUser = currentUser;
 }
 
-@if (currentUser != null)
+@if (currentUser == null)
 {
 
 
@@ -33,7 +33,7 @@ else
     <div class="dropdown">
         <button class="btn btn-outline-success dropdown-toggle" type="button" id="profile-btn" data-toggle="dropdown"
                 aria-expanded="false">
-            <i class="bi bi-person-badge"></i> Hello @ViewBag.
+            <i class="bi bi-person-badge"></i> Hello @ViewBag.CurrentUser.Username
         </button>
         <ul class="dropdown-menu" aria-labelledby="profile-btn">
             <li>

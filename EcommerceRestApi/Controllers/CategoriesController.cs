@@ -24,9 +24,9 @@ namespace EcommerceRestApi.Controllers
 
         // GET: api/categories
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllCategories()
         {
-            var categories = await _service.GetAllAsync();
+            var categories = await _service.GetAllCategories();
             return Ok(categories);
         }
 

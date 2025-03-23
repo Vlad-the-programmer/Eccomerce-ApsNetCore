@@ -11,10 +11,11 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         [StringLength(20, MinimumLength = 10, ErrorMessage = "Code must be between 10 and 20 characters.")]
         public string? Code { get; set; } = default!;
 
-        [StringLength(500, MinimumLength = 10, ErrorMessage = "Name must be between 10 and 20 characters.")]
+        [StringLength(50, MinimumLength = 10, ErrorMessage = "Name must be between 10 and 20 characters.")]
         [Required]
         public string Name { get; set; }
 
+        [StringLength(500, MinimumLength = 10, ErrorMessage = "About must be between 10 and 20 characters.")]
         public string? About { get; set; } = default!;
 
         //public List<Subcategory> Subcategories { get; set; } = new List<Subcategory>();

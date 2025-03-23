@@ -11,7 +11,7 @@ namespace EcommerceWebApp.Helpers
         {
             var response = await apiService.GetDataAsync(endpoint); // response is a string
 
-            var user = JsonSerializer.Deserialize<ApplicationUserViewModel>(response); // Deserialize from string
+            var user = JsonSerializer.Deserialize<ApplicationUserViewModel>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
             return user == null ? new ApplicationUserViewModel() : user;
         }

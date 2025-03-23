@@ -21,12 +21,14 @@ public class HomeController : Controller
     {
         try
         {
-            var endpoint = "api/products";
 
-            List<NewProductViewModel> products = await ProductsEndpointsHelperFuncs.GetProducts("api/products", _apiService);
-            List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories("api/categories", _apiService);
+            List<NewProductViewModel> products = await ProductsEndpointsHelperFuncs.GetProducts(
+                                                        GlobalConstants.ProductsEndpoint, _apiService);
+            List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
+                                                        GlobalConstants.CategoriesEndpoint, _apiService);
 
-            ViewBag.FeaturedProduct = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(endpoint, _apiService);
+            ViewBag.FeaturedProduct = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(    
+                                                        GlobalConstants.ProductsEndpoint, _apiService);
             ViewBag.Categories = CategoriesEndpointsHelperFuncs.GetCategoriesDictionaryWithNameCodeFields(categories);
             ViewBag.ProductsExists = products.Count > 0 ? true : false;
             ViewBag.CategoriesExist = categories.Count > 0 ? true : false;
@@ -34,7 +36,6 @@ public class HomeController : Controller
         }
         catch (HttpRequestException ex)
         {
-            // Handle API errors
             ViewBag.ErrorMessage = ex.Message;
             return View(); // Return the view with an error message
         }
@@ -44,7 +45,7 @@ public class HomeController : Controller
     {
         try
         {
-            var endpoint = "api/products/{id}";
+            var endpoint = GlobalConstants.ProductsEndpoint +  "{id}";
             var product = ProductsEndpointsHelperFuncs.GetProductById(endpoint, _apiService);
             return View(product); // Return the view with the product's data
         }

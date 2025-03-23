@@ -51,6 +51,17 @@ builder.Services.AddAuthorization(options =>
     //});
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin() // Allow requests from any origin
+                   .AllowAnyMethod() // Allow all HTTP methods
+                   .AllowAnyHeader(); // Allow all headers
+        });
+});
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce API", Version = "v1" });
@@ -96,7 +107,7 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseCors("AllowAllOrigins");
 
 app.MapControllerRoute(
     name: "default",

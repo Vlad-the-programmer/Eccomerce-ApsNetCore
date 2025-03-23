@@ -10,7 +10,7 @@ namespace EcommerceWebApp.Helpers
         {
             var response = await apiService.GetDataAsync(endpoint); // response is a string
 
-            var products = JsonSerializer.Deserialize<List<NewProductViewModel>>(response); // Deserialize from string
+            var products = JsonSerializer.Deserialize<List<NewProductViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
             return products == null ? new List<NewProductViewModel>() : products;
         }
@@ -20,7 +20,7 @@ namespace EcommerceWebApp.Helpers
 
             var response = await apiService.GetDataAsync(endpoint); // response is a string
 
-            var activeProducts = JsonSerializer.Deserialize<List<NewProductViewModel>>(response); // Deserialize from string
+            var activeProducts = JsonSerializer.Deserialize<List<NewProductViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
             var featuredProduct = new NewProductViewModel();
             if (activeProducts != null && activeProducts.Count > 0)
@@ -35,7 +35,7 @@ namespace EcommerceWebApp.Helpers
         public async static Task<NewProductViewModel> GetProductById(string endpoint, IApiService apiService)
         {
             var response = await apiService.GetDataAsync(endpoint); // response is a string
-            var product = JsonSerializer.Deserialize<NewProductViewModel>(response); // Deserialize from string
+            var product = JsonSerializer.Deserialize<NewProductViewModel>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
             return product != null ? product : new NewProductViewModel();
         }
     }

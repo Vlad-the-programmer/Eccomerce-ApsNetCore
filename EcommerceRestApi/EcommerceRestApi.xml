@@ -224,5 +224,17 @@
         <member name="M:EcommerceRestApi.Migrations.AddedShoppingCartItemModelfixedModelDatValidationInCategoryModel.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:EcommerceRestApi.Migrations.UserstringtoGuidIdandCustomerUserIdFKbeGuidtype">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.UserstringtoGuidIdandCustomerUserIdFKbeGuidtype.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.UserstringtoGuidIdandCustomerUserIdFKbeGuidtype.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.UserstringtoGuidIdandCustomerUserIdFKbeGuidtype.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
     </members>
 </doc>

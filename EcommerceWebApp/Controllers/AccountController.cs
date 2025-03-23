@@ -11,7 +11,8 @@ namespace EcommerceWebApp.Controllers
     {
         private readonly ILogger<AccountController> _logger;
         private readonly IApiService _apiService;
-        public AccountController(ILogger<AccountController> logger, IApiService apiService)
+        public AccountController(ILogger<AccountController> logger, 
+                                    IApiService apiService)
         {
             _apiService = apiService;
             _logger = logger;
@@ -26,7 +27,10 @@ namespace EcommerceWebApp.Controllers
 
             try
             {
-                var response = await _apiService.PostDataAsync("api/account/login", JsonSerializer.Serialize(loginVM));
+                var response = await _apiService.PostDataAsync(
+                    GlobalConstants.LoginEndpoint, 
+                    JsonSerializer.Serialize(loginVM)
+                );
             } catch (HttpRequestException e)
             {
                 TempData["Error"] = e.Message;
@@ -38,17 +42,27 @@ namespace EcommerceWebApp.Controllers
             TempData["Success"] = "Login successful!";
             return RedirectToAction("Index", "Home");
         }
-        public async Task<IActionResult> Register() => View(new RegisterViewModel(await CountriesEndpointsHelperFuncs.GetCountriesNames("api/countries", _apiService)));
+        public async Task<IActionResult> Register()
+        {
+            return View(new RegisterViewModel(
+                await CountriesEndpointsHelperFuncs.GetCountriesNames(
+                    GlobalConstants.CountriesEndpoint, _apiService))
+            );
+        }
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerVM)
         {
+            registerVM.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
+
             if (!ModelState.IsValid) return View(registerVM);
 
             //var user = new ApplicationUserViewModel();
             try
             {
-                var response = await _apiService.PostDataAsync("api/account/register", JsonSerializer.Serialize(registerVM));
+                var response = await _apiService.PostDataAsync( 
+                                    GlobalConstants.RegisterEndpoint, 
+                                    JsonSerializer.Serialize<ApplicationUserViewModel>(registerVM));
                 //user = JsonSerializer.Deserialize<ApplicationUserViewModel>(response); // Deserialize from string 
 
             }
@@ -63,15 +77,24 @@ namespace EcommerceWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await _apiService.PostDataAsync("api/account/logout", "");
-            return RedirectToAction("Index", "Products");
+            try
+            {
+                await _apiService.PostDataAsync(GlobalConstants.LogoutEndpoint);
+            } catch (HttpRequestException e)
+            {
+                TempData["Error"] = e.Message;
+                return View();
+            }
+
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult AccessDenied(string ReturnUrl)
         {
             try
             {
-                var response = _apiService.GetDataAsync("api/account/access-denied");
+                var response = _apiService.GetDataAsync(
+                                GlobalConstants.AccessDeniedEndpoint);
             } catch(HttpRequestException e)
             {
                 TempData["Error: "] = e.Message;

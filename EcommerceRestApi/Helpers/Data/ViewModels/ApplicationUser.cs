@@ -7,6 +7,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
 {
     public class ApplicationUser: IdentityUser
     {
+
         [Display(Name = "Full Name")]
         public string FullName { get; set; } = default!;
 

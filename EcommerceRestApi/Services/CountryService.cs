@@ -1,4 +1,5 @@
-﻿using EcommerceRestApi.Models;
+﻿using EcommerceRestApi.Helpers.Data.ViewModels;
+using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services.Base;
 
@@ -13,9 +14,14 @@ namespace EcommerceRestApi.Services
             _context = context;
         }
 
-        public List<Country> GetCountriesList()
+        public List<CountryViewModel> GetCountriesList()
         {
-            return _context.Countries.ToList();
+            return _context.Countries.Select(c => new CountryViewModel()
+            {
+                Id = c.Id,
+                CountryCode = c.CountryCode,
+                CountryName = c.CountryName
+            }).ToList();
         }
     }
 }

@@ -1,7 +1,15 @@
 ﻿@inject EcommerceWebApp.ApiServices.IApiService apiService;
 
 @{
-    var currentUser = EcommerceWebApp.Helpers.AccountEndpointsHelperFuncs.GetCurrentUserObj("api/account/get-current-user", apiService);
+    var currentUser = new ApplicationUserViewModel();
+    try
+    {
+        currentUser = await EcommerceWebApp.Helpers.AccountEndpointsHelperFuncs.GetCurrentUserObj("api/account/get-current-user", apiService);
+    }
+    catch (HttpRequestException e)
+    {
+        currentUser = null;
+    }
     ViewBag.CurrentUser = currentUser;
 }
 <!DOCTYPE html>
@@ -31,7 +39,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index"><i class="bi bi-shop"></i> Products</a>
                         </li>
 
-                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        @if (currentUser != null)
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -4,7 +4,7 @@
     {
         public CountryViewModel() : base("Countries") { }
         public int Id { get; set; }
-        public string Code { get; set; } = default!;
-        public string Title { get; set; } = default!;
+        public string CountryCode { get; set; } = default!;
+        public string CountryName { get; set; } = default!;
     }
 }

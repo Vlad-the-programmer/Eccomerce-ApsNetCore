@@ -29,10 +29,10 @@ namespace EcommerceWebApp.Models
 
         [Display(Name = "Photo")]
         [Required(ErrorMessage = "Photo is Requred")]
-        public string? Photo { get; set; } = default!;
+        public string? Photo { get; set; }
 
         [Display(Name = "Other photoes")]
-        public string? OtherPhotos { get; set; } = default!;
+        public string? OtherPhotos { get; set; }
 
         [Display(Name = "Stock")]
         [Required(ErrorMessage = "Stock is Requred")]
