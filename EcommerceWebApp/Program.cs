@@ -1,16 +1,17 @@
 using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Models;
-using EcommerceWebApp.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+//builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+
 builder.Services.AddDistributedMemoryCache(); // Required for session storage
 builder.Services.AddSession(options =>
 {
@@ -19,30 +20,26 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true; // Ensures session is maintained
 });
 
-//builder.Services.AddAuthentication(options =>
-//{
-//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//});
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/account/login"; // Redirect if unauthorized
+        options.LoginPath = "/account/login"; // Redirect to login if unauthorized
         options.AccessDeniedPath = "/account/access-denied";
         options.Cookie.HttpOnly = true; // Prevent JavaScript access
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Use only over HTTPS
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Token expiry time
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Only over HTTPS
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Session expiry time
+        options.SlidingExpiration = true; // Extend session if user is active
+        options.Cookie.SameSite = SameSiteMode.None;
     });
+
+builder.Services.AddAuthorization();
+
 // Add services to the container.
 builder.Services.AddHttpContextAccessor(); // Register IHttpContextAccessor
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddHttpClient<IApiService, ApiService>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:5001/"); // Base URL of the REST API
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-});
+builder.Services.AddHttpClient<IApiService, ApiService>();
 
-builder.Services.AddScoped<CurrentUserService>(); // Register the CurrentUserService
 
 var app = builder.Build();
 
@@ -71,7 +68,7 @@ app.UseAuthorization();
 app.UseRouting();
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Products}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 

@@ -1,0 +1,86 @@
+﻿@model NewProductViewModel
+
+@{
+    ViewData["Title"] = "Products details";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-2">
+        <div class="card mb-12">
+            <div class="row g-0">
+                <div class="col-md-12">
+                    <div class="card-header text-white bg-info">
+                        <p class="card-text">
+                            <h5 class="card-title">
+                                @Model.Name
+                            </h5>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <img src="@Model.Photo" width="100%" alt="@Model.Name">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <p class="card-text">@Model.LongAbout</p>
+                        <p class="card-text">
+                            <b>About: </b>
+                            @* <a asp-controller="Companies" asp-action="Details" asp-route-id="@Model.CompanyId"> *@
+                            @*     @Model.Company.Name *@
+                            @* </a> *@
+                            <p>@Model.About</p>
+                        </p>
+                        <p class="card-text">
+                            <b>Brand: </b>
+                            @* <a asp-controller="Brands" asp-action="Details" asp-route-id="@Model.Bra"> *@
+                            @*     @Model.Brand.FullName *@
+                            @* </a> *@
+                            <p>@Model.Brand</p>
+                        </p>
+                        @*  <p class="card-text"><b>Category: </b>@Model.C</p> *@
+                        @*  <p class="card-text"><b>Start Date: </b>@Model.Date.ToString("dd MMM yy")</p> *@
+                        @*  <p class="card-text"><b>End Date: </b>@Model.ExpiredDate.ToString("dd MMM yy")</p> *@
+                        <p class="card-text ">
+                            <b>Status: </b>
+                            @if (@Model.IsActive)
+                            {
+                                <span class="badge bg-success text-white">AVAILABLE</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger text-white">Not Available</span>
+                            }
+                        </p>
+                        @* <p class="card-text"> *@
+                        @*     <b>Suppliers: </b> *@
+                        @*     <hr /> *@
+                        @*     <div class="row"> *@
+                        @*         @foreach (var actor in Model.Supplier_Products) *@
+                        @*         { *@
+                        @*             <div class="column text-center"> *@
+                        @*                 <img class="border-info rounded-circle" src="@actor.Supplier.ProfilePictureUrl" style="max-width: 150px" /> *@
+                        @*                 <br /> *@
+                        @*                 <a asp-controller="Suppliers" asp-action="Details" asp-route-id="@actor.SupplierId">@actor.Supplier.FullName</a> *@
+                        @*             </div> *@
+                        @*         } *@
+                        @*     </div> *@
+                        @* </p> *@
+
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card-footer">
+                        <p class="card-text">
+                            <a class="btn btn-outline-primary float-right" asp-action="Index">
+                                Back to List
+                            </a>
+                            <a class="btn btn-success text-white  @(!Model.IsActive ? "disabled" : "")"
+                               asp-controller="Products"
+                               asp-action="AddItemToShoppingCart" asp-route-id="@Model.Id"><i class="bi bi-cart-plus"></i> Add to Cart (Price @Model.Price.ToString("c"))</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

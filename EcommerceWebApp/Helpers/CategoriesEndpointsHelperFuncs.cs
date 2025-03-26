@@ -8,19 +8,28 @@ namespace EcommerceWebApp.Helpers
     {
         public async static Task<List<CategoryViewModel>> GetCategories(string endpoint, IApiService apiService)
         {
-            var response = await apiService.GetDataAsync(endpoint); // response is a string
-            var categories = JsonSerializer.Deserialize<List<CategoryViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+            var categories = new List<CategoryViewModel>();
+            try
+            {
+                var response = await apiService.GetDataAsync(endpoint); // response is a string
+                categories = JsonSerializer.Deserialize<List<CategoryViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+            } catch (HttpRequestException ex) { }
 
-            return categories == null ? new List<CategoryViewModel>() : categories;
+
+            return categories;
         }
 
         public async static Task<List<SubcategoryViewModel>> GetSubCategories(string endpoint, IApiService apiService)
         {
-            var response = await apiService.GetDataAsync(endpoint); // response is a string
+            var subCategories = new List<SubcategoryViewModel>();
+            try
+            {
+                var response = await apiService.GetDataAsync(endpoint); // response is a string
+                subCategories = JsonSerializer.Deserialize<List<SubcategoryViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+            }
+            catch (HttpRequestException ex) { }
 
-            var subCategories = JsonSerializer.Deserialize<List<SubcategoryViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
-
-            return subCategories == null ? new List<SubcategoryViewModel>() : subCategories;
+            return subCategories;
         }
 
         public static Dictionary<string, string> GetCategoriesDictionaryWithNameCodeFields(List<CategoryViewModel> categories)
@@ -28,5 +37,9 @@ namespace EcommerceWebApp.Helpers
             return categories.Count > 0 && categories.FirstOrDefault()?.Name != null ? categories.ToDictionary(c => c.Name, c => c.Code) : new Dictionary<string, string>() ;
         }
 
+        public static Dictionary<string, string> GetSubCategoriesDictionaryWithNameCodeFields(List<SubcategoryViewModel> subCategories)
+        {
+            return subCategories.Count > 0 && subCategories.FirstOrDefault()?.Name != null ? subCategories.ToDictionary(c => c.Name, c => c.Code) : new Dictionary<string, string>();
+        }
     }
 }

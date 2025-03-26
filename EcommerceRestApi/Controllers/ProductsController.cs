@@ -1,5 +1,5 @@
 ﻿using EcommerceRestApi.Helpers.Data.ViewModels;
-using EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels;
+using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Helpers.Static;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Common;
@@ -68,7 +68,7 @@ namespace EcommerceRestApi.Controllers
             var product = await _service.GetProductByIDAsync(id);
             if (product == null)
             {
-                return NotFound();
+                return NotFound(); 
             }
             return Ok(product);
         }

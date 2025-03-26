@@ -1,5 +1,5 @@
 ﻿using EcommerceRestApi.Helpers.Data.ViewModels;
-using EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels;
+using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Services.Base;
 using System.Linq.Expressions;
 

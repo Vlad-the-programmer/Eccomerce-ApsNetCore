@@ -1,0 +1,66 @@
+﻿@model List<NewProductViewModel>
+
+@{
+    ViewData["Title"] = "List Of Products";
+}
+<div class="row">
+    @if (Model == null || !Model.Any())
+    {
+        <p class="text-center col-12">No data available.</p>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 col-sm-6 col-12 mb-3">
+                <div class="card h-100">
+                    <div class="row g-0">
+                        <div class="col-12">
+                            <div class="card-header text-white bg-info d-flex justify-content-between">
+                                <h5 class="card-title m-0">@item.Name</h5>
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                                {
+                                    <a class="text-white" asp-action="Edit" asp-route-id="@item.Id">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <img src="@item.Photo" class="img-fluid" alt="@item.Name">
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="card-body">
+                                <p class="card-text">@item.LongAbout</p>
+                                <p class="card-text"><b>Brand:</b> @item.Brand</p>
+                                <p class="card-text"><b>Category:</b> @item.CategoryId</p> <!-- Fixed Category -->
+                                <p class="card-text">
+                                    <b>Status:</b>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success text-white">AVAILABLE</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger text-white">Not Available</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                            <a class="btn btn-outline-primary" asp-action="Details" asp-route-id="@item.Id">
+                                <i class="bi bi-eye-fill"></i> Show Details
+                            </a>
+                            <a class="btn btn-success @((!item.IsActive) ? "disabled" : "") text-white" asp-controller="Orders"
+                               asp-action="AddItemToShoppingCart" asp-route-id="@item.Id">
+                                <i class="bi bi-cart-plus"></i> Add to Cart (Rs. @item.Price.ToString(".00"))
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

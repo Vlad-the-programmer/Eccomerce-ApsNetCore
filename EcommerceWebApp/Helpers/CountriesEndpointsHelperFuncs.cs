@@ -8,16 +8,26 @@ namespace EcommerceWebApp.Helpers
     {
         public async static Task<List<CountryViewModel>> GetCountries(string endpoint, IApiService apiService)
         {
-            var response = await apiService.GetDataAsync(endpoint); // response is a string
+            var countries = new List<CountryViewModel>();
+            try
+            {
+                var response = await apiService.GetDataAsync(endpoint); // response is a string
 
-            var countries = JsonSerializer.Deserialize<List<CountryViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+                countries = JsonSerializer.Deserialize<List<CountryViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
-            return countries == null ? new List<CountryViewModel>() : countries;
+            } catch(HttpRequestException ex) { }
+            return countries;
         }
 
         public async static Task<List<string>> GetCountriesNames(string endpoint, IApiService apiService)
         {
-            return (await GetCountries(endpoint, apiService)).Select(c => c.CountryName).ToList();
+            var countriesNames = new List<string>();    
+            try
+            {
+                countriesNames = (await GetCountries(endpoint, apiService)).Select(c => c.CountryName).ToList();
+            } catch (ArgumentNullException ex) { 
+            }
+           return countriesNames;  
         }
     }
 }

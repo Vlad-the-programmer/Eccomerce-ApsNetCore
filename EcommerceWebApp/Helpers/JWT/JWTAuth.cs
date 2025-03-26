@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace EcommerceWebApp.Helpers
+namespace EcommerceWebApp.Helpers.JWT
 {
     public class JWTAuth
     {

@@ -4,7 +4,7 @@ using EcommerceRestApi.Services.Base;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels;
+using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 
 namespace EcommerceRestApi.Services
 {

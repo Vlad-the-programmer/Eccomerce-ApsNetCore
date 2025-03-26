@@ -1,7 +1,7 @@
 ﻿using EcommerceRestApi.Models;
 using EcommerceRestApi.Services.Base;
 using EcommerceRestApi.Helpers.Data.ViewModels;
-using EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels;
+using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 
 namespace EcommerceRestApi.Services
 {

@@ -23,7 +23,7 @@ namespace EcommerceWebApp.Models
         [Display(Name = "About")]
         public string? About { get; set; } = default!;
 
-        [Display(Name = "Description")]
+        [Display(Name = "Long About")]
         [Required(ErrorMessage = "Description is Requred")]
         public string LongAbout { get; set; }
 

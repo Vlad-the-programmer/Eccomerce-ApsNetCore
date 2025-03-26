@@ -1,7 +1,7 @@
 ﻿using EcommerceRestApi.Helpers.Data.Auth;
 using EcommerceRestApi.Helpers.Data.Functions;
 using EcommerceRestApi.Helpers.Data.ViewModels;
-using EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels;
+using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Helpers.Static;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Common;
@@ -56,13 +56,7 @@ namespace EcommerceRestApi.Controllers
             }
 
             var user = await _userManager.FindByEmailAsync(loginVM.Email);
-            if (user == null)
-            {
-                return Unauthorized(new { Message = "Invalid email or password." });
-            }
-
-            var passwordCheck = await _userManager.CheckPasswordAsync(user, loginVM.Password);
-            if (!passwordCheck)
+            if (user == null || !await _userManager.CheckPasswordAsync(user, loginVM.Password))
             {
                 return Unauthorized(new { Message = "Invalid email or password." });
             }
@@ -73,29 +67,26 @@ namespace EcommerceRestApi.Controllers
                 return Unauthorized(new { Message = "Login failed. Please try again." });
             }
 
-            user.IsAuthenticated = true; 
-            var token = _tokenService.GenerateToken(_configuration, user);
-
-            // Create user claims
             var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim("auth_token", token) // Store token in claims
-        };
+    {
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim(ClaimTypes.NameIdentifier, user.Id)
+    };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            // Sign in the user with cookie authentication
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
-                new AuthenticationProperties
-                {
-                    IsPersistent = true, // Keep the user logged in
-                    ExpiresUtc = DateTime.UtcNow.AddMinutes(60)
-                });
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTime.UtcNow.AddMinutes(600)
+            };
 
-            return Ok(new { Message = "Login successful.", User=user, Token = token });
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
+
+            return Ok(new { Message = "Login successful." });
         }
+
 
         // POST: api/account/register
         [HttpPost("register")]
@@ -153,7 +144,7 @@ namespace EcommerceRestApi.Controllers
         {
             //await _signInManager.SignOutAsync();
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            HttpContext.Session.Clear();
+            //HttpContext.Session.Clear();
             return Ok(new { Message = "Logout successful." });
         }
 

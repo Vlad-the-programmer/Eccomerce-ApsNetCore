@@ -1,0 +1,111 @@
+﻿@model NewProductViewModel
+@using EcommerceWebApp.Helpers;
+
+@{
+    ViewData["Title"] = "Create a new movie";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-2">
+        <p>
+            <h4>Create a new Product</h4>
+        </p>
+
+        <div class="row">
+            <div class="col-md-8 offset-2">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Name" class="control-label"></label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            @* <div class="form-group"> *@
+                            @*     <label asp-for="ManufactureDate" class="control-label"></label> *@
+                            @*     <input asp-for="ManufactureDate" type="date" class="form-control" /> *@
+                            @*     <span asp-validation-for="ManufactureDate" class="text-danger"></span> *@
+                            @* </div> *@
+                            @* <div class="form-group"> *@
+                            @*     <label asp-for="ExpiredDate" class="control-label"></label> *@
+                            @*     <input asp-for="ExpiredDate" type="date" class="form-control" /> *@
+                            @*     <span asp-validation-for="ExpiredDate" class="text-danger"></span> *@
+                            @* </div> *@
+                            <div class="form-group">
+                                <label asp-for="Price" class="control-label"></label>
+                                <input asp-for="Price" type="number" class="form-control" />
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Stock" class="control-label"></label>
+                                <input asp-for="Stock" type="number" class="form-control" />
+                                <span asp-validation-for="Stock" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Photo" class="control-label"></label>
+                                <input asp-for="Photo" class="form-control" />
+                                <span asp-validation-for="Photo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CategoryId" class="control-label"></label>
+                                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories"></select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="SubcategoryId" class="control-label"></label>
+                                <select asp-for="SubcategoryId" class="form-control" asp-items="ViewBag.SubCategories"></select>
+                                <span asp-validation-for="SubcategoryId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Brand" class="control-label"></label>
+                                <input asp-for="Brand" type="number" class="form-control" />
+                                <span asp-validation-for="Brand" class="text-danger"></span>
+                            </div>
+                            @* <div class="form-group"> *@
+                            @*     <label asp-for="SupplierIds" class="control-label"></label> *@
+                            @*     <select asp-for="SupplierIds" class="form-control" asp-items="ViewBag.Suppliers" multiple></select> *@
+                            @*     <span asp-validation-for="SupplierIds" class="text-danger"></span> *@
+                            @* </div> *@
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label asp-for="LongAbout" class="control-label"></label>
+                                <textarea asp-for="LongAbout" class="form-control"></textarea>
+                                <span asp-validation-for="LongAbout" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="About" class="control-label"></label>
+                                <textarea asp-for="About" class="form-control"></textarea>
+                                <span asp-validation-for="About" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 offset-4 text-center">
+                        <img width="100%" id="ImageUrlPreview" />
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-outline-success float-right" />
+                        <a class="btn btn-outline-secondary" asp-action="Index">Show all</a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $("#ImageUrl").on("change", function () {
+                    var output = document.getElementById("ImageUrlPreview");
+                    output.src = $(this).val();
+                })</script>
+}

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels
+namespace EcommerceWebApp.Models.UpdateViewModels
 {
     public class ProductUpdateVM: BaseUpdateViewModel
     {

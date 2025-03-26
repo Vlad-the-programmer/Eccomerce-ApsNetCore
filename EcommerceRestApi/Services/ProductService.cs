@@ -4,7 +4,7 @@ using EcommerceRestApi.Services.Base;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels;
+using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 
 namespace EcommerceRestApi.Services
 {
@@ -62,15 +62,13 @@ namespace EcommerceRestApi.Services
         //    return response;
         //}
 
-        public async Task<Product> GetProductByIDAsync(int id)
+        public async Task<Product?> GetProductByIDAsync(int id)
         {
-            var productDetails = await _context.Products
-                .Include(C => C.Reviews)
-            .Include(B => B.Subcategory)
-            .ThenInclude(SC => SC.Category)
-            .FirstOrDefaultAsync(n => n.Id == id);
-
-            return productDetails;
+            return await _context.Products
+                    .Include(p => p.Reviews)
+                    .Where(p => p.Id == id) 
+                    .FirstOrDefaultAsync();
+            Console.WriteLine(_context.Database.GenerateCreateScript());
         }
 
         public async Task UpdateProductAsync(int id, ProductUpdateVM data)

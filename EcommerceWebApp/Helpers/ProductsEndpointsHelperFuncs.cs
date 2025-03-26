@@ -8,35 +8,50 @@ namespace EcommerceWebApp.Helpers
     {
         public async static Task<List<NewProductViewModel>> GetProducts(string endpoint, IApiService apiService)
         {
-            var response = await apiService.GetDataAsync(endpoint); // response is a string
+            var products = new List<NewProductViewModel>();
+            try
+            {
+                var response = await apiService.GetDataAsync(endpoint); // response is a string
+                products = JsonSerializer.Deserialize<List<NewProductViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+            } catch(HttpRequestException ex) { }
 
-            var products = JsonSerializer.Deserialize<List<NewProductViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
-
-            return products == null ? new List<NewProductViewModel>() : products;
+            return products;
         }
 
-        public async static Task<NewProductViewModel> GetFeaturedProduct(string endpoint, IApiService apiService)
+        public async static Task<NewProductViewModel?> GetFeaturedProduct(string endpoint, IApiService apiService)
         {
-
-            var response = await apiService.GetDataAsync(endpoint); // response is a string
-
-            var activeProducts = JsonSerializer.Deserialize<List<NewProductViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
-
+            var activeProducts = new List<NewProductViewModel>();
             var featuredProduct = new NewProductViewModel();
+            try
+            {
+                var response = await apiService.GetDataAsync(endpoint); // response is a string
+                activeProducts = JsonSerializer.Deserialize<List<NewProductViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+            }
+            catch (HttpRequestException ex) { }
+
             if (activeProducts != null && activeProducts.Count > 0)
             {
                 var random = new Random();
                 featuredProduct = activeProducts[random.Next(activeProducts.Count)];
             }
+            else
+            {
+                featuredProduct = null;
+            }
             return featuredProduct;
         }
 
 
-        public async static Task<NewProductViewModel> GetProductById(string endpoint, IApiService apiService)
+        public async static Task<NewProductViewModel?> GetProductById(string endpoint, IApiService apiService)
         {
-            var response = await apiService.GetDataAsync(endpoint); // response is a string
-            var product = JsonSerializer.Deserialize<NewProductViewModel>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
-            return product != null ? product : new NewProductViewModel();
+            var product = new NewProductViewModel();
+            try
+            {
+                var response = await apiService.GetDataAsync(endpoint); // response is a string
+                product = JsonSerializer.Deserialize<NewProductViewModel>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+
+            } catch(HttpRequestException ex) { product = null; }
+            return product;
         }
     }
 }

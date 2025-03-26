@@ -85,6 +85,7 @@ builder.Services.AddAuthentication(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
     options.SlidingExpiration = true; // Extend session if active
+    options.Cookie.SameSite = SameSiteMode.None;
 });
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);

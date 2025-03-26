@@ -89,77 +89,77 @@
             The postal code of the user.
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.FirstName">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.FirstName">
             <summary>
             The first name of the user.
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.LastName">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.LastName">
             <summary>
             The last name of the user.
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.Email">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.Email">
             <summary>
             The email address of the user.
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.Username">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.Username">
             <summary>
             The username of the user (optional).
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.PhoneNumber">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.PhoneNumber">
             <summary>
             The phone number of the user.
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.Nip">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.Nip">
             <summary>
             The NIP (Tax Identification Number) of the user (optional).
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.Role">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.Role">
             <summary>
             The role of the user (e.g., Admin, User).
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.Points">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.Points">
             <summary>
             The Points User get for making an each  order.
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.CountryName">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.CountryName">
             <summary>
             The name of the selected country.
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.Street">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.Street">
             <summary>
             The street address of the user.
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.HouseNumber">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.HouseNumber">
             <summary>
             The house number of the user.
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.FlatNumber">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.FlatNumber">
             <summary>
             The flat number of the user (optional).
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.City">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.City">
             <summary>
             The city of the user.
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.State">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.State">
             <summary>
             The state or region of the user.
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM.PostalCode">
+        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.PostalCode">
             <summary>
             The postal code of the user.
             </summary>

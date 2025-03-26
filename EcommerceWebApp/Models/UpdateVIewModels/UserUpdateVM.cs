@@ -1,8 +1,7 @@
-﻿using EcommerceRestApi.Helpers.Data.Functions;
-using Microsoft.EntityFrameworkCore;
+﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels
+namespace EcommerceWebApp.Models.UpdateViewModels
 {
     public class UserUpdateVM : BaseUpdateViewModel
     {
@@ -96,7 +95,6 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels
         /// The name of the selected country.
         /// </summary>
         [StringLength(100, ErrorMessage = "Country name should be no more than 100 characters long.")]
-        [Unicode(false)]
         public string? CountryName { get; set; }
 
 
@@ -104,35 +102,30 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels
         /// The street address of the user.
         /// </summary>
         [StringLength(100, ErrorMessage = "Street should be no more than 100 characters long.")]
-        [Unicode(false)]
         public string? Street { get; set; }
 
         /// <summary>
         /// The house number of the user.
         /// </summary>
         [StringLength(20, ErrorMessage = "Housenumber should be no more than 20 characters long.")]
-        [Unicode(false)]
         public string? HouseNumber { get; set; }
 
         /// <summary>
         /// The flat number of the user (optional).
         /// </summary>
         [StringLength(20, ErrorMessage = "Flatnumber should be no more than 20 characters long.")]
-        [Unicode(false)]
         public string? FlatNumber { get; set; }
 
         /// <summary>
         /// The city of the user.
         /// </summary>
         [StringLength(50, ErrorMessage = "City should be no more than 50 characters long.")]
-        [Unicode(false)]
         public string? City { get; set; }
 
         /// <summary>
         /// The state or region of the user.
         /// </summary>
         [StringLength(50, ErrorMessage = "State should be no more than 50 characters long.")]
-        [Unicode(false)]
         public string? State { get; set; }
 
         /// <summary>
@@ -140,7 +133,6 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels
         /// </summary>
         [StringLength(10, ErrorMessage = "Postalcode should be no more than 10 characters long.")]
         [DataType(DataType.PostalCode)]
-        [Unicode(false)]
         public string? PostalCode { get; set; }
     }
 }

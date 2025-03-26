@@ -21,8 +21,8 @@
                             <p class="card-text">
                                 <h5 class="card-title">
                                     @item.Name
-                                    
-                                    @if (User.Identity.IsAuthenticated)
+
+                                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                                     {
                                         <a class="text-white float-right" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
                                     }
@@ -36,7 +36,7 @@
                     <div class="col-md-6">
                         <div class="card-body">
                             <p class="card-text">@item.LongAbout</p>
-                            <p class="card-text"><b>Company: </b>@item.Brand</p>
+                            <p class="card-text"><b>Brand: </b>@item.Brand</p>
                             <p class="card-text"><b>Category: </b>@item.</p>
                             @* <p class="card-text"><b>Manufactured Date: </b>@item.DateCr.ToString("dd MMM yy")</p> *@
                             @* <p class="card-text"><b>Exp Date: </b>@item.ExpiredDate.ToString("dd MMM yy")</p> *@

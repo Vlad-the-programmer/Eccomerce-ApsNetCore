@@ -14,13 +14,13 @@
       },
       {
         "Name": "model",
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM",
+        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.UserUpdateVM",
+        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -212,13 +212,13 @@
       },
       {
         "Name": "model",
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.CategoryUpdateVM",
+        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.CategoryUpdateVM",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.CategoryUpdateVM",
+        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.CategoryUpdateVM",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -339,13 +339,13 @@
       },
       {
         "Name": "model",
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.ProductUpdateVM",
+        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.ProductUpdateVM",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels.ProductUpdateVM",
+        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.ProductUpdateVM",
         "MediaTypes": [
           "text/plain",
           "application/json",
