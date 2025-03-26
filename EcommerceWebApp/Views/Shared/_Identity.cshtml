@@ -1,20 +1,24 @@
 ﻿@inject EcommerceWebApp.ApiServices.IApiService apiService;
+@* @inject Microsoft.AspNetCore.Http.HttpContext HttpContext; *@
 
 @{
     var currentUser = new ApplicationUserViewModel();
-    try
-    {
-        currentUser = await EcommerceWebApp.Helpers.AccountEndpointsHelperFuncs.GetCurrentUserObj("api/account/get-current-user", apiService);
-    } 
-    catch(HttpRequestException e)
-    {
-        currentUser = null;
-    }
-
-    ViewBag.CurrentUser = currentUser;
+    // var token = HttpContext.Session.GetString("auth_token");
+    // if (token != null)
+    // {
+    //     currentUser = await EcommerceWebApp.Helpers.AccountEndpointsHelperFuncs.GetCurrentUserObj("api/account/get-current-user", apiService);
+    // } 
+    // catch(HttpRequestException ex)
+    // {
+    //     currentUser.IsAuthenticated = false;
+    //     ViewBag.ErrorMessage = ex.Message;
+    // }
+    
+    // ViewBag.CurrentUser = currentUser;
+    
 }
 
-@if (currentUser == null)
+@if (!User.Identity.IsAuthenticated)
 {
 
 
@@ -33,7 +37,7 @@ else
     <div class="dropdown">
         <button class="btn btn-outline-success dropdown-toggle" type="button" id="profile-btn" data-toggle="dropdown"
                 aria-expanded="false">
-            <i class="bi bi-person-badge"></i> Hello @ViewBag.CurrentUser.Username
+            <i class="bi bi-person-badge"></i> Hello @User.Identity.Name
         </button>
         <ul class="dropdown-menu" aria-labelledby="profile-btn">
             <li>

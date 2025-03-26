@@ -236,5 +236,17 @@
         <member name="M:EcommerceRestApi.Migrations.UserstringtoGuidIdandCustomerUserIdFKbeGuidtype.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:EcommerceRestApi.Migrations.applicationUserIsAuthenticatedField">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.applicationUserIsAuthenticatedField.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.applicationUserIsAuthenticatedField.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.applicationUserIsAuthenticatedField.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
     </members>
 </doc>

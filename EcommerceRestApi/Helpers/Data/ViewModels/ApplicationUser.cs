@@ -25,6 +25,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         [Display(Name = "Is Admin")]
         public bool IsAdmin { get; set; }
         public bool IsActive { get; set; }
+        public bool IsAuthenticated { get; set; }
 
         public DateTime DateCreated { get; set; } = DateTime.Now;
         public DateTime DateUpdated { get; set; } = DateTime.Now;

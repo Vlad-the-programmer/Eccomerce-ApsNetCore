@@ -1,6 +1,7 @@
 ﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Models;
+using EcommerceWebApp.Models.ResponseModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -11,11 +12,14 @@ namespace EcommerceWebApp.Controllers
     {
         private readonly ILogger<AccountController> _logger;
         private readonly IApiService _apiService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         public AccountController(ILogger<AccountController> logger, 
-                                    IApiService apiService)
+                                    IApiService apiService,
+                                    IHttpContextAccessor httpContextAccessor)
         {
             _apiService = apiService;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IActionResult Login() => View(new LoginViewModel());
@@ -23,14 +27,19 @@ namespace EcommerceWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginVM)
         {
-            if (!ModelState.IsValid) return View(loginVM);
-
+            //if (!ModelState.IsValid) return View(loginVM);
+            TokenResponse? tokenObj = new TokenResponse();
             try
             {
                 var response = await _apiService.PostDataAsync(
                     GlobalConstants.LoginEndpoint, 
                     JsonSerializer.Serialize(loginVM)
                 );
+
+                tokenObj = JsonSerializer.Deserialize<TokenResponse>(response, GlobalConstants.JsonSerializerOptions);
+
+                HttpContext.Session.SetString("auth_token", tokenObj.Token);
+                JWTAuth.SetUserFromToken(tokenObj.Token, _httpContextAccessor);
             } catch (HttpRequestException e)
             {
                 TempData["Error"] = e.Message;
@@ -53,18 +62,15 @@ namespace EcommerceWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerVM)
         {
-            registerVM.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
+            registerVM.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService) ?? new List<string>();
 
-            if (!ModelState.IsValid) return View(registerVM);
+            //if (!ModelState.IsValid) return View(registerVM);
 
-            //var user = new ApplicationUserViewModel();
             try
             {
                 var response = await _apiService.PostDataAsync( 
                                     GlobalConstants.RegisterEndpoint, 
                                     JsonSerializer.Serialize<ApplicationUserViewModel>(registerVM));
-                //user = JsonSerializer.Deserialize<ApplicationUserViewModel>(response); // Deserialize from string 
-
             }
             catch (HttpRequestException e)
             {
@@ -80,10 +86,11 @@ namespace EcommerceWebApp.Controllers
             try
             {
                 await _apiService.PostDataAsync(GlobalConstants.LogoutEndpoint);
+                HttpContext.Session.Remove("auth_token");
             } catch (HttpRequestException e)
             {
                 TempData["Error"] = e.Message;
-                return View();
+                //return View();
             }
 
             return RedirectToAction("Index", "Home");

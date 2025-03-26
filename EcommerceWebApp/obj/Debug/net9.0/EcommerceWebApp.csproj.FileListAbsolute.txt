@@ -104,3 +104,11 @@ C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\obj\Debug\net9.0\Ecomme
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\obj\Debug\net9.0\EcommerceWebApp.genruntimeconfig.cache
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\obj\Debug\net9.0\ref\EcommerceWebApp.dll
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\obj\Debug\net9.0\EcommerceWebApp.sourcelink.json
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\bin\Debug\net9.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\bin\Debug\net9.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\bin\Debug\net9.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll

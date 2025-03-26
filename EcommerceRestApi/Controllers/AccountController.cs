@@ -1,4 +1,5 @@
-﻿using EcommerceRestApi.Helpers.Data.Functions;
+﻿using EcommerceRestApi.Helpers.Data.Auth;
+using EcommerceRestApi.Helpers.Data.Functions;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels;
 using EcommerceRestApi.Helpers.Static;
@@ -6,6 +7,8 @@ using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Common;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -24,17 +27,23 @@ namespace EcommerceRestApi.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly AppDbContext _context;
         private readonly IUserService _service;
+        private readonly ITokenService _tokenService;
+        private readonly IConfiguration _configuration;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             AppDbContext context,
-            IUserService service)
+            IUserService service,
+            ITokenService tokenService,
+            IConfiguration configuration)
         {
+            _configuration = configuration;
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
             _service = service;
+            _tokenService = tokenService;
         }
 
         // POST: api/account/login
@@ -64,7 +73,28 @@ namespace EcommerceRestApi.Controllers
                 return Unauthorized(new { Message = "Login failed. Please try again." });
             }
 
-            return Ok(new { Message = "Login successful.",  User = user });
+            user.IsAuthenticated = true; 
+            var token = _tokenService.GenerateToken(_configuration, user);
+
+            // Create user claims
+            var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim("auth_token", token) // Store token in claims
+        };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            // Sign in the user with cookie authentication
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
+                new AuthenticationProperties
+                {
+                    IsPersistent = true, // Keep the user logged in
+                    ExpiresUtc = DateTime.UtcNow.AddMinutes(60)
+                });
+
+            return Ok(new { Message = "Login successful.", User=user, Token = token });
         }
 
         // POST: api/account/register
@@ -121,7 +151,9 @@ namespace EcommerceRestApi.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            //await _signInManager.SignOutAsync();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
             return Ok(new { Message = "Logout successful." });
         }
 

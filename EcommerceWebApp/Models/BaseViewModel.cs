@@ -2,6 +2,7 @@
 {
     public class BaseViewModel
     {
+        public BaseViewModel() { }
         public BaseViewModel(string title = "")
         {
             PageTitle = title;

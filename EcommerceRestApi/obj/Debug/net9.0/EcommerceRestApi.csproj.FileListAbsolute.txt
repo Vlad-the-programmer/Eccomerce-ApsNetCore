@@ -346,3 +346,4 @@ C:\Users\klamc\source\repos\EcommerceWeb\EcommerceRestApi\bin\Debug\net9.0\tr\Mi
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceRestApi\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Scripting.resources.dll
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceRestApi\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Scripting.resources.dll
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceRestApi\bin\Debug\net9.0\EcommerceRestApi.xml
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceRestApi\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

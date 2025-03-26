@@ -2,7 +2,7 @@
 
 namespace EcommerceWebApp.Models
 {
-    public class ApplicationUserViewModel:BaseViewModel
+    public class ApplicationUserViewModel: BaseViewModel
     {
         public ApplicationUserViewModel() { }
         public ApplicationUserViewModel(string title): base(title) { }
@@ -21,11 +21,11 @@ namespace EcommerceWebApp.Models
         public string Email { get; set; }
 
         [Display(Name = "Username")]
-        public string? Username { get; set; }
+        public string? UserName { get; set; }
 
         [Display(Name = "Phonenumber")]
         //[Required(ErrorMessage = "Phonenumber is Required")]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -35,14 +35,14 @@ namespace EcommerceWebApp.Models
         [Display(Name = "Nip")]
         //[DataType(DataType.Password)]
         //[StringLength(10, ErrorMessage = "Nip should be 10 digit long")]
-        public string Nip { get; set; } = string.Empty;
+        public string? Nip { get; set; } = string.Empty;
 
         [Display(Name = "Role")]
         public string Role { get; set; }
 
         public bool IsActive { get; set; }
         public bool IsAdmin { get; set; }
-
+        public bool IsAuthenticated { get; set; } = default!;
 
         public int? CountryId { get; set; }
 

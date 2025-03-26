@@ -137,7 +137,7 @@ namespace EcommerceRestApi.Helpers.Data
                     var newAppUser = new ApplicationUser()
                     {
                         FullName = "Application User",
-                        UserName = "app-user",
+                        UserName = "user",
                         Email = appUserEmail,
                         Role = UserRoles.User,
                         IsAdmin = false,
