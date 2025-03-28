@@ -78,7 +78,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         /// The role of the user (e.g., Admin, User).
         /// </summary>
         [Display(Name = "Role")]
-        public string Role { get; set; } = null!;
+        public string? Role { get; set; } = null!;
 
         [Display(Name = "IsAdmin")]
         public bool IsAdmin { get; set; }

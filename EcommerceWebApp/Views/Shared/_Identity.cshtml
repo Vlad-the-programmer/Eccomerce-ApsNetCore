@@ -1,20 +1,5 @@
-﻿@inject EcommerceWebApp.ApiServices.IApiService apiService;
-@* @inject Microsoft.AspNetCore.Http.HttpContext HttpContext; *@
-
+﻿
 @{
-    var currentUser = new ApplicationUserViewModel();
-    // var token = HttpContext.Session.GetString("auth_token");
-    // if (token != null)
-    // {
-    //     currentUser = await EcommerceWebApp.Helpers.AccountEndpointsHelperFuncs.GetCurrentUserObj("api/account/get-current-user", apiService);
-    // } 
-    // catch(HttpRequestException ex)
-    // {
-    //     currentUser.IsAuthenticated = false;
-    //     ViewBag.ErrorMessage = ex.Message;
-    // }
-    
-    // ViewBag.CurrentUser = currentUser;
     
 }
 
@@ -48,10 +33,10 @@ else
         </ul>
 
     </div>
+}
     <span style="padding: 5px;"></span>
     <form asp-controller="Account" asp-action="Logout">
         <button class="btn btn-outline-danger my-2 my-sm-0">
             <i class="bi bi-box-arrow-in-right"></i> Log out
         </button>
     </form>
-}

@@ -1,4 +1,5 @@
-﻿using EcommerceWebApp.Models.AppViewModels;
+﻿using EcommerceWebApp.AppGlobals;
+using EcommerceWebApp.Models.AppViewModels;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
@@ -25,7 +26,7 @@ namespace EcommerceWebApp.ApiServices
 
             _httpClient = new HttpClient(handler)
             {
-                BaseAddress = new Uri("https://localhost:5001")
+                BaseAddress = new Uri(AppConstants.BASE_URL)
             };
 
             // Retrieve token from session if needed
@@ -54,7 +55,8 @@ namespace EcommerceWebApp.ApiServices
                 var errorJson = await response.Content.ReadAsStringAsync();
 
                 var errorResponse = errorJson != "" ? JsonSerializer.Deserialize<ErrorViewModel>(errorJson) : new ErrorViewModel();
-                throw new HttpRequestException(errorResponse?.Message ?? "An error occurred.");
+                var errorMessage = string.Join(Environment.NewLine, errorResponse?.Errors ?? new List<string>());
+                throw new HttpRequestException(errorMessage);
             }
             return await response.Content.ReadAsStringAsync();
         }

@@ -3,7 +3,7 @@ using EcommerceRestApi.Helpers.Data.Auth;
 using EcommerceRestApi.Helpers.Data.Functions;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Static;
-using EcommerceRestApi.Models;
+using EcommerceRestApi.AppGlobals;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services;
 using EcommerceRestApi.Services.Base;
@@ -79,13 +79,14 @@ builder.Services.AddAuthentication(options =>
 })
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
 {
-    options.LoginPath = "/account/login"; // Redirect if unauthorized
-    options.AccessDeniedPath = "/account/access-denied";
+    options.Cookie.Name = "user-auth";
+    options.LoginPath = "/api/account/login"; // Redirect if unauthorized
+    options.AccessDeniedPath = "/api/account/access-denied";
     options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
     options.SlidingExpiration = true; // Extend session if active
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
@@ -95,14 +96,15 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
-        builder =>
-        {
-            builder.AllowAnyOrigin() // Allow requests from any origin
-                   .AllowAnyMethod() // Allow all HTTP methods
-                   .AllowAnyHeader(); // Allow all headers
-        });
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins(AppConstants.CLIENT_URLS) // Replace with your actual client URL
+              .AllowCredentials() // Required for authentication cookies
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
+
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -149,7 +151,7 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseCors("AllowAllOrigins");
+app.UseCors("AllowSpecificOrigins");
 app.UseAuthentication(); // Enable authentication
 app.UseAuthorization();
 

@@ -20,16 +20,12 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
+        "Type": "System.Void",
+        "MediaTypes": [],
         "StatusCode": 200
       },
       {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "Type": "EcommerceRestApi.Helpers.Data.ResponseModels.ResponseModel",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -63,7 +59,17 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "EcommerceRestApi.Helpers.Data.ResponseModels.ResponseModel",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      }
+    ]
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.AccountController",
@@ -89,7 +95,35 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "EcommerceRestApi.Helpers.Data.ResponseModels.ResponseModel",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "EcommerceRestApi.Helpers.Data.ResponseModels.ResponseModel",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "EcommerceRestApi.Helpers.Data.ResponseModels.ResponseModel",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      }
+    ]
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.AccountController",
@@ -117,7 +151,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.RegisterViewModel",
+        "Type": "EcommerceRestApi.Helpers.Data.ResponseModels.ResponseModel",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -126,13 +160,22 @@
         "StatusCode": 200
       },
       {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "Type": "EcommerceRestApi.Helpers.Data.ResponseModels.ResponseModel",
         "MediaTypes": [
           "text/plain",
           "application/json",
           "text/json"
         ],
         "StatusCode": 400
+      },
+      {
+        "Type": "EcommerceRestApi.Helpers.Data.ResponseModels.ResponseModel",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 409
       }
     ]
   },
@@ -289,16 +332,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.NewProductViewModel",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "Type": "EcommerceRestApi.Helpers.Data.ResponseModels.ResponseModel",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -345,13 +379,9 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.ProductUpdateVM",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 204
       },
       {
         "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
@@ -361,6 +391,15 @@
           "text/json"
         ],
         "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
       }
     ]
   },

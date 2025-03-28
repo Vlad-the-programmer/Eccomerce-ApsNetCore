@@ -1,4 +1,6 @@
-﻿namespace EcommerceWebApp.Models
+﻿using System.Text.Json.Serialization;
+
+namespace EcommerceWebApp.Models
 {
     public class BaseViewModel
     {
@@ -7,6 +9,7 @@
         {
             PageTitle = title;
         }
+        [JsonIgnore]
         public string PageTitle { get; set; }
     }
 }

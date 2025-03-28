@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using EcommerceRestApi.Helpers.Data.ResponseModels;
+using System.Linq.Expressions;
 
 namespace EcommerceRestApi.Controllers
 {
@@ -48,30 +50,38 @@ namespace EcommerceRestApi.Controllers
 
         // POST: api/account/login
         [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseModel)),
+            ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ResponseModel))]
         public async Task<IActionResult> Login([FromBody] LoginViewModel loginVM)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new { Message = "Invalid input data." });
+                return BadRequest(new ResponseModel { Message = "Invalid input data.",
+                                                      Errors = ModelState.Values
+                                                                        .SelectMany(v => v.Errors)
+                                                                        .Select(e => e.ErrorMessage)
+                                                                        .ToList()
+                });
             }
 
             var user = await _userManager.FindByEmailAsync(loginVM.Email);
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginVM.Password))
             {
-                return Unauthorized(new { Message = "Invalid email or password." });
+                return Unauthorized(new ResponseModel { Message = "Invalid email!" });
             }
 
             var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
             if (!result.Succeeded)
             {
-                return Unauthorized(new { Message = "Login failed. Please try again." });
+                return Unauthorized(new ResponseModel { Message = "Wrong password!" });
             }
 
             var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.Name, user.UserName),
-        new Claim(ClaimTypes.NameIdentifier, user.Id)
-    };
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
+            };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
@@ -84,25 +94,39 @@ namespace EcommerceRestApi.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
-            return Ok(new { Message = "Login successful." });
+            //Response.Cookies.Append("user", "cookie_value", new CookieOptions
+            //{
+            //    HttpOnly = true,
+            //    Secure = true, // Ensure it's sent only over HTTPS
+            //    SameSite = SameSiteMode.Lax, // Allow cross-site requests
+            //    Expires = DateTime.UtcNow.AddMinutes(60) // Cookie expiration
+            //});
+
+            return Ok(new ResponseModel { Message = "Login successful." });
         }
 
 
         // POST: api/account/register
         [HttpPost("register")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterViewModel))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseModel)),
+            ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(ResponseModel))]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel registerVM)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new { Message = "Invalid input data." });
+                return BadRequest(new ResponseModel { Message = "Invalid input data.", 
+                                                      Errors = ModelState.Values
+                                                                        .SelectMany(v => v.Errors)
+                                                                        .Select(e => e.ErrorMessage)
+                                                                        .ToList()
+                                                       });
             }
 
             var user = await _userManager.FindByEmailAsync(registerVM.Email);
             if (user != null)
             {
-                return Conflict(new { Message = "This email address is already in use." });
+                return Conflict(new ResponseModel { Message = "This email address is already in use." });
             }
 
             var newUser = await DbFuncs.GetApplicationUserObjForRegister(registerVM, _context);
@@ -114,12 +138,13 @@ namespace EcommerceRestApi.Controllers
             var newUserResponse = await _userManager.CreateAsync(newUser, registerVM.Password);
             if (!newUserResponse.Succeeded)
             {
-                return BadRequest(new { Message = "User registration failed.", Errors = newUserResponse.Errors });
+                return BadRequest(new ResponseModel { Message = "User registration failed.",
+                                              Errors = newUserResponse.Errors.Select(e => e.Description) });
             }
 
             await _userManager.AddToRoleAsync(newUser, UserRoles.User);
 
-            return Ok(new { Message = "User registered successfully.", User = await _context.Users.FirstAsync(u => u.Id == newUser.Id) });
+            return Ok(new ResponseModel { Message = "User registered successfully." });
         }
 
         [HttpGet("get-current-user")]
@@ -140,24 +165,32 @@ namespace EcommerceRestApi.Controllers
         // POST: api/account/logout
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost("logout")]
+        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseModel))]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Logout()
         {
             //await _signInManager.SignOutAsync();
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             //HttpContext.Session.Clear();
-            return Ok(new { Message = "Logout successful." });
+            return Ok();
         }
 
         // PUT: api/products/5
         [Authorize(Roles = UserRoles.User)]
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserUpdateVM))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseModel))]
         public async Task<IActionResult> Update(string id, [FromBody] UserUpdateVM model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new ResponseModel {   
+                                                        Message = "Invalid model data", 
+                                                        Errors = ModelState.Values
+                                                                                .SelectMany(v => v.Errors)
+                                                                                .Select(e => e.ErrorMessage)
+                                                                                .ToList()
+                                                        });
             }
 
             var user = await _context.Users.FindAsync(id);
@@ -187,9 +220,10 @@ namespace EcommerceRestApi.Controllers
 
         // GET: api/account/access-denied
         [HttpGet("access-denied")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ResponseModel))]
         public IActionResult AccessDenied()
         {
-            return Unauthorized(new { Message = "Access denied. You do not have permission to access this resource." });
+            return Unauthorized(new ResponseModel{ Message = "Access denied. You do not have permission to access this resource." });
         }
     }
 }

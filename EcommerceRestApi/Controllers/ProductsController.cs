@@ -1,4 +1,5 @@
-﻿using EcommerceRestApi.Helpers.Data.ViewModels;
+﻿using EcommerceRestApi.Helpers.Data.ResponseModels;
+using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Helpers.Static;
 using EcommerceRestApi.Models;
@@ -6,6 +7,7 @@ using EcommerceRestApi.Models.Common;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceRestApi.Controllers
@@ -49,7 +51,11 @@ namespace EcommerceRestApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "An error occurred while filtering products.", Details = ex.Message });
+                return StatusCode(500, new ResponseModel
+                {
+                    Message = "An error occurred while filtering products.",
+                    Errors = new List<string>().Append(ex.Message)
+                });
             }
         }
 
@@ -76,13 +82,19 @@ namespace EcommerceRestApi.Controllers
         // POST: api/products
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NewProductViewModel))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseModel))]
         public async Task<IActionResult> Create([FromBody] NewProductViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new ResponseModel
+                {
+                                            Message = "Invalid input data.",
+                                            Errors = ModelState.Values
+                                            .SelectMany(v => v.Errors)
+                                            .Select(e => e.ErrorMessage)
+                                            .ToList()
+                });
             }
 
             await _service.AddNewProductAsync(model);
@@ -92,13 +104,20 @@ namespace EcommerceRestApi.Controllers
         // PUT: api/products/5
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductUpdateVM))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest), ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(int id, [FromBody] ProductUpdateVM model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new ResponseModel
+                {
+                                            Message = "Invalid input data.",
+                                            Errors = ModelState.Values
+                                                .SelectMany(v => v.Errors)
+                                                .Select(e => e.ErrorMessage)
+                                                .ToList()
+                });
             }
 
             var product = await _service.GetProductByIDAsync(id);

@@ -73,7 +73,7 @@ namespace EcommerceWebApp.Controllers
             {
                 var response = await _apiService.PostDataAsync( 
                                     GlobalConstants.RegisterEndpoint, 
-                                    JsonSerializer.Serialize<ApplicationUserViewModel>(registerVM));
+                                    JsonSerializer.Serialize<RegisterViewModel>(registerVM));
             }
             catch (HttpRequestException e)
             {

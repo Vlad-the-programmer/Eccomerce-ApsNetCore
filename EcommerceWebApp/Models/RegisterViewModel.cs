@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace EcommerceWebApp.Models
 {
     public class RegisterViewModel: ApplicationUserViewModel
     {
+            [JsonIgnore]
             public List<string> Countries { get; set; }
 
             public RegisterViewModel()

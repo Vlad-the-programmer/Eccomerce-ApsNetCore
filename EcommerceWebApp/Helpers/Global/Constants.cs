@@ -30,8 +30,7 @@ public static class GlobalConstants
     public const string UserDeleteEndpoint = "api/account/";
     public const string UserUpdateEndpoint = "api/account/";
     public const string UserCreateEndpoint = "api/account/";
-
-
+    public const string GetCurrentUserEndpoint = "api/account/get-current-user";
 
 
     // Other Constants
