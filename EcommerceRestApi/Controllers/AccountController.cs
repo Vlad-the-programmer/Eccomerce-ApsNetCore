@@ -175,7 +175,7 @@ namespace EcommerceRestApi.Controllers
             return Ok();
         }
 
-        // PUT: api/products/5
+        // PUT: api/account/users/5
         [Authorize(Roles = UserRoles.User)]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
