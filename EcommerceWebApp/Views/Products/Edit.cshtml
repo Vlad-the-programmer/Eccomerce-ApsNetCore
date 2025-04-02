@@ -1,0 +1,112 @@
+﻿@model EcommerceWebApp.Models.UpdateViewModels.ProductUpdateVM;
+
+@{
+    ViewData["Title"] = "Update Product";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-2">
+        <h4 class="text-center">Update Product</h4>
+
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row">
+                <!-- Left Column -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Brand" class="control-label"></label>
+                        <input asp-for="Brand" class="form-control" />
+                        <span asp-validation-for="Brand" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Price" class="control-label"></label>
+                        <input asp-for="Price" type="number" class="form-control" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Stock" class="control-label"></label>
+                        <input asp-for="Stock" type="number" class="form-control" />
+                        <span asp-validation-for="Stock" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CategoryId" class="control-label"></label>
+                        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories"></select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="SubcategoryId" class="control-label"></label>
+                        <select asp-for="SubcategoryId" class="form-control" asp-items="ViewBag.Subcategories"></select>
+                        <span asp-validation-for="SubcategoryId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Photo" class="control-label"></label>
+                        <input asp-for="Photo" class="form-control" />
+                        <span asp-validation-for="Photo" class="text-danger"></span>
+                    </div>
+
+                    <div class="text-center">
+                        <img id="PhotoPreview" src="@Model.Photo" width="100%" class="img-thumbnail" alt="Product Image">
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="OtherPhotos" class="control-label"></label>
+                        <input asp-for="OtherPhotos" class="form-control" />
+                        <span asp-validation-for="OtherPhotos" class="text-danger"></span>
+                    </div>
+
+                    <div class="text-center">
+                        <img id="OtherPhotosPreview" src="@Model.OtherPhotos" width="100%" class="img-thumbnail" alt="Other Photos">
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="About" class="control-label"></label>
+                        <textarea asp-for="About" class="form-control"></textarea>
+                        <span asp-validation-for="About" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="LongAbout" class="control-label"></label>
+                        <textarea asp-for="LongAbout" class="form-control"></textarea>
+                        <span asp-validation-for="LongAbout" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="text-center">
+                <input type="submit" value="Update" class="btn btn-outline-success" />
+                <a class="btn btn-outline-secondary" asp-action="Index">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#Photo").on("input", function () {
+                $("#PhotoPreview").attr("src", $(this).val());
+            });
+
+            $("#OtherPhotos").on("input", function () {
+                $("#OtherPhotosPreview").attr("src", $(this).val());
+            });
+        });
+    </script>
+}
