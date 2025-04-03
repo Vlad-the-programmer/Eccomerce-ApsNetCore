@@ -32,6 +32,12 @@ public static class GlobalConstants
     public const string UserCreateEndpoint = "api/account/";
     public const string GetCurrentUserEndpoint = "api/account/get-current-user";
 
+    // ShopppingCart
+    public const string GetCartEndpoint = "api/cart/";
+    public const string GetCartItemsEndpoint = "api/cart/items";
+    public const string ClearCartEndpoint = "api/cart/"; //HTTP_Delete
+    public const string AddItemToCartEndpoint = "api/cart/"; //HTTP_POST
+    public const string RemoveItemFromCartEndpoint = "api/cart/remove-item/"; // + id
 
     // Other Constants
     public const int MaxRetryAttempts = 3;

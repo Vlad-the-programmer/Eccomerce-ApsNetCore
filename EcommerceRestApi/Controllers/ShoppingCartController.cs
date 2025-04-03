@@ -8,13 +8,13 @@ using EcommerceRestApi.Helpers.Data.ResponseModels;
 
 namespace EcommerceRestApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/cart")]
     [ApiController]
     public class ShoppingCartController : ControllerBase
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly AppDbContext _context;
-        private ISession session;
+        private ISession _session;
 
         public string ShoppingCartId { get; set; }
 
@@ -22,17 +22,39 @@ namespace EcommerceRestApi.Controllers
         {
             _serviceProvider = services;
             _context = context;
+            _session = _serviceProvider.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetCart()
         {
-            session = _serviceProvider.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session;
             var context = _serviceProvider.GetService<AppDbContext>();
 
-            ShoppingCartId = session.GetString("CartId") ?? Guid.NewGuid().ToString();
-            session.SetString("CartId", ShoppingCartId);
+            ShoppingCartId = _session.GetString("CartId") ?? Guid.NewGuid().ToString();
+            _session.SetString("CartId", ShoppingCartId);
             return Ok(ShoppingCartId);
+        }
+
+        [HttpGet("items")]
+        public async Task<IActionResult> GetCartItems()
+        {
+            ShoppingCartId = _session.GetString("CartId") ?? string.Empty;
+
+            if (ShoppingCartId == string.Empty)
+            {
+                return NotFound(new ResponseModel { Message = "Cart does not exist!" });
+            }
+
+            bool isCartEmpty = !_context.ShoppingCartItems.Any(n => n.ShoppingCartId == ShoppingCartId);
+            if (isCartEmpty)
+            {
+                return BadRequest(new ResponseModel { Message = "Your cart is empty." });
+            }
+
+           var ShoppingCartItems = _context.ShoppingCartItems
+                                                    .Where(n => n.ShoppingCartId == ShoppingCartId).ToList();
+                
+           return Ok(ShoppingCartItems);
         }
 
         [HttpPost]
@@ -68,7 +90,7 @@ namespace EcommerceRestApi.Controllers
                 }
 
                 await _context.SaveChangesAsync(); // Use async saving
-                return Ok(new ResponseModel { Message = "Item added to cart successfully!" });
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -78,12 +100,14 @@ namespace EcommerceRestApi.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> RemoveItemFromCart(Product product)
+        [HttpPost("remove-item/{id}")]
+        public async Task<IActionResult> RemoveItemFromCart(ShoppingCartItemVM cartItem)
         {
-            if (product == null)
+            ShoppingCartId = _session.GetString("CartId") ?? string.Empty;
+
+            if (ShoppingCartId == string.Empty)
             {
-                return BadRequest(new ResponseModel { Message = "Invalid product!" });
+                return NotFound(new ResponseModel { Message = "Cart does not exist!" });
             }
 
             bool isCartEmpty = !_context.ShoppingCartItems.Any(n => n.ShoppingCartId == ShoppingCartId);
@@ -95,7 +119,7 @@ namespace EcommerceRestApi.Controllers
             try
             {
                 var ShoppingCartItem = _context.ShoppingCartItems
-                                                    .FirstOrDefault(n => n.Product.Id == product.Id
+                                                    .FirstOrDefault(n => n.Product.Id == cartItem.Id
                                                                     && n.ShoppingCartId == ShoppingCartId);
                 if (ShoppingCartItem != null)
                 {
@@ -120,10 +144,10 @@ namespace EcommerceRestApi.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpDelete]
         public async Task<IActionResult> ClearCart()
         {
-            string cratId = session.GetString("CartId");
+            string cratId = _session.GetString("CartId");
             if (string.IsNullOrEmpty(cratId))
             {
                 return NotFound(new ResponseModel { Message = "Cart does not exist" });

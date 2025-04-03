@@ -22,5 +22,6 @@ namespace EcommerceRestApi.Models
         [StringLength(20, MinimumLength = 10, ErrorMessage = "Code must be between 10 and 20 characters.")]
         [Required]
         public string ShoppingCartId { get; set; }
+
     }
 }

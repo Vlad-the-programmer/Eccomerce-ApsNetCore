@@ -41,10 +41,5 @@ namespace EcommerceWebApp.Helpers.Cart
             var total = GetShoppingCartItems().Where(n => n.ShoppingCartId == ShoppingCartId).Select(n => n.Product.Price * n.Amount).Sum();
             return total;
         }
-
-        public async Task ClearShoppingCartAsync()
-        {
-            
-        }
     }
 }

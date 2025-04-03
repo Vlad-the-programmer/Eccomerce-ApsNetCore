@@ -58,6 +58,7 @@ namespace EcommerceWebApp.Controllers
 
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> Create(NewProductViewModel product)
         {
