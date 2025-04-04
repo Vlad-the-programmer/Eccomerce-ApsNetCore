@@ -14,7 +14,7 @@ namespace EcommerceRestApi.Controllers
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly AppDbContext _context;
-        private ISession _session;
+        private readonly ISession _session;
 
         public string ShoppingCartId { get; set; }
 
@@ -26,7 +26,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCart()
+        public async Task<IActionResult> GetCreateCart()
         {
             var context = _serviceProvider.GetService<AppDbContext>();
 
@@ -55,6 +55,27 @@ namespace EcommerceRestApi.Controllers
                                                     .Where(n => n.ShoppingCartId == ShoppingCartId).ToList();
                 
            return Ok(ShoppingCartItems);
+        }
+
+        [HttpGet("cart-item/{product_id}")]
+        public async Task<IActionResult> GetCartItem(int product_id)
+        {
+            ShoppingCartId = _session.GetString("CartId") ?? string.Empty;
+
+            if (ShoppingCartId == string.Empty)
+            {
+                return NotFound(new ResponseModel { Message = "Cart does not exist!" });
+            }
+
+            var shoppingCartItem = _context.ShoppingCartItems
+                                                     .FirstOrDefault(n => n.ShoppingCartId == ShoppingCartId
+                                                                        && n.ProductId == product_id);
+
+            if (shoppingCartItem == null)
+            {
+                return NotFound();
+            }
+            return Ok(shoppingCartItem);
         }
 
         [HttpPost]

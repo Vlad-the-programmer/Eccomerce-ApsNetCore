@@ -21,7 +21,21 @@ namespace EcommerceWebApp.Helpers
 
             var cartItems = JsonSerializer.Deserialize<List<ShoppingCartItemVM>>(response, 
                                                         GlobalConstants.JsonSerializerOptions); // Deserialize from string
-            return cartItems ?? new List<ShoppingCartItemVM>();
+            if (cartItems.Any())
+            {
+                cartItems.ForEach(e => e.TotalPrice = e.Product.Price * e.Amount);
+                return cartItems;
+            }
+            return new List<ShoppingCartItemVM>();
+        }
+
+        public static async Task<ShoppingCartItemVM> GetProductById(string endpoint, IApiService apiService)
+        {
+            var response = await apiService.GetDataAsync(endpoint); // response is a string
+
+            var cartItem = JsonSerializer.Deserialize<ShoppingCartItemVM>(response,
+                                                        GlobalConstants.JsonSerializerOptions); // Deserialize from string
+            return cartItem ?? new ShoppingCartItemVM();
         }
 
         public static async Task<string> AddItemToCart(string endpoint, IApiService apiService, ShoppingCartItemVM cartItem)

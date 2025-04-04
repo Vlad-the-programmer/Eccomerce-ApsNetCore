@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+using EcommerceRestApi.Helpers.Cart;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +40,7 @@ builder.Services.AddScoped<IProductsService, ProductsService>();
 //builder.Services.AddScoped<IOrdersService, OrdersService>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped(sc => ShoppingCart.GetShoppingCart(sc));
+builder.Services.AddScoped(sc => ShoppingCart.GetShoppingCart(sc, sc.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session));
 
 //authontication and authorization
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

@@ -16,10 +16,9 @@ namespace EcommerceRestApi.Models
         public Product Product { get; set; }
 
         [Required]
-        [Range(0, int.MaxValue, ErrorMessage = "Price must be 0 or greater.")]
+        [Range(0, int.MaxValue, ErrorMessage = "Amount must be 0 or greater.")]
         public int Amount { get; set; }
 
-        [StringLength(20, MinimumLength = 10, ErrorMessage = "Code must be between 10 and 20 characters.")]
         [Required]
         public string ShoppingCartId { get; set; }
 
