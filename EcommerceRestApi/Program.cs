@@ -40,12 +40,45 @@ builder.Services.AddScoped<IProductsService, ProductsService>();
 //builder.Services.AddScoped<IOrdersService, OrdersService>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped(sc => ShoppingCart.GetShoppingCart(sc, sc.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session));
+
 
 //authontication and authorization
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                                             .AddEntityFrameworkStores<AppDbContext>()
                                             .AddDefaultTokenProviders();
+
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.Cookie.Name = "user-auth";
+    options.LoginPath = "/api/account/login"; // Redirect if unauthorized
+    options.AccessDeniedPath = "/api/account/access-denied";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.SlidingExpiration = true; // Extend session if active
+    options.Cookie.SameSite = SameSiteMode.Lax;
+});
+//.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+//{
+//    options.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        ValidateIssuer = true,
+//        ValidateAudience = true,
+//        ValidateLifetime = true,
+//        ValidateIssuerSigningKey = true,
+//        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+//        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+//        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+//    };
+//})
+
 builder.Services.AddAuthorization(options =>
 {
     // Role-based authorization
@@ -59,35 +92,12 @@ builder.Services.AddAuthorization(options =>
     //});
 });
 
-builder.Services.AddAuthentication(options =>
+builder.Services.AddDistributedMemoryCache(); // Required for session storage
+builder.Services.AddSession(options =>
 {
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // Default for APIs
-})
-.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-        ValidAudience = builder.Configuration["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
-    };
-})
-.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-{
-    options.Cookie.Name = "user-auth";
-    options.LoginPath = "/api/account/login"; // Redirect if unauthorized
-    options.AccessDeniedPath = "/api/account/access-denied";
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-    options.SlidingExpiration = true; // Extend session if active
-    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+    options.Cookie.HttpOnly = true; // Prevents JavaScript access (security)
+    options.Cookie.IsEssential = true; // Ensures session is maintained
 });
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
@@ -155,6 +165,7 @@ app.UseStaticFiles();
 app.UseCors("AllowSpecificOrigins");
 app.UseAuthentication(); // Enable authentication
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

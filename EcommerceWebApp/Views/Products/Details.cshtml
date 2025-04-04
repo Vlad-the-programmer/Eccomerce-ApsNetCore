@@ -33,8 +33,8 @@
                     <div class="mt-4">
                         <a class="btn btn-outline-secondary me-2" asp-action="Index">Back to List</a>
                         <a class="btn btn-primary text-white @(Model.IsActive ? "" : "disabled")"
-                           asp-controller="Products"
-                           asp-action="AddItemToShoppingCart"
+                           asp-controller="Cart"
+                           asp-action="AddItemToCart"
                            asp-route-id="@Model.Id">
                             <i class="bi bi-cart-plus"></i> Add to Cart
                         </a>

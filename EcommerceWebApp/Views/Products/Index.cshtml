@@ -53,9 +53,9 @@
                             <a class="btn btn-outline-primary" asp-action="Details" asp-route-id="@item.Id">
                                 <i class="bi bi-eye-fill"></i> Show Details
                             </a>
-                            <a class="btn btn-success @((!item.IsActive) ? "disabled" : "") text-white" asp-controller="Orders"
-                               asp-action="AddItemToShoppingCart" asp-route-id="@item.Id">
-                                <i class="bi bi-cart-plus"></i> Add to Cart (Rs. @item.Price.ToString(".00"))
+                            <a class="btn btn-success @((!item.IsActive) ? "disabled" : "") text-white" asp-controller="Cart"
+                               asp-action="AddItemToCart" asp-route-id="@item.Id">
+                                <i class="bi bi-cart-plus"></i> Add to Cart ($ @item.Price.ToString(".00"))
                             </a>
                         </div>
                     </div>

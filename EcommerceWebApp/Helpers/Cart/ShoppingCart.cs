@@ -1,7 +1,4 @@
-﻿using EcommerceRestApi.Models.Context;
-using EcommerceRestApi.Models;
-using EcommerceRestApi.Helpers.Data.ViewModels;
-using Microsoft.EntityFrameworkCore;
+﻿using EcommerceRestApi.Models;
 using EcommerceWebApp.Models;
 
 namespace EcommerceWebApp.Helpers.Cart
@@ -13,13 +10,20 @@ namespace EcommerceWebApp.Helpers.Cart
 
         public List<ShoppingCartItemVM> ShoppingCartItems { get; set; }
 
-        public ShoppingCart()
+        private readonly ISession _session;
+
+        private ShoppingCart(ISession? session=null)
         {
+            _session = session;
         }
 
-        public static ShoppingCart GetShoppingCart(IServiceProvider services)
+        public static ShoppingCart GetShoppingCart(IServiceProvider services, ISession? session)
         {
-            return new ShoppingCart();
+            if (session == null)
+            {
+                session = services.GetRequiredService<IHttpContextAccessor>()?.HttpContext?.Session;
+            }
+            return new ShoppingCart(session);
         }
 
         public void AddItemToCart(NewProductViewModel product)

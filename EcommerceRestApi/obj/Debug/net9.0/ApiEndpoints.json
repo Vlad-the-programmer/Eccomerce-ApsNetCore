@@ -180,6 +180,89 @@
     ]
   },
   {
+    "ContainingType": "EcommerceRestApi.Controllers.ShoppingCartController",
+    "Method": "GetCreateCart",
+    "RelativePath": "api/cart",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.ShoppingCartController",
+    "Method": "AddItemToCart",
+    "RelativePath": "api/cart",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "product",
+        "Type": "EcommerceRestApi.Models.Product",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.ShoppingCartController",
+    "Method": "ClearCart",
+    "RelativePath": "api/cart",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.ShoppingCartController",
+    "Method": "GetCartItem",
+    "RelativePath": "api/cart/cart-item/{product_id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "product_id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.ShoppingCartController",
+    "Method": "GetCartItems",
+    "RelativePath": "api/cart/items",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.ShoppingCartController",
+    "Method": "RemoveItemFromCart",
+    "RelativePath": "api/cart/remove-item/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cartItem",
+        "Type": "EcommerceRestApi.Models.ShoppingCartItemVM",
+        "IsRequired": true
+      },
+      {
+        "Name": "id",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "EcommerceRestApi.Controllers.CategoriesController",
     "Method": "GetAllCategories",
     "RelativePath": "api/Categories",
