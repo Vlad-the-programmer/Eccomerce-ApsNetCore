@@ -10,6 +10,7 @@ using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Helpers.Data.ResponseModels;
 using Microsoft.AspNetCore.Identity;
+using EcommerceRestApi.Services;
 
 namespace EcommerceRestApi.Controllers
 {
@@ -19,42 +20,26 @@ namespace EcommerceRestApi.Controllers
     {
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IOrderService _orderService;
 
-        public OrderController(AppDbContext context, UserManager<ApplicationUser> userManager)
+        public OrderController(AppDbContext context, UserManager<ApplicationUser> userManager, IOrderService orderService)
         {
             _context = context;
             _userManager = userManager;
+            _orderService = orderService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetOrders()
         {
-            var orders = await _context.Orders.Include(o => o.Customer)
-                                        .Include(o => o.OrderItems)
-                                        .Select(o => new OrderViewModel
-                                        {
-                                            Code = o.Code,
-                                            CustomerId = o.CustomerId,
-                                            OrderDate = o.OrderDate,
-                                            TotalAmount = o.TotalAmount,
-                                            Status = o.Status,
-                                            OrderItems = (IList<OrderItem>)o.OrderItems.Select(oi => new OrderItemViewModel
-                                            {
-                                                ProductId = oi.ProductId,
-                                                Quantity = oi.Quantity,
-                                                UnitPrice = oi.UnitPrice,
-                                                OrderId = oi.OrderId,
-                                            }).ToList()
-                                        }).ToListAsync();
+            var orders = await _orderService.GetOrdersAsync();
             return Ok(orders);
         }
 
         [HttpGet("{code}")]
         public async Task<IActionResult> GetOrder(string code)
         {
-            var order = await _context.Orders.Include(o => o.Customer)
-                                             .Include(o => o.OrderItems)
-                                             .FirstOrDefaultAsync(o => o.Code == code);
+            var order = await _orderService.GetOrderByCodeAsync(code);
 
             if (order == null)
                 return NotFound();
@@ -98,39 +83,20 @@ namespace EcommerceRestApi.Controllers
                 });
             }
 
-            var order = new Order
-            {
-                Code = model.Code,
-                CustomerId = model.CustomerId,
-                OrderDate = model.OrderDate,
-                TotalAmount = model.TotalAmount,
-                Status = model.Status,
-                OrderItems = model.OrderItems.Select(oi => new OrderItem
-                {
-                    ProductId = oi.ProductId,
-                    Quantity = oi.Quantity,
-                    UnitPrice = oi.UnitPrice,
-                    OrderId = oi.OrderId,
-                }).ToList()
-            };
+            await _orderService.AddNewOrderAsync(model);
 
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetOrder), new { code = order.Code }, model);
+            return CreatedAtAction(nameof(GetOrder), new { code = model.Code }, model);
         }
 
         [HttpPut("{code}")]
         [Authorize]
         public async Task<IActionResult> UpdateOrder(string code, OrderViewModel model)
         {
-            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Code == code);
+            var order = await _orderService.GetOrderByCodeAsync(code);
             if (order == null)
                 return NotFound();
 
-            order.Status = model.Status;
-            _context.Orders.Update(order);
-            await _context.SaveChangesAsync();
+            await _orderService.UpdateOrderAsync(code, model);
 
             return NoContent();
         }
@@ -139,12 +105,11 @@ namespace EcommerceRestApi.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteOrder(string code)
         {
-            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Code == code);
+            var order = await _orderService.GetOrderByCodeAsync(code);
             if (order == null)
                 return NotFound();
 
-            _context.Orders.Remove(order);
-            await _context.SaveChangesAsync();
+            await _orderService.DeleteOrderAsync(code);
 
             return NoContent();
         }

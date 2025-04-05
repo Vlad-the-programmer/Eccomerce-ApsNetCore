@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using EcommerceWebApp.Models;
+using EcommerceWebApp.Helpers.Enums;
+using System.Text.Json.Serialization;
 
 namespace EcommerceWebApp.Models
 {
@@ -38,6 +40,18 @@ namespace EcommerceWebApp.Models
         //public IList<Payment> Payments { get; set; } = new List<Payment>();
 
         //public IList<Shipment> Shipments { get; set; } = new List<Shipment>();
+
+        [JsonIgnore]
+        public string Address { get; set; }
+
+        [JsonIgnore]
+        public DeliveryMethods DeliveryMethod { get; set; }
+
+        [JsonIgnore]
+        public PaymentMethods PaymentMethod { get; set; }
+
+        [JsonIgnore]
+        public OrderStatuses OrderStatus { get; set; }
     }
 
 }

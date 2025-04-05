@@ -20,7 +20,7 @@ namespace EcommerceWebApp.Helpers
         }
 
 
-        public async static Task<NewProductViewModel?> GetOrderByCode(string endpoint, string code,  IApiService apiService)
+        public async static Task<OrderViewModel?> GetOrderByCode(string endpoint, string code,  IApiService apiService)
         {
             var order = new OrderViewModel();
             try
@@ -31,6 +31,50 @@ namespace EcommerceWebApp.Helpers
             }
             catch (HttpRequestException ex) { order = null; }
             return order;
+        }
+
+        public async static Task<string> SubmitOrder(string endpoint, OrderViewModel order, IApiService apiService)
+        {
+            try
+            {
+                var response = await apiService.PostDataAsync(endpoint, JsonSerializer.Serialize(order)); // response is a string
+                return response;
+            }
+            catch (HttpRequestException ex) { return ex.Message; }
+            
+        }
+
+        public async static Task<string> UpdateOrder(string endpoint, OrderViewModel order, IApiService apiService)
+        {
+            try
+            {
+                var response = await apiService.UpdateDataAsync(endpoint, JsonSerializer.Serialize(order)); // response is a string
+                return response;
+            }
+            catch (HttpRequestException ex) { return ex.Message; }
+
+        }
+
+        public async static Task<string> CancelOrder(string endpoint, string code, IApiService apiService)
+        {
+            try
+            {
+                var response = await apiService.DeleteDataAsync(endpoint + code); // response is a string
+                return response;
+            }
+            catch (HttpRequestException ex) { return ex.Message; }
+
+        }
+
+        public async static Task<string> DeleteOrder(string endpoint,string code, IApiService apiService)
+        {
+            try
+            {
+                var response = await apiService.DeleteDataAsync(endpoint + code); // response is a string
+                return response;
+            }
+            catch (HttpRequestException ex) { return ex.Message; }
+
         }
     }
 }
