@@ -29,13 +29,21 @@ namespace EcommerceWebApp.Helpers
             return new List<ShoppingCartItemVM>();
         }
 
-        public static async Task<ShoppingCartItemVM> GetProductById(string endpoint, IApiService apiService)
+        public static async Task<ShoppingCartItemVM?> GetProductById(string endpoint, IApiService apiService)
         {
-            var response = await apiService.GetDataAsync(endpoint); // response is a string
+            var cartItem = new ShoppingCartItemVM();
+            try
+            {
+                var response = await apiService.GetDataAsync(endpoint); // response is a string
 
-            var cartItem = JsonSerializer.Deserialize<ShoppingCartItemVM>(response,
-                                                        GlobalConstants.JsonSerializerOptions); // Deserialize from string
-            return cartItem ?? new ShoppingCartItemVM();
+                cartItem = JsonSerializer.Deserialize<ShoppingCartItemVM>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+
+            } catch (HttpRequestException ex)
+            {
+                cartItem = null;
+            }
+                                                        
+            return cartItem;
         }
 
         public static async Task<string> AddItemToCart(string endpoint, IApiService apiService, ShoppingCartItemVM cartItem)

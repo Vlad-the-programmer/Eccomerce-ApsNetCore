@@ -4,6 +4,7 @@ using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Helpers.Cart;
 using EcommerceWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace EcommerceWebApp.Controllers
 {
@@ -18,16 +19,27 @@ namespace EcommerceWebApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
-            var cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
-            var cartTotal = await CartEndpointsHelperFuncs.GetShoppingCartTotal(_apiService);
+            var cartItems = new List<ShoppingCartItemVM>();
+            var cartTotal = 0.0;
+            try
+            {
+                await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
+                cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
+                cartTotal = await CartEndpointsHelperFuncs.GetShoppingCartTotal(_apiService);
 
-            var response = new ShoppingCartViewModel()
+
+            } catch (HttpRequestException ex)
+            {
+                TempData["Error"] = ex.Message;
+                Debug.WriteLine($"Error: {ex.Message}");
+            }
+
+            var model = new ShoppingCartViewModel()
             {
                 ShoppingCartItems = cartItems,
                 CartTotal = cartTotal,
             };
-            return View();
+            return View(model);
         }
 
         public async Task<IActionResult> AddItemToCart(int product_id)
@@ -65,6 +77,7 @@ namespace EcommerceWebApp.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
 
         public async Task<IActionResult> ClearCart()
         {

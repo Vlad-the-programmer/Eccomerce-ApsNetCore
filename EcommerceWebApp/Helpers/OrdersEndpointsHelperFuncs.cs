@@ -35,13 +35,8 @@ namespace EcommerceWebApp.Helpers
 
         public async static Task<string> SubmitOrder(string endpoint, OrderViewModel order, IApiService apiService)
         {
-            try
-            {
                 var response = await apiService.PostDataAsync(endpoint, JsonSerializer.Serialize(order)); // response is a string
                 return response;
-            }
-            catch (HttpRequestException ex) { return ex.Message; }
-            
         }
 
         public async static Task<string> UpdateOrder(string endpoint, OrderViewModel order, IApiService apiService)

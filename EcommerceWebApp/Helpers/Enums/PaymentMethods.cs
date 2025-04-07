@@ -4,7 +4,7 @@
     {
         Card,
         Transaction,
-        Cash
+        Cash,
         PayPal,
     }
 }

@@ -16,11 +16,11 @@
 </script>
 @section top {
     <div class="jumbotron">
-        <h1 class="display-3 text-center">Zamówienie</h1>
+        <h1 class="display-3 text-center">Order</h1>
     </div>
 }
 
-@if (Model.OrderItems.Count < 1)
+@if (ViewBag.CartItems.Count < 1)
 {
     <h2 class="text-info">Cart is empty</h2>
     <br />
@@ -31,7 +31,7 @@ else
     @if (Context.User.Identity.IsAuthenticated)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            Logged in as @Model.Customer.FirstName @Model.Customer.LastName! 
+            Logged in as @Context.User.Identity.Name! 
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -41,7 +41,7 @@ else
     {
 
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <a href="@Url.Action("login", "account")?ReturnUrl=/order" class="nounderline text-dark">
+            <a href="@Url.Action("login", "account")?ReturnUrl=/orders" class="nounderline text-dark">
                 Login to save your order.
             </a>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
