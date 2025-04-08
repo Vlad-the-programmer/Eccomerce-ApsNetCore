@@ -1,5 +1,6 @@
 ﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
+using EcommerceWebApp.Helpers.Orders;
 using EcommerceWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,7 +37,6 @@ namespace EcommerceWebApp.Controllers
             try
             {
                 var response = await OrdersEndpointsHelperFuncs.SubmitOrder(GlobalConstants.OrderCreateEndpoint, order, _apiService);
-
             } catch (HttpRequestException ex) {     
                 TempData["Error"] = ex.Message;
                 return View(order);

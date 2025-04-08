@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EcommerceRestApi.Helpers.Data.ViewModels;
+using EcommerceRestApi.Helpers.Data.Functions;
+using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Helpers.Data
 {
@@ -74,8 +76,7 @@ namespace EcommerceRestApi.Helpers.Data
                 new PaymentMethod { PaymentType = "Credit Card", Details = "Visa, MasterCard, Amex", IsActive = true, DateCreated = DateTime.Now },
                 new PaymentMethod { PaymentType = "PayPal", Details = "Secure online payments", IsActive = true, DateCreated = DateTime.Now }
             });
-                    context.SaveChanges();
-                }
+                   
 
                 // Seed Products
                 if (!context.Products.Any())
@@ -89,6 +90,31 @@ namespace EcommerceRestApi.Helpers.Data
                     OtherPhotos = "https://tinyurl.com/2p8ypn72", IsActive = true, DateCreated = DateTime.Now },
 
             });
+                    context.SaveChanges();
+                }
+                if (!context.Orders.Any())
+                {
+                    context.Orders.AddRange(new List<Order>
+                    {
+                        new Order { Code = Guid.NewGuid().ToString(), Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Approved), IsActive = true,  CustomerId = context.Customers.First().Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
+                        new Order { Code = Guid.NewGuid().ToString(), Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Approved), IsActive = true, CustomerId = context.Customers.ToArray()[1].Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
+                        new Order { Code = Guid.NewGuid().ToString(), Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Approved), IsActive = true, CustomerId = context.Customers.ToArray()[2].Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
+
+                    });
+                }
+                if (!context.OrderItems.Any())
+                {
+                    context.OrderItems.AddRange(new List<OrderItem>
+                    {
+                        new OrderItem { OrderId = context.Orders.First().Id, IsActive = true, ProductId = context.Products.First().Id, Quantity = 2, UnitPrice = 12, DateCreated = DateTime.Now },
+                        new OrderItem { OrderId = context.Orders.ToArray()[1].Id, IsActive = true, ProductId = context.Orders.ToArray()[1].Id, Quantity = 2, UnitPrice = 12, DateCreated = DateTime.Now },
+                        new OrderItem { OrderId = context.Orders.ToArray()[2].Id, IsActive = true, ProductId = context.Orders.ToArray()[2].Id, Quantity = 2, UnitPrice = 12, DateCreated = DateTime.Now },
+
+                    });
+
+                        context.OrderItems.ForEachAsync(item => item.Order.TotalAmount = item.UnitPrice * item.Quantity);
+                }
+
                     context.SaveChanges();
                 }
             }

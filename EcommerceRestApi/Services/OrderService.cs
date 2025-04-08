@@ -3,6 +3,7 @@ using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services.Base;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using EcommerceRestApi.Helpers.Data.Functions;
 
 namespace EcommerceRestApi.Services
 {
@@ -25,13 +26,20 @@ namespace EcommerceRestApi.Services
                 .Include(o => o.Shipments)
                 .FirstOrDefaultAsync(o => o.Code == code);
 
+            if (order == null)
+            {
+                return null;
+            }
+
             return new OrderViewModel
             {
                 Code = order.Code,
                 CustomerId = order.CustomerId,
                 OrderDate = order.OrderDate,
                 TotalAmount = order.TotalAmount,
-                Status = order.Status,
+                OrderStatus = OrderProcessingFuncs.GetEnumValueForOrderStatus(order.Status),
+                PaymentMethod = OrderProcessingFuncs.GetEnumValueForPaymentMethod(order.Payments.FirstOrDefault()?.PaymentMethod?.PaymentType),
+                DeliveryMethod = OrderProcessingFuncs.GetEnumValueForDeliveryMethod(order.DeliveryMethodOrders.FirstOrDefault()?.DeliveryMethod.MethodName),
                 OrderItems = (IList<OrderItem>)order.OrderItems.Select(oi => new OrderItemViewModel
                 {
                     ProductId = oi.ProductId,
@@ -48,12 +56,15 @@ namespace EcommerceRestApi.Services
             if (order == null)
                 throw new KeyNotFoundException($"Order with code '{code}' not found.");
 
-            // Map the view model data to the entity
             order.TotalAmount = data.TotalAmount;
-            order.Status = data.Status;
+            order.Status = OrderProcessingFuncs.GetStringValue(data.OrderStatus);
             order.OrderDate = data.OrderDate;
             order.CustomerId = data.CustomerId;
             order.DateUpdated = DateTime.Now;
+
+
+            order.DeliveryMethodOrders.First().DeliveryMethodId = _context.DeliveryMethods.First(
+                            m => m.MethodName == OrderProcessingFuncs.GetStringValue(data.DeliveryMethod)).Id;
 
             _context.Orders.Update(order);
             await _context.SaveChangesAsync();
@@ -77,13 +88,28 @@ namespace EcommerceRestApi.Services
                 CustomerId = data.CustomerId,
                 OrderDate = data.OrderDate,
                 TotalAmount = data.TotalAmount,
-                Status = data.Status,
                 OrderItems = new List<OrderItem>()
             };
 
+            order.Status = OrderProcessingFuncs.GetStringValue(data.OrderStatus);
+            order.Payments.Add(new Payment { 
+                Amount = data.TotalAmount,
+                OrderId = order.Id,
+                IsActive = true,
+                PaymentDate = DateTime.Now,
+                PaymentMethodId = _context.PaymentMethods.First(m => m.PaymentType == OrderProcessingFuncs.GetStringValue(data.PaymentMethod)).Id,
+                DateCreated = DateTime.Now,
+            });
+
             order.DateCreated = DateTime.Now;
 
-            // Optionally map OrderItems from the view model
+            order.DeliveryMethodOrders.Add(new DeliveryMethodOrder {
+                OrderId = order.Id,
+                DeliveryMethodId = _context.DeliveryMethods.First(m => m.MethodName == OrderProcessingFuncs.GetStringValue(data.DeliveryMethod)).Id,   
+                IsActive=true,
+                DateCreated = DateTime.Now
+            });
+
             foreach (var item in data.OrderItems)
             {
                 order.OrderItems.Add(new OrderItem
@@ -109,7 +135,9 @@ namespace EcommerceRestApi.Services
                                             CustomerId = o.CustomerId,
                                             OrderDate = o.OrderDate,
                                             TotalAmount = o.TotalAmount,
-                                            Status = o.Status,
+                                            OrderStatus = OrderProcessingFuncs.GetEnumValueForOrderStatus(o.Status),
+                                            PaymentMethod = OrderProcessingFuncs.GetEnumValueForPaymentMethod(o.Payments.FirstOrDefault().PaymentMethod.PaymentType),
+                                            DeliveryMethod = OrderProcessingFuncs.GetEnumValueForDeliveryMethod(o.DeliveryMethodOrders.FirstOrDefault().DeliveryMethod.MethodName),
                                             OrderItems = (IList<OrderItem>)o.OrderItems.Select(oi => new OrderItemViewModel
                                             {
                                                 ProductId = oi.ProductId,

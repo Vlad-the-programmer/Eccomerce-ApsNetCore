@@ -18,13 +18,11 @@ namespace EcommerceRestApi.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IOrderService _orderService;
 
-        public OrderController(AppDbContext context, UserManager<ApplicationUser> userManager, IOrderService orderService)
+        public OrderController(UserManager<ApplicationUser> userManager, IOrderService orderService)
         {
-            _context = context;
             _userManager = userManager;
             _orderService = orderService;
         }
@@ -48,26 +46,11 @@ namespace EcommerceRestApi.Controllers
             {
                 return Forbid();
             }
-            var orderVM =  new OrderViewModel
-            {
-                Code = order.Code,
-                CustomerId = order.CustomerId,
-                OrderDate = order.OrderDate,
-                TotalAmount = order.TotalAmount,
-                Status = order.Status,
-                OrderItems = (IList<OrderItem>)order.OrderItems.Select(oi => new OrderItemViewModel
-                {
-                    ProductId = oi.ProductId,
-                    Quantity = oi.Quantity,
-                    UnitPrice = oi.UnitPrice,
-                    OrderId = oi.OrderId,
-                }).ToList()
-            };
 
-            return Ok(orderVM);
+            return Ok(order);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         [Authorize]
         public async Task<IActionResult> CreateOrder(OrderViewModel model)
         {
@@ -88,7 +71,7 @@ namespace EcommerceRestApi.Controllers
             return CreatedAtAction(nameof(GetOrder), new { code = model.Code }, model);
         }
 
-        [HttpPut("{code}")]
+        [HttpPut("update/{code}")]
         [Authorize]
         public async Task<IActionResult> UpdateOrder(string code, OrderViewModel model)
         {
@@ -101,7 +84,7 @@ namespace EcommerceRestApi.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{code}")]
+        [HttpDelete("delete/{code}")]
         [Authorize]
         public async Task<IActionResult> DeleteOrder(string code)
         {

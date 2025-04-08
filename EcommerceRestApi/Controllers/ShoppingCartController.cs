@@ -79,17 +79,17 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddItemToCart(Product product)
+        public async Task<IActionResult> AddItemToCart(ShoppingCartItem cartItem)
         {
-            if (product == null)
+            if (cartItem == null)
             {
-                return BadRequest(new ResponseModel { Message = "Invalid product!" });
+                return BadRequest(new ResponseModel { Message = "Invalid cartItem!" });
             }
 
             try
             {
                 var existingCartItem = _context.ShoppingCartItems
-                                               .FirstOrDefault(n => n.Product.Id == product.Id
+                                               .FirstOrDefault(n => n.Id == cartItem.Id
                                                                  && n.ShoppingCartId == ShoppingCartId);
 
                 if (existingCartItem != null)
@@ -103,7 +103,7 @@ namespace EcommerceRestApi.Controllers
                     var shoppingCartItem = new ShoppingCartItem
                     {
                         ShoppingCartId = ShoppingCartId,
-                        ProductId = product.Id, // Avoid direct object assignment
+                        ProductId = cartItem.Product.Id, // Avoid direct object assignment
                         Amount = 1
                     };
 
@@ -140,7 +140,7 @@ namespace EcommerceRestApi.Controllers
             try
             {
                 var ShoppingCartItem = _context.ShoppingCartItems
-                                                    .FirstOrDefault(n => n.Product.Id == cartItem.Id
+                                                    .FirstOrDefault(n => n.Product.Id == cartItem.Product.Id
                                                                     && n.ShoppingCartId == ShoppingCartId);
                 if (ShoppingCartItem != null)
                 {

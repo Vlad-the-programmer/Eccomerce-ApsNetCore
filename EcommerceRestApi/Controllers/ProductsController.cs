@@ -81,7 +81,7 @@ namespace EcommerceRestApi.Controllers
 
         // POST: api/products
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpPost]
+        [HttpPost("create")]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseModel))]
         public async Task<IActionResult> Create([FromBody] NewProductViewModel model)
         {
@@ -103,7 +103,7 @@ namespace EcommerceRestApi.Controllers
 
         // PUT: api/products/5
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest), ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(int id, [FromBody] ProductUpdateVM model)
@@ -132,7 +132,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         // DELETE: api/products/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _service.GetProductByIDAsync(id);

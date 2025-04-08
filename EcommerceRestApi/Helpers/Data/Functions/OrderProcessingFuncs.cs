@@ -1,6 +1,7 @@
-﻿using EcommerceWebApp.Helpers.Enums;
+﻿using EcommerceRestApi.Helpers.Enums;
+using EcommerceRestApi.Models;
 
-namespace EcommerceWebApp.Helpers.Orders
+namespace EcommerceRestApi.Helpers.Data.Functions
 {
     public class OrderProcessingFuncs
     {
@@ -42,6 +43,24 @@ namespace EcommerceWebApp.Helpers.Orders
 
                 _ => throw new ArgumentOutOfRangeException(nameof(deliveryMethod), deliveryMethod, null)
             };
+        }
+
+        public static OrderStatuses GetEnumValueForOrderStatus(string? orderStatus)
+        {
+            Enum.TryParse(orderStatus, ignoreCase: true, out OrderStatuses statusObj);
+            return statusObj;
+        }
+
+        public static DeliveryMethods GetEnumValueForDeliveryMethod(string? deliveryMethod)
+        {
+            Enum.TryParse(deliveryMethod, ignoreCase: true, out DeliveryMethods methodObj);
+            return methodObj;
+        }
+
+        public static PaymentMethods GetEnumValueForPaymentMethod(string? paymentMethod)
+        {
+            Enum.TryParse(paymentMethod, ignoreCase: true, out PaymentMethods methodObj);
+            return methodObj;
         }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using EcommerceRestApi.Helpers.Enums;
 
 namespace EcommerceRestApi.Helpers.Data.ViewModels
 {
@@ -30,13 +31,19 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
 
         public virtual Customer Customer { get; set; } = null!;
 
-        public IList<DeliveryMethodOrder> DeliveryMethodOrders { get; set; } = new List<DeliveryMethodOrder>();
+        //public IList<DeliveryMethodOrder> DeliveryMethodOrders { get; set; } = new List<DeliveryMethodOrder>();
 
         public IList<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
-        public IList<Payment> Payments { get; set; } = new List<Payment>();
+        //public IList<Payment> Payments { get; set; } = new List<Payment>();
 
-        public IList<Shipment> Shipments { get; set; } = new List<Shipment>();
+        //public IList<Shipment> Shipments { get; set; } = new List<Shipment>();
+
+        public DeliveryMethods DeliveryMethod { get; set; }
+
+        public PaymentMethods PaymentMethod { get; set; }
+
+        public OrderStatuses OrderStatus { get; set; }
     }
 
 }
