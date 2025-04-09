@@ -1,15 +1,17 @@
-﻿using EcommerceWebApp.ApiServices;
+﻿using EcommerceRestApi.Models;
+using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
-using EcommerceWebApp.Helpers.Orders;
 using EcommerceWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceWebApp.Controllers
 {
+    [Route("orders")]
     public class OrdersController : Controller
     {
         private readonly IApiService _apiService;
-        public OrdersController(IApiService apiService) {
+        public OrdersController(IApiService apiService)
+        {
             _apiService = apiService;
         }
 
@@ -21,13 +23,34 @@ namespace EcommerceWebApp.Controllers
             return View(orders);
         }
 
+        [HttpGet("/{code}")]
+        public async Task<IActionResult> GetOrder(string code)
+        {
+            var order = await OrdersEndpointsHelperFuncs.GetOrderByCode(GlobalConstants.OrdersEndpoint, code, _apiService);
+
+            if (order == null)
+            {
+                return View("NotFound");
+            }
+
+            return View(order);
+        }
+
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
-            var cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
-            ViewBag.CartItems = cartItems;
+            var cartItems = new List<ShoppingCartItemVM>();
+            try
+            {
+                await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
+                cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
 
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+            ViewBag.CartItems = cartItems;
             return View();
         }
 
@@ -37,12 +60,14 @@ namespace EcommerceWebApp.Controllers
             try
             {
                 var response = await OrdersEndpointsHelperFuncs.SubmitOrder(GlobalConstants.OrderCreateEndpoint, order, _apiService);
-            } catch (HttpRequestException ex) {     
+            }
+            catch (HttpRequestException ex)
+            {
                 TempData["Error"] = ex.Message;
                 return View(order);
             }
 
-            return RedirectToAction("Index", new { code = order.Code });
+            return RedirectToAction(nameof(GetOrder), new { code = order.Code });
         }
 
         [HttpGet("status/{code}")]

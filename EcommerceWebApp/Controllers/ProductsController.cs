@@ -1,6 +1,7 @@
 ﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Models;
+using EcommerceWebApp.Models.UpdateViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Text.Json;
@@ -52,9 +53,21 @@ namespace EcommerceWebApp.Controllers
             List<SubcategoryViewModel> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
                                                            GlobalConstants.SubCategoriesEndpoint, _apiService);
 
-            ViewBag.SubCategories = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(
-                                                        GlobalConstants.ProductsEndpoint, _apiService);
-            ViewBag.Categories = CategoriesEndpointsHelperFuncs.GetSubCategoriesDictionaryWithNameCodeFields(subCategories);
+            ViewBag.SubCategories = CategoriesEndpointsHelperFuncs
+                                                            .GetSubCategoriesDictionaryWithNameCodeFields(subCategories)
+                                                            .Select(kvp => new SelectListItem
+                                                            {
+                                                                Text = kvp.Key,
+                                                                Value = kvp.Value
+                                                            });
+            ViewBag.Categories = CategoriesEndpointsHelperFuncs
+                                                            .GetCategoriesDictionaryWithNameCodeFields(categories)
+                                                            .Select(kvp => new SelectListItem
+                                                            {
+                                                                Text = kvp.Key,
+                                                                Value = kvp.Value
+                                                            });
+
 
             return View();
         }
@@ -75,9 +88,21 @@ namespace EcommerceWebApp.Controllers
                 List<SubcategoryViewModel> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
                                                                GlobalConstants.SubCategoriesEndpoint, _apiService);
 
-                ViewBag.SubCategories = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(
-                                                            GlobalConstants.ProductsEndpoint, _apiService);
-                ViewBag.Categories = CategoriesEndpointsHelperFuncs.GetSubCategoriesDictionaryWithNameCodeFields(subCategories);
+                ViewBag.SubCategories = CategoriesEndpointsHelperFuncs
+                                                            .GetSubCategoriesDictionaryWithNameCodeFields(subCategories)
+                                                            .Select(kvp => new SelectListItem
+                                                            {
+                                                                Text = kvp.Key,
+                                                                Value = kvp.Value
+                                                            });
+
+                ViewBag.Categories = CategoriesEndpointsHelperFuncs
+                                                            .GetCategoriesDictionaryWithNameCodeFields(categories)
+                                                            .Select(kvp => new SelectListItem
+                                                            {
+                                                                Text = kvp.Key,
+                                                                Value = kvp.Value
+                                                            });
 
                 return View(product);
             }
@@ -96,20 +121,46 @@ namespace EcommerceWebApp.Controllers
                                                                GlobalConstants.CategoriesEndpoint, _apiService);
                 List<SubcategoryViewModel> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
                                                                GlobalConstants.SubCategoriesEndpoint, _apiService);
+                ViewBag.SubCategories = CategoriesEndpointsHelperFuncs
+                                                                            .GetSubCategoriesDictionaryWithNameCodeFields(subCategories)
+                                                                            .Select(kvp => new SelectListItem
+                                                                            {
+                                                                                Text = kvp.Key,
+                                                                                Value = kvp.Value
+                                                                            });
 
-                ViewBag.SubCategories = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(
-                                                            GlobalConstants.ProductsEndpoint, _apiService);
-                ViewBag.Categories = CategoriesEndpointsHelperFuncs.GetSubCategoriesDictionaryWithNameCodeFields(subCategories);
+                ViewBag.Categories = CategoriesEndpointsHelperFuncs
+                                                            .GetCategoriesDictionaryWithNameCodeFields(categories)
+                                                            .Select(kvp => new SelectListItem
+                                                            {
+                                                                Text = kvp.Key,
+                                                                Value = kvp.Value
+                                                            });
 
                 return View("NotFound");
             }
-            return View(product);
+            var productUpdateVM = new ProductUpdateVM
+            {
+                ProductId = product.Id,
+                Name = product.Name,
+                Brand = product.Brand,
+                Photo = product.Photo,
+                OtherPhotos = product.OtherPhotos,  
+                Price = product.Price,  
+                About = product.About,
+                LongAbout = product.LongAbout,
+                Stock = product.Stock,
+                SubcategoryCode = product.SubcategoryCode,
+                CategoryCode = product.CategoryCode,    
+                IsActive = product.IsActive,
+            };
+            return View(productUpdateVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, NewProductViewModel product)
+        public async Task<IActionResult> Edit(int id, ProductUpdateVM product)
         {
-            if (id != product.Id) return View("NotFound");
+            if (id != product.ProductId) return View("NotFound");
 
             try
             {
@@ -125,9 +176,21 @@ namespace EcommerceWebApp.Controllers
                 List<SubcategoryViewModel> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
                                                                GlobalConstants.SubCategoriesEndpoint, _apiService);
 
-                ViewBag.SubCategories = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(
-                                                            GlobalConstants.ProductsEndpoint, _apiService);
-                ViewBag.Categories = CategoriesEndpointsHelperFuncs.GetSubCategoriesDictionaryWithNameCodeFields(subCategories);
+                ViewBag.SubCategories = CategoriesEndpointsHelperFuncs
+                                                            .GetSubCategoriesDictionaryWithNameCodeFields(subCategories)
+                                                            .Select(kvp => new SelectListItem
+                                                            {
+                                                                Text = kvp.Key,
+                                                                Value = kvp.Value
+                                                            });
+
+                ViewBag.Categories = CategoriesEndpointsHelperFuncs
+                                                            .GetCategoriesDictionaryWithNameCodeFields(categories)
+                                                            .Select(kvp => new SelectListItem
+                                                            {
+                                                                Text = kvp.Key,
+                                                                Value = kvp.Value
+                                                            });
 
                 return View(product);
             }

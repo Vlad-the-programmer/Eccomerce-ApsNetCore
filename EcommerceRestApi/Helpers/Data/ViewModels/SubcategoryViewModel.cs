@@ -23,6 +23,6 @@ namespace EcommerceWebApp.Models
 
         public CategoryViewModel Category { get; set; } = null!;
 
-        public ICollection<NewProductViewModel> Products { get; set; } = new List<NewProductViewModel>();
+        public IList<NewProductViewModel> Products { get; set; } = new List<NewProductViewModel>();
     }
 }

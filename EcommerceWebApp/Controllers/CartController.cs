@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 namespace EcommerceWebApp.Controllers
 {
+    [Route("cart")]
     public class CartController : Controller
     {
         private readonly IApiService _apiService;
@@ -26,7 +27,6 @@ namespace EcommerceWebApp.Controllers
                 await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
                 cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
                 cartTotal = await CartEndpointsHelperFuncs.GetShoppingCartTotal(_apiService);
-
 
             } catch (HttpRequestException ex)
             {
@@ -50,12 +50,8 @@ namespace EcommerceWebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var response = await CartEndpointsHelperFuncs.AddItemToCart(GlobalConstants.AddItemToCartEndpoint, _apiService, cartItem);
+            var message = await CartEndpointsHelperFuncs.AddItemToCart(GlobalConstants.AddItemToCartEndpoint, _apiService, cartItem);
 
-            if (response != null)
-            {
-                return View(response);
-            }
             return RedirectToAction(nameof(Index));
         }
 
@@ -68,13 +64,9 @@ namespace EcommerceWebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var response = await CartEndpointsHelperFuncs.RemoveItemFromCart(GlobalConstants.RemoveItemFromCartEndpoint,
+            var message = await CartEndpointsHelperFuncs.RemoveItemFromCart(GlobalConstants.RemoveItemFromCartEndpoint,
                                                                                     _apiService, cartItem);
-            
-            if (response != null)
-            { 
-                return View(response);
-            }
+           
             return RedirectToAction(nameof(Index));
         }
 
@@ -83,10 +75,6 @@ namespace EcommerceWebApp.Controllers
         {
             var response = await CartEndpointsHelperFuncs.ClearCart(GlobalConstants.ClearCartEndpoint, _apiService);
 
-            if (response != null)
-            {
-                return View(response);
-            }
             return RedirectToAction(nameof(Index));
         }
     }

@@ -29,10 +29,15 @@ namespace EcommerceRestApi.Services
                 Photo = data.Photo,
                 OtherPhotos = data.OtherPhotos,
                 Stock = data.Stock,
-                SubcategoryId = data.SubcategoryId,
             };
 
-            var category = _context.Categories.FirstOrDefault(C => C.Id == data.CategoryId);
+            var subCategory = _context.Subcategories.FirstOrDefault(C => C.Code == data.SubcategoryCode);
+            if(subCategory != null)
+            {
+                newProduct.SubcategoryId = subCategory.Id;
+            }
+
+            var category = _context.Categories.FirstOrDefault(C => C.Code == data.CategoryCode);
             if (category != null)
             {
                 newProduct.ProductCategories.Add(new ProductCategory()
@@ -68,7 +73,6 @@ namespace EcommerceRestApi.Services
                     .Include(p => p.Reviews)
                     .Where(p => p.Id == id) 
                     .FirstOrDefaultAsync();
-            Console.WriteLine(_context.Database.GenerateCreateScript());
         }
 
         public async Task UpdateProductAsync(int id, ProductUpdateVM data)
@@ -86,13 +90,21 @@ namespace EcommerceRestApi.Services
                 dbproduct.Photo = data.Photo ?? dbproduct.Photo;
                 dbproduct.OtherPhotos = data.OtherPhotos ?? dbproduct.OtherPhotos;
                 dbproduct.Stock = data.Stock ?? dbproduct.Stock;
-                dbproduct.SubcategoryId = data.SubcategoryId ?? dbproduct.SubcategoryId;
+
+                var subCategory = _context.Subcategories.FirstOrDefault(C => C.Code == data.SubcategoryCode);
+                if(subCategory != null)
+                {
+                    dbproduct.SubcategoryId = subCategory.Id;
+                }
                 dbproduct.IsActive = data.IsActive;
                 dbproduct.DateUpdated = DateTime.Now;
 
-
-                dbproduct.ProductCategories.First().CategoryId = data.CategoryId ?? dbproduct.ProductCategories.First().CategoryId;
-                dbproduct.ProductCategories.First().DateUpdated = DateTime.Now;
+                var category = _context.Categories.FirstOrDefault(C => C.Code == data.CategoryCode);
+                if (category != null)
+                {
+                    dbproduct.ProductCategories.First().CategoryId = category.Id;
+                    dbproduct.ProductCategories.First().DateUpdated = DateTime.Now;
+                }
 
                 await _context.SaveChangesAsync();
             }

@@ -35,7 +35,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Only over HTTPS
         options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Session expiry time
         options.SlidingExpiration = true; // Extend session if user is active
-        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SameSite = SameSiteMode.None;
     });
 
 builder.Services.AddAuthorization();
@@ -72,33 +72,66 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRouting();
+app.Use(async (context, next) =>
+{
+    try
+    {
+        var session = context.Session;
+        var userJson = session.GetString("CurrentUser");
+
+        CurrentUserViewModel? user = null;
+
+        if (string.IsNullOrEmpty(userJson))
+        {
+            // Not cached yet, fetch from API
+            var client = new HttpClient(new HttpClientHandler { UseCookies = true })
+            {
+                BaseAddress = new Uri(AppConstants.BASE_URL)
+            };
+
+            var response = await client.GetAsync(GlobalConstants.GetCurrentUserEndpoint);
+
+            if (response.IsSuccessStatusCode)
+            {
+                userJson = await response.Content.ReadAsStringAsync();
+
+                // Cache it
+                session.SetString("CurrentUser", userJson);
+            }
+        }
+
+        // Deserialize from cached string (whether newly fetched or already in session)
+        if (!string.IsNullOrEmpty(userJson))
+        {
+            user = JsonSerializer.Deserialize<CurrentUserViewModel>(userJson);
+
+            if (user != null)
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.FullName ?? "Unknown")
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                context.User = new ClaimsPrincipal(identity);
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[Middleware] Exception: {ex.Message}");
+    }
+
+    await next.Invoke();
+});
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Products}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-app.Use(async (context, next) =>
-{
-    var client = new HttpClient(new HttpClientHandler { UseCookies = true });
-    client.BaseAddress = new Uri(AppConstants.BASE_URL);
 
-    var response = await client.GetAsync(GlobalConstants.GetCurrentUserEndpoint);
-    if (response.IsSuccessStatusCode)
-    {
-        var userJson = await response.Content.ReadAsStringAsync();
-        var user = JsonSerializer.Deserialize<CurrentUserViewModel>(userJson);
 
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, user.FullName)
-        };
-
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        context.User = new ClaimsPrincipal(identity);
-    }
-
-    await next();
-});
 
 
 app.Run();

@@ -1,27 +1,20 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using EcommerceRestApi.Helpers.Data.ResponseModels;
 using EcommerceRestApi.Helpers.Data.ViewModels;
-using EcommerceRestApi.Models;
-using EcommerceRestApi.Models.Context;
-using EcommerceRestApi.Helpers.Data.ResponseModels;
-using Microsoft.AspNetCore.Identity;
 using EcommerceRestApi.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceRestApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderController : ControllerBase
+    public class OrdersController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IOrderService _orderService;
 
-        public OrderController(UserManager<ApplicationUser> userManager, IOrderService orderService)
+        public OrdersController(UserManager<ApplicationUser> userManager, IOrderService orderService)
         {
             _userManager = userManager;
             _orderService = orderService;
@@ -42,7 +35,7 @@ namespace EcommerceRestApi.Controllers
             if (order == null)
                 return NotFound();
 
-            if(order.Customer.User.Id != _userManager.GetUserId(User))
+            if (order.Customer.User.Id != _userManager.GetUserId(User))
             {
                 return Forbid();
             }

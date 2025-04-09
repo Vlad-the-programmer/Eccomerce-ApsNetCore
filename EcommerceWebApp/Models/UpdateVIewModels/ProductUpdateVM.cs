@@ -4,6 +4,8 @@ namespace EcommerceWebApp.Models.UpdateViewModels
 {
     public class ProductUpdateVM: BaseUpdateViewModel
     {
+        public int ProductId { get; set; }
+
         [Display(Name = "Product name")]
         public string? Name { get; set; }
 
@@ -28,10 +30,18 @@ namespace EcommerceWebApp.Models.UpdateViewModels
         [Display(Name = "Stock")]
         public int? Stock { get; set; }
 
-        [Display(Name = "Select Product SubCategory")]
-        public int? SubcategoryId { get; set; }
+        //[Display(Name = "Select Product SubCategory")]
+        //public int? SubcategoryId { get; set; }
 
-        [Display(Name = "Select Product Category")]
-        public int? CategoryId { get; set; }
+        //[Display(Name = "Select Product Category")]
+        //public int? CategoryId { get; set; }
+
+        [Display(Name = "SubCategory Code")]
+        [Required(ErrorMessage = "Subcategory Code is Requred")]
+        public string SubcategoryCode { get; set; }
+
+        [Display(Name = "Category Code")]
+        [Required(ErrorMessage = "Category code is Requred")]
+        public string CategoryCode { get; set; }
     }
 }

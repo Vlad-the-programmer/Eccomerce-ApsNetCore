@@ -1,21 +1,15 @@
+using EcommerceRestApi.AppGlobals;
 using EcommerceRestApi.Helpers.Data;
 using EcommerceRestApi.Helpers.Data.Auth;
-using EcommerceRestApi.Helpers.Data.Functions;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Static;
-using EcommerceRestApi.AppGlobals;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services;
-using EcommerceRestApi.Services.Base;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using System.Text;
-using EcommerceRestApi.Helpers.Cart;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +31,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
-//builder.Services.AddScoped<IOrdersService, OrdersService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ISubcategoryService, SubCategoryService>();
+
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -63,7 +59,7 @@ builder.Services.AddAuthentication(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
     options.SlidingExpiration = true; // Extend session if active
-    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SameSite = SameSiteMode.None;
 });
 //.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
 //{
@@ -110,9 +106,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
         policy.WithOrigins(AppConstants.CLIENT_URLS) // Replace with your actual client URL
-              .AllowCredentials() // Required for authentication cookies
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials(); // Required for authentication cookies
     });
 });
 

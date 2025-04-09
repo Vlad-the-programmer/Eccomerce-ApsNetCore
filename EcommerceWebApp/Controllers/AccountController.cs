@@ -11,6 +11,7 @@ using System.Text.Json;
 
 namespace EcommerceWebApp.Controllers
 {
+    [Route("account")]
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
@@ -89,7 +90,7 @@ namespace EcommerceWebApp.Controllers
             try
             {
                 await _apiService.PostDataAsync(GlobalConstants.LogoutEndpoint);
-                //HttpContext.Session.Remove("auth_token");
+                HttpContext.Session.Remove("CurrentUser");
             } catch (HttpRequestException e)
             {
                 TempData["Error"] = e.Message;

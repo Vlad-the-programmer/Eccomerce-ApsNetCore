@@ -401,22 +401,6 @@
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.OrderController",
-    "Method": "CreateOrder",
-    "RelativePath": "api/Order",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "model",
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.OrderViewModel",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "EcommerceRestApi.Controllers.OrderController",
     "Method": "GetOrder",
     "RelativePath": "api/Order/{code}",
     "HttpMethod": "GET",
@@ -433,8 +417,40 @@
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.OrderController",
+    "Method": "CreateOrder",
+    "RelativePath": "api/Order/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.OrderViewModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.OrderController",
+    "Method": "DeleteOrder",
+    "RelativePath": "api/Order/delete/{code}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "code",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.OrderController",
     "Method": "UpdateOrder",
-    "RelativePath": "api/Order/{code}",
+    "RelativePath": "api/Order/update/{code}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -453,22 +469,6 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "EcommerceRestApi.Controllers.OrderController",
-    "Method": "DeleteOrder",
-    "RelativePath": "api/Order/{code}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "code",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
     "ContainingType": "EcommerceRestApi.Controllers.ProductsController",
     "Method": "GetAllProducts",
     "RelativePath": "api/Products",
@@ -480,8 +480,24 @@
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.ProductsController",
+    "Method": "GetById",
+    "RelativePath": "api/Products/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.ProductsController",
     "Method": "Create",
-    "RelativePath": "api/Products",
+    "RelativePath": "api/Products/create",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -506,9 +522,9 @@
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.ProductsController",
-    "Method": "GetById",
-    "RelativePath": "api/Products/{id}",
-    "HttpMethod": "GET",
+    "Method": "Delete",
+    "RelativePath": "api/Products/delete/{id}",
+    "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -522,8 +538,24 @@
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.ProductsController",
+    "Method": "Filter",
+    "RelativePath": "api/Products/filter",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "searchString",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.ProductsController",
     "Method": "Update",
-    "RelativePath": "api/Products/{id}",
+    "RelativePath": "api/Products/update/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -566,33 +598,27 @@
     ]
   },
   {
-    "ContainingType": "EcommerceRestApi.Controllers.ProductsController",
-    "Method": "Delete",
-    "RelativePath": "api/Products/{id}",
-    "HttpMethod": "DELETE",
+    "ContainingType": "EcommerceRestApi.Controllers.SubcategoriesController",
+    "Method": "GetAll",
+    "RelativePath": "api/Subcategories",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "EcommerceRestApi.Controllers.ProductsController",
-    "Method": "Filter",
-    "RelativePath": "api/Products/filter",
+    "ContainingType": "EcommerceRestApi.Controllers.SubcategoriesController",
+    "Method": "GetByCode",
+    "RelativePath": "api/Subcategories/{code}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "searchString",
+        "Name": "code",
         "Type": "System.String",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []

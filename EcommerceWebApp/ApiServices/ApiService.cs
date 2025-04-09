@@ -30,11 +30,11 @@ namespace EcommerceWebApp.ApiServices
             };
 
             // Retrieve token from session if needed
-            var token = _httpContextAccessor.HttpContext?.Session.GetString("auth_token");
-            if (!string.IsNullOrEmpty(token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
+            //var token = _httpContextAccessor.HttpContext?.Session.GetString("auth_token");
+            //if (!string.IsNullOrEmpty(token))
+            //{
+            //    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            //}
 
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
