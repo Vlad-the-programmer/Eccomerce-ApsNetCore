@@ -1,15 +1,13 @@
-﻿using EcommerceRestApi.Models;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using EcommerceWebApp.Helpers.Enums;
 using System.ComponentModel.DataAnnotations;
-using EcommerceWebApp.Models;
-using EcommerceWebApp.Helpers.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace EcommerceWebApp.Models
 {
-    public class OrderViewModel: BaseViewModel
+    public class OrderViewModel : BaseViewModel
     {
-        public OrderViewModel(): base("Order") { } 
+        public OrderViewModel() : base("Order") { }
 
         [Required(ErrorMessage = "Order code is required.")]
         [StringLength(50, ErrorMessage = "Order code cannot exceed 50 characters.")]
@@ -41,13 +39,10 @@ namespace EcommerceWebApp.Models
 
         //public IList<Shipment> Shipments { get; set; } = new List<Shipment>();
 
-        [JsonIgnore]
         public string Address { get; set; }
 
-        [JsonIgnore]
         public DeliveryMethods DeliveryMethod { get; set; }
 
-        [JsonIgnore]
         public PaymentMethods PaymentMethod { get; set; }
 
         [JsonIgnore]

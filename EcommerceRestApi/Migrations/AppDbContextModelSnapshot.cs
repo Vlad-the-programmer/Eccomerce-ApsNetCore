@@ -397,10 +397,7 @@ namespace EcommerceRestApi.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -589,11 +586,11 @@ namespace EcommerceRestApi.Migrations
 
             modelBuilder.Entity("EcommerceRestApi.Models.OrderItem", b =>
                 {
-                    b.Property<int>("OrderId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
@@ -610,16 +607,16 @@ namespace EcommerceRestApi.Migrations
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -627,10 +624,12 @@ namespace EcommerceRestApi.Migrations
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("money");
 
-                    b.HasKey("OrderId", "ProductId")
-                        .HasName("PK__OrderIte__08D097A33294AF3C");
+                    b.HasKey("Id");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("OrderId", "ProductId")
+                        .IsUnique();
 
                     b.ToTable("OrderItems");
                 });
@@ -842,10 +841,7 @@ namespace EcommerceRestApi.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -990,8 +986,7 @@ namespace EcommerceRestApi.Migrations
 
                     b.Property<string>("ShoppingCartId")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

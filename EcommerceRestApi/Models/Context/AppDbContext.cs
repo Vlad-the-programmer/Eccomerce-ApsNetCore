@@ -1,5 +1,4 @@
-﻿using EcommerceRestApi.Helpers.Data.Functions;
-using EcommerceRestApi.Helpers.Data.ViewModels;
+﻿using EcommerceRestApi.Helpers.Data.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -199,7 +198,7 @@ namespace EcommerceRestApi.Models.Context
 
             modelBuilder.Entity<OrderItem>(entity =>
             {
-                entity.HasKey(e => new { e.OrderId, e.ProductId }).HasName("PK__OrderIte__08D097A33294AF3C");
+                entity.HasKey(e => e.Id);
 
                 entity.Property(e => e.DateCreated).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.DateDeleted).HasDefaultValueSql("(getdate())");
@@ -223,10 +222,10 @@ namespace EcommerceRestApi.Models.Context
 
                 // Ensure that OrderId is nullable in the database
                 entity.HasOne(d => d.Order)
-                    .WithMany(p => p.Payments)
-                    .HasForeignKey(d => d.OrderId)
-                    .OnDelete(DeleteBehavior.SetNull) // SetNull behavior is correct here
-                    .HasConstraintName("FK__Payments__OrderI__75A278F5");
+                            .WithMany(p => p.Payments)
+                            .HasForeignKey(d => d.OrderId)
+                            .OnDelete(DeleteBehavior.SetNull) // SetNull behavior is correct here
+                            .HasConstraintName("FK__Payments__OrderI__75A278F5");
             });
 
             modelBuilder.Entity<PaymentMethod>(entity =>

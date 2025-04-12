@@ -4,7 +4,6 @@ using EcommerceRestApi.Helpers.Static;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Helpers.Data
 {
@@ -32,12 +31,16 @@ namespace EcommerceRestApi.Helpers.Data
                 // Seed Subcategories
                 if (!context.Subcategories.Any())
                 {
-                    context.Subcategories.AddRange(new List<Subcategory>
+                    if (context.Categories.ToList().Count >= 2)
                     {
-                        new Subcategory { Code = "SCAT001", Name = "Mobile Phones", About = "Smartphones and feature phones", CategoryId = context.Categories.First().Id, IsActive = true, DateCreated = DateTime.Now },
-                        new Subcategory { Code = "SCAT002", Name = "Men's Wear", About = "Clothing for men", CategoryId = context.Categories.ToList()[1].Id, IsActive = true, DateCreated = DateTime.Now }
-                    });
-                    context.SaveChanges();
+                        context.Subcategories.AddRange(new List<Subcategory>
+                        {
+                            new Subcategory { Code = "SCAT001", Name = "Mobile Phones", About = "Smartphones and feature phones", CategoryId = context.Categories.First().Id, IsActive = true, DateCreated = DateTime.Now },
+                            new Subcategory { Code = "SCAT002", Name = "Men's Wear", About = "Clothing for men", CategoryId = context.Categories.ToList()[1].Id, IsActive = true, DateCreated = DateTime.Now }
+                        });
+                        context.SaveChanges();
+
+                    }
                 }
 
                 // Seed Countries
@@ -75,41 +78,48 @@ namespace EcommerceRestApi.Helpers.Data
                         new PaymentMethod { PaymentType =  OrderProcessingFuncs.GetStringValue(Enums.PaymentMethods.Transaction), Details = "Bank transfers", IsActive = true, DateCreated = DateTime.Now },
                         new PaymentMethod { PaymentType =  OrderProcessingFuncs.GetStringValue(Enums.PaymentMethods.Cash), Details = "Pay upon getting a parcel deliverred to you or at takeaway", IsActive = true, DateCreated = DateTime.Now }
                     });
-
+                    context.SaveChanges();
                 }
                 // Seed Products
                 if (!context.Products.Any())
                 {
-                    context.Products.AddRange(new List<Product>
-                        {
-                            new Product { Name = "iPhone 13", Brand = "Apple", Code = "IP13", Price = 999, Stock = 10, SubcategoryId = context.Subcategories.First().Id, LongAbout = "Latest iPhone model", Photo = "https://tinyurl.com/2p8ypn72",
-                                OtherPhotos = "https://tinyurl.com/2p8ypn72", IsActive = true, DateCreated = DateTime.Now },
-                            new Product { Name = "Nike Sneakers", Brand = "Nike", Code = "NS001", Price = 120, Stock = 25, SubcategoryId = context.Subcategories.ToList().First().Id, LongAbout = "High-quality running shoes",
-                                Photo = "https://acesse.one/QwFYy",
-                                OtherPhotos = "https://acesse.one/QwFYy", IsActive = true, DateCreated = DateTime.Now },
-                            new Product { Name = "Nike Sneakers", Brand = "Nike", Code = "NS002", Price = 120, Stock = 25, SubcategoryId = context.Subcategories.ToList().First().Id, LongAbout = "High-quality running shoes2",
-                                Photo = "https://acesse.one/QwFYy",
-                                OtherPhotos = "https://acesse.one/QwFYy", IsActive = true, DateCreated = DateTime.Now },
+                    if (context.Subcategories.ToList().Count > 0)
+                    {
+                        context.Products.AddRange(new List<Product>
+                            {
+                                new Product { Name = "iPhone 13", Brand = "Apple", Code = "IP13", Price = 999, Stock = 10, SubcategoryId = context.Subcategories.First().Id, LongAbout = "Latest iPhone model", Photo = "https://tinyurl.com/2p8ypn72",
+                                    OtherPhotos = "https://tinyurl.com/2p8ypn72", IsActive = true, DateCreated = DateTime.Now },
+                                new Product { Name = "Nike Sneakers", Brand = "Nike", Code = "NS001", Price = 120, Stock = 25, SubcategoryId = context.Subcategories.ToList().First().Id, LongAbout = "High-quality running shoes",
+                                    Photo = "https://acesse.one/QwFYy",
+                                    OtherPhotos = "https://acesse.one/QwFYy", IsActive = true, DateCreated = DateTime.Now },
+                                new Product { Name = "Nike Sneakers", Brand = "Nike", Code = "NS002", Price = 120, Stock = 25, SubcategoryId = context.Subcategories.ToList().First().Id, LongAbout = "High-quality running shoes2",
+                                    Photo = "https://acesse.one/QwFYy",
+                                    OtherPhotos = "https://acesse.one/QwFYy", IsActive = true, DateCreated = DateTime.Now },
+
 
                         });
+                        context.SaveChanges();
+                    }
                 }
 
                 if (!context.Orders.Any())
                 {
-                    if (context.Customers.Any())
+                    if (context.Customers.Any() && context.Customers.ToList().Count >= 3)
                     {
                         context.Orders.AddRange(new List<Order>
                         {
-                            new Order { Code = Guid.NewGuid().ToString(), Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Approved), IsActive = true,  CustomerId = context.Customers.First().Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
+                            new Order { Code = Guid.NewGuid().ToString(),  Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Approved), IsActive = true,  CustomerId = context.Customers.First().Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
                             new Order { Code = Guid.NewGuid().ToString(), Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Approved), IsActive = true, CustomerId = context.Customers.ToArray()[2].Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
                             new Order { Code = Guid.NewGuid().ToString(), Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Approved), IsActive = true, CustomerId = context.Customers.ToArray()[2].Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
 
                         });
+                        context.SaveChanges();
+
                     }
                 }
                 if (!context.OrderItems.Any())
                 {
-                    if (context.Products.Any() && context.Orders.Any())
+                    if (context.Products.Any() && context.Orders.Any() && context.Products.ToList().Count >= 3 && context.Orders.ToList().Count >= 3)
                     {
                         context.OrderItems.AddRange(new List<OrderItem>
                                 {
@@ -119,11 +129,21 @@ namespace EcommerceRestApi.Helpers.Data
 
                                 });
 
-                        context.OrderItems.ForEachAsync(item => item.Order.TotalAmount = item.UnitPrice * item.Quantity);
+
+                        context.SaveChanges();
+
+                        foreach (var item in context.OrderItems)
+                        {
+                            var order = context.Orders.FirstOrDefault(o => o.Id == item.OrderId);
+                            if (order != null)
+                            {
+                                order.TotalAmount += item.Quantity * item.UnitPrice;
+                            }
+                        }
+
+                        context.SaveChanges();
                     }
                 }
-
-                context.SaveChanges();
             }
         }
 

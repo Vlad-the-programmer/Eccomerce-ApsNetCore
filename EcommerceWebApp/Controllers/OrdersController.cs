@@ -2,7 +2,9 @@
 using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace EcommerceWebApp.Controllers
 {
@@ -10,9 +12,12 @@ namespace EcommerceWebApp.Controllers
     public class OrdersController : Controller
     {
         private readonly IApiService _apiService;
-        public OrdersController(IApiService apiService)
+        private readonly UserManager<ApplicationUserViewModel> _userManager;
+
+        public OrdersController(IApiService apiService, UserManager<ApplicationUserViewModel> userManager)
         {
             _apiService = apiService;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -23,18 +28,18 @@ namespace EcommerceWebApp.Controllers
             return View(orders);
         }
 
-        [HttpGet("/{code}")]
-        public async Task<IActionResult> GetOrder(string code)
-        {
-            var order = await OrdersEndpointsHelperFuncs.GetOrderByCode(GlobalConstants.OrdersEndpoint, code, _apiService);
+        //[HttpGet("/{code}")]
+        //public async Task<IActionResult> GetOrder(string code)
+        //{
+        //    var order = await OrdersEndpointsHelperFuncs.GetOrderByCode(GlobalConstants.OrdersEndpoint, code, _apiService);
 
-            if (order == null)
-            {
-                return View("NotFound");
-            }
+        //    if (order == null)
+        //    {
+        //        return View("NotFound");
+        //    }
 
-            return View(order);
-        }
+        //    return View("Status.html", order);
+        //}
 
         [HttpGet("create")]
         public async Task<IActionResult> Create()
@@ -67,7 +72,7 @@ namespace EcommerceWebApp.Controllers
                 return View(order);
             }
 
-            return RedirectToAction(nameof(GetOrder), new { code = order.Code });
+            return RedirectToAction(nameof(Status), new { code = order.Code });
         }
 
         [HttpGet("status/{code}")]
@@ -86,7 +91,39 @@ namespace EcommerceWebApp.Controllers
             {
                 products.Add(item, item.Quantity);
             }
-            return View(products);
+
+            ViewBag.Products = products;
+            return View(order);
+        }
+
+        [HttpDelete("cancel/{code}")]
+        public async Task<IActionResult> Cancel(string code)
+        {
+            try
+            {
+                await _apiService.DeleteDataAsync($"{GlobalConstants.OrderDeleteEndpoint}/{code}");
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPut("update/{code}")]
+        public async Task<IActionResult> Update(string code, OrderViewModel order)
+        {
+            try
+            {
+                await _apiService.UpdateDataAsync($"{GlobalConstants.OrderUpdateEndpoint}/{code}", JsonSerializer.Serialize(order));
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

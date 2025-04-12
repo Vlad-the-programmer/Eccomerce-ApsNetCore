@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Models;
 
 public partial class DeliveryMethod : EntityBase
 {
-
     [StringLength(50)]
     [Unicode(false)]
     public string MethodName { get; set; } = null!;

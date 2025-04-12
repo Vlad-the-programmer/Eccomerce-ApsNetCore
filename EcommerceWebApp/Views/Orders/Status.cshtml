@@ -11,8 +11,8 @@
 }
 <div class="row">
     <ul class="list-group col-sm-8">
-        <li class="list-group-item list-group-item-primary">Produkty</li>
-        @foreach (KeyValuePair<OrderItemViewModel, int> kvp in ViewBag.products)
+        <li class="list-group-item list-group-item-primary">Products</li>
+        @foreach (KeyValuePair<OrderItemViewModel, int> kvp in ViewBag.Products)
         {
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <a href="/products/@kvp.Key.Product.Id" class="text-dark nounderline">@kvp.Key.Product.Brand @kvp.Key.Product.Name</a>

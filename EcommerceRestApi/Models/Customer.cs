@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using EcommerceRestApi.Helpers.Data.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using EcommerceRestApi.Helpers.Data.ViewModels;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Models;
 
+[Index("UserId", Name = "IX_Customers_UserId")]
 public partial class Customer : EntityBase
 {
+    public string UserId { get; set; } = null!;
 
-    [Required(ErrorMessage = "User ID is required.")]
-    public string UserId { get; set; }
-
-    [Range(0, int.MaxValue, ErrorMessage = "Points cannot be negative.")]
     public int? Points { get; set; }
 
-    [StringLength(50, ErrorMessage = "NIP should be no more than 50 characters long.")]
+    [StringLength(50)]
     [Unicode(false)]
     public string? Nip { get; set; }
 

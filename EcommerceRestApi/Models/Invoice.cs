@@ -1,34 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Models;
 
 [Table("Invoice")]
+[Index("CustomerId", Name = "IX_Invoice_CustomerId")]
+[Index("PaymentId", Name = "IX_Invoice_PaymentId")]
 public partial class Invoice : EntityBase
 {
-
-    [Required(ErrorMessage = "CustomerId is required.")]
     public int CustomerId { get; set; }
 
-    [Required(ErrorMessage = "Invoice Number is required.")]
-    [StringLength(16, ErrorMessage = "Invoice number should be no more than 16 characters long.")]
+    [StringLength(16)]
     [Unicode(false)]
-    public string Number { get; set; }
+    public string Number { get; set; } = null!;
 
-    [Required(ErrorMessage = "Date of issue is required.")]
     [Column(TypeName = "datetime")]
     public DateTime DateOfIssue { get; set; }
 
-    public int? PaymentId { get; set; } = null;
+    public int? PaymentId { get; set; }
 
     public bool IsPaid { get; set; }
 
+
     [ForeignKey("CustomerId")]
     [InverseProperty("Invoices")]
-    public virtual Customer? Customer { get; set; }
+    public virtual Customer Customer { get; set; } = null!;
 
     [InverseProperty("Invoice")]
     public virtual ICollection<InvoiceItem> InvoiceItems { get; set; } = new List<InvoiceItem>();

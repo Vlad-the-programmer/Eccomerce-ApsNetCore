@@ -1,26 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EcommerceRestApi.Models
+namespace EcommerceRestApi.Models;
+
+[Index("ProductId", Name = "IX_ShoppingCartItems_ProductId")]
+public partial class ShoppingCartItem : EntityBase
 {
-    public class ShoppingCartItem : EntityBase
-    {
+    public int ProductId { get; set; }
 
-        // Foreign key to the Product model
-        [Required]
-        public int ProductId { get; set; } // Foreign key property
+    public int Amount { get; set; }
 
-        // Navigation property to the Product model
-        [ForeignKey("ProductId")] // Explicitly specify the foreign key
-        [InverseProperty("ShoppingCartItems")]
-        public Product Product { get; set; }
+    [StringLength(20)]
+    public string ShoppingCartId { get; set; } = null!;
 
-        [Required]
-        [Range(0, int.MaxValue, ErrorMessage = "Amount must be 0 or greater.")]
-        public int Amount { get; set; }
-
-        [Required]
-        public string ShoppingCartId { get; set; }
-
-    }
+    [ForeignKey("ProductId")]
+    [InverseProperty("ShoppingCartItems")]
+    public virtual Product Product { get; set; } = null!;
 }

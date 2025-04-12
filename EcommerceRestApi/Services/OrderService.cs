@@ -1,9 +1,9 @@
-﻿using EcommerceRestApi.Models;
+﻿using EcommerceRestApi.Helpers.Data.Functions;
+using EcommerceRestApi.Helpers.Data.ViewModels;
+using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services.Base;
-using EcommerceRestApi.Helpers.Data.ViewModels;
 using Microsoft.EntityFrameworkCore;
-using EcommerceRestApi.Helpers.Data.Functions;
 
 namespace EcommerceRestApi.Services
 {
@@ -40,12 +40,14 @@ namespace EcommerceRestApi.Services
                 OrderStatus = OrderProcessingFuncs.GetEnumValueForOrderStatus(order.Status),
                 PaymentMethod = OrderProcessingFuncs.GetEnumValueForPaymentMethod(order.Payments.FirstOrDefault()?.PaymentMethod?.PaymentType),
                 DeliveryMethod = OrderProcessingFuncs.GetEnumValueForDeliveryMethod(order.DeliveryMethodOrders.FirstOrDefault()?.DeliveryMethod.MethodName),
-                OrderItems = (IList<OrderItem>)order.OrderItems.Select(oi => new OrderItemViewModel
+                OrderItems = order.OrderItems.Select(oi => new OrderItemViewModel
                 {
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
                     UnitPrice = oi.UnitPrice,
                     OrderId = oi.OrderId,
+                    Product = oi.Product,
+                    Order = oi.Order,
                 }).ToList()
             };
         }
@@ -92,7 +94,8 @@ namespace EcommerceRestApi.Services
             };
 
             order.Status = OrderProcessingFuncs.GetStringValue(data.OrderStatus);
-            order.Payments.Add(new Payment { 
+            order.Payments.Add(new Payment
+            {
                 Amount = data.TotalAmount,
                 OrderId = order.Id,
                 IsActive = true,
@@ -103,10 +106,11 @@ namespace EcommerceRestApi.Services
 
             order.DateCreated = DateTime.Now;
 
-            order.DeliveryMethodOrders.Add(new DeliveryMethodOrder {
+            order.DeliveryMethodOrders.Add(new DeliveryMethodOrder
+            {
                 OrderId = order.Id,
-                DeliveryMethodId = _context.DeliveryMethods.First(m => m.MethodName == OrderProcessingFuncs.GetStringValue(data.DeliveryMethod)).Id,   
-                IsActive=true,
+                DeliveryMethodId = _context.DeliveryMethods.First(m => m.MethodName == OrderProcessingFuncs.GetStringValue(data.DeliveryMethod)).Id,
+                IsActive = true,
                 DateCreated = DateTime.Now
             });
 
@@ -138,13 +142,14 @@ namespace EcommerceRestApi.Services
                                             OrderStatus = OrderProcessingFuncs.GetEnumValueForOrderStatus(o.Status),
                                             PaymentMethod = OrderProcessingFuncs.GetEnumValueForPaymentMethod(o.Payments.FirstOrDefault().PaymentMethod.PaymentType),
                                             DeliveryMethod = OrderProcessingFuncs.GetEnumValueForDeliveryMethod(o.DeliveryMethodOrders.FirstOrDefault().DeliveryMethod.MethodName),
-                                            OrderItems = (IList<OrderItem>)o.OrderItems.Select(oi => new OrderItemViewModel
+                                            OrderItems = o.OrderItems.Select(oi => new OrderItemViewModel
                                             {
                                                 ProductId = oi.ProductId,
                                                 Quantity = oi.Quantity,
                                                 UnitPrice = oi.UnitPrice,
-                                                OrderId = oi.OrderId,
+                                                OrderId = oi.OrderId
                                             }).ToList()
+
                                         }).ToListAsync();
         }
     }

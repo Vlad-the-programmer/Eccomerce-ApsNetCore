@@ -1,12 +1,12 @@
-﻿using EcommerceRestApi.Models;
+﻿using EcommerceRestApi.Helpers.Enums;
+using EcommerceRestApi.Models;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using EcommerceRestApi.Helpers.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcommerceRestApi.Helpers.Data.ViewModels
 {
-    public class OrderViewModel: BaseViewModel
+    public class OrderViewModel : BaseViewModel
     {
         [Required(ErrorMessage = "Order code is required.")]
         [StringLength(50, ErrorMessage = "Order code cannot exceed 50 characters.")]
@@ -29,11 +29,11 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         [Unicode(false)]
         public string Status { get; set; } = null!;
 
-        public virtual Customer Customer { get; set; } = null!;
+        public Customer Customer { get; set; } = null!;
 
         //public IList<DeliveryMethodOrder> DeliveryMethodOrders { get; set; } = new List<DeliveryMethodOrder>();
 
-        public IList<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public IList<OrderItemViewModel> OrderItems { get; set; } = new List<OrderItemViewModel>();
 
         //public IList<Payment> Payments { get; set; } = new List<Payment>();
 

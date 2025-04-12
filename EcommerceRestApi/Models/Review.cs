@@ -1,27 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Models;
 
+[Index("CustomerId", Name = "IX_Reviews_CustomerId")]
+[Index("ProductId", Name = "IX_Reviews_ProductId")]
 public partial class Review : EntityBase
 {
-
-    [Required(ErrorMessage = "Product ID is required.")]
     public int ProductId { get; set; }
 
-    [Required(ErrorMessage = "Customer ID is required.")]
     public int CustomerId { get; set; }
 
-    [Required(ErrorMessage = "Rating is required.")]
-    [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5.")]
     public int Rating { get; set; }
 
-    [Required(ErrorMessage = "Review text is required.")]
     [Column(TypeName = "text")]
-    [StringLength(1000, ErrorMessage = "Review text cannot exceed 1000 characters.")]
     public string ReviewText { get; set; } = null!;
 
     [ForeignKey("CustomerId")]

@@ -18,10 +18,10 @@ public static class GlobalConstants
     public const string ProductCreateEndpoint = "api/products/create/";
 
     // Products
-    public const string OrdersEndpoint = "api/orders/";
-    public const string OrderDeleteEndpoint = "api/orders/delete/";
-    public const string OrderUpdateEndpoint = "api/orders/update/";
-    public const string OrderCreateEndpoint = "api/orders/create/";
+    public const string OrdersEndpoint = "api/orders";
+    public const string OrderDeleteEndpoint = "api/orders/delete";
+    public const string OrderUpdateEndpoint = "api/orders/update";
+    public const string OrderCreateEndpoint = "api/orders/create";
 
     // Categories
     public const string CategoriesEndpoint = "api/categories/";

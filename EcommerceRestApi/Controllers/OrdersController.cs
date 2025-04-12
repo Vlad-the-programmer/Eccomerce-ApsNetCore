@@ -21,6 +21,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetOrders()
         {
             var orders = await _orderService.GetOrdersAsync();
@@ -28,6 +29,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpGet("{code}")]
+        //[Authorize]
         public async Task<IActionResult> GetOrder(string code)
         {
             var order = await _orderService.GetOrderByCodeAsync(code);
@@ -35,16 +37,16 @@ namespace EcommerceRestApi.Controllers
             if (order == null)
                 return NotFound();
 
-            if (order.Customer.User.Id != _userManager.GetUserId(User))
-            {
-                return Forbid();
-            }
+            //if (order.Customer.User.Id != _userManager.GetUserId(User))
+            //{
+            //    return Forbid();
+            //}
 
             return Ok(order);
         }
 
         [HttpPost("create")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> CreateOrder(OrderViewModel model)
         {
             if (!ModelState.IsValid)
@@ -59,13 +61,14 @@ namespace EcommerceRestApi.Controllers
                 });
             }
 
+            model.CustomerId = _userManager.Users.First(u => u.Id == _userManager.GetUserId(User)).Customers.First().Id;
             await _orderService.AddNewOrderAsync(model);
 
             return CreatedAtAction(nameof(GetOrder), new { code = model.Code }, model);
         }
 
         [HttpPut("update/{code}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> UpdateOrder(string code, OrderViewModel model)
         {
             var order = await _orderService.GetOrderByCodeAsync(code);

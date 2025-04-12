@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Models;
 
+[Index("OrderId", Name = "IX_Payments_OrderId")]
+[Index("PaymentMethodId", Name = "IX_Payments_PaymentMethodId")]
 public partial class Payment : EntityBase
 {
-    public int? OrderId { get; set; } = null!;
 
-    public int? PaymentMethodId { get; set; } = null;
+    public int? OrderId { get; set; }
 
-    [Required(ErrorMessage = "Amount is required.")]
+    public int? PaymentMethodId { get; set; }
+
     [Column(TypeName = "money")]
-    [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than 0.")]
     public decimal Amount { get; set; }
 
-    [Required(ErrorMessage = "Payment Date is required.")]
     [Column(TypeName = "datetime")]
     public DateTime PaymentDate { get; set; }
 

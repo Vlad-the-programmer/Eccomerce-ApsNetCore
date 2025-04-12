@@ -20,12 +20,12 @@ namespace EcommerceWebApp.Helpers
         }
 
 
-        public async static Task<OrderViewModel?> GetOrderByCode(string endpoint, string code,  IApiService apiService)
+        public async static Task<OrderViewModel?> GetOrderByCode(string endpoint, string code, IApiService apiService)
         {
             var order = new OrderViewModel();
             try
             {
-                var response = await apiService.GetDataAsync(endpoint); // response is a string
+                var response = await apiService.GetDataAsync($"{endpoint}/{code}"); // response is a string
                 order = JsonSerializer.Deserialize<OrderViewModel>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
             }
@@ -35,33 +35,19 @@ namespace EcommerceWebApp.Helpers
 
         public async static Task<string> SubmitOrder(string endpoint, OrderViewModel order, IApiService apiService)
         {
-                var response = await apiService.PostDataAsync(endpoint, JsonSerializer.Serialize(order)); // response is a string
-                return response;
+            var response = await apiService.PostDataAsync(endpoint, JsonSerializer.Serialize(order)); // response is a string
+            return response;
         }
 
         public async static Task<string> UpdateOrder(string endpoint, OrderViewModel order, IApiService apiService)
         {
-            try
-            {
-                var response = await apiService.UpdateDataAsync(endpoint, JsonSerializer.Serialize(order)); // response is a string
-                return response;
-            }
-            catch (HttpRequestException ex) { return ex.Message; }
+            var response = await apiService.UpdateDataAsync(endpoint, JsonSerializer.Serialize(order)); // response is a string
+            return response;
+
 
         }
 
         public async static Task<string> CancelOrder(string endpoint, string code, IApiService apiService)
-        {
-            try
-            {
-                var response = await apiService.DeleteDataAsync(endpoint + code); // response is a string
-                return response;
-            }
-            catch (HttpRequestException ex) { return ex.Message; }
-
-        }
-
-        public async static Task<string> DeleteOrder(string endpoint,string code, IApiService apiService)
         {
             try
             {

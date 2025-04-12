@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Models;
 
@@ -10,7 +8,6 @@ namespace EcommerceRestApi.Models;
 [Index("CountryName", Name = "UQ__Countrie__E056F201CC4E645C", IsUnique = true)]
 public partial class Country : EntityBase
 {
-
     [StringLength(50)]
     [Unicode(false)]
     public string CountryName { get; set; } = null!;
@@ -18,6 +15,7 @@ public partial class Country : EntityBase
     [StringLength(5)]
     [Unicode(false)]
     public string CountryCode { get; set; } = null!;
+
 
     [InverseProperty("Country")]
     public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();

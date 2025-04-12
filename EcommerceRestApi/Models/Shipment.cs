@@ -1,28 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
-using EcommerceRestApi.Helpers;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Models;
 
+[Index("DeliveryMethodId", Name = "IX_Shipments_DeliveryMethodId")]
+[Index("OrderId", Name = "IX_Shipments_OrderId")]
 public partial class Shipment : EntityBase
 {
 
-    [Required(ErrorMessage = "Order ID is required.")]
     public int OrderId { get; set; }
 
-    [Required(ErrorMessage = "Delivery Method ID is required.")]
     public int DeliveryMethodId { get; set; }
 
-    [Required(ErrorMessage = "Shipment date is required.")]
     [Column(TypeName = "datetime")]
     public DateTime ShipmentDate { get; set; }
 
-    [Required(ErrorMessage = "Estimated arrival date is required.")]
     [Column(TypeName = "datetime")]
-    [DateGreaterThan("ShipmentDate", ErrorMessage = "Estimated arrival date must be after shipment date.")]
     public DateTime EstimatedArrivalDate { get; set; }
 
     [ForeignKey("DeliveryMethodId")]

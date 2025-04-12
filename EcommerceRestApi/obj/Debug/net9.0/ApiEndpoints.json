@@ -390,9 +390,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "EcommerceRestApi.Controllers.OrderController",
+    "ContainingType": "EcommerceRestApi.Controllers.OrdersController",
     "Method": "GetOrders",
-    "RelativePath": "api/Order",
+    "RelativePath": "api/Orders",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -400,9 +400,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "EcommerceRestApi.Controllers.OrderController",
+    "ContainingType": "EcommerceRestApi.Controllers.OrdersController",
     "Method": "GetOrder",
-    "RelativePath": "api/Order/{code}",
+    "RelativePath": "api/Orders/{code}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -416,9 +416,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "EcommerceRestApi.Controllers.OrderController",
+    "ContainingType": "EcommerceRestApi.Controllers.OrdersController",
     "Method": "CreateOrder",
-    "RelativePath": "api/Order/create",
+    "RelativePath": "api/Orders/create",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -432,9 +432,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "EcommerceRestApi.Controllers.OrderController",
+    "ContainingType": "EcommerceRestApi.Controllers.OrdersController",
     "Method": "DeleteOrder",
-    "RelativePath": "api/Order/delete/{code}",
+    "RelativePath": "api/Orders/delete/{code}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -448,9 +448,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "EcommerceRestApi.Controllers.OrderController",
+    "ContainingType": "EcommerceRestApi.Controllers.OrdersController",
     "Method": "UpdateOrder",
-    "RelativePath": "api/Order/update/{code}",
+    "RelativePath": "api/Orders/update/{code}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,

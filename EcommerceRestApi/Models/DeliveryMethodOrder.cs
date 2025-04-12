@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Models;
 
 [PrimaryKey("DeliveryMethodId", "OrderId")]
-public partial class DeliveryMethodOrder : EntityBase
+[Index("OrderId", Name = "IX_DeliveryMethodOrders_OrderId")]
+public partial class DeliveryMethodOrder
 {
     [Key]
     public int DeliveryMethodId { get; set; }
@@ -15,6 +14,16 @@ public partial class DeliveryMethodOrder : EntityBase
     [Key]
     public int OrderId { get; set; }
 
+    public bool IsActive { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime DateCreated { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime DateUpdated { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime DateDeleted { get; set; }
 
     [ForeignKey("DeliveryMethodId")]
     [InverseProperty("DeliveryMethodOrders")]
