@@ -1,5 +1,6 @@
 ﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Models;
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace EcommerceWebApp.Helpers
@@ -29,7 +30,11 @@ namespace EcommerceWebApp.Helpers
                 order = JsonSerializer.Deserialize<OrderViewModel>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
             }
-            catch (HttpRequestException ex) { order = null; }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine("OrderByCode: " + ex);
+                order = null;
+            }
             return order;
         }
 

@@ -1,23 +1,20 @@
 ﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
-using EcommerceWebApp.Helpers.JWT;
 using EcommerceWebApp.Models;
 using EcommerceWebApp.Models.ResponseModels;
 using EcommerceWebApp.Models.UpdateViewModels;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text.Json;
 
 namespace EcommerceWebApp.Controllers
 {
-    [Route("account")]
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
         private readonly IApiService _apiService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AccountController(ILogger<AccountController> logger, 
+        public AccountController(ILogger<AccountController> logger,
                                     IApiService apiService,
                                     IHttpContextAccessor httpContextAccessor)
         {
@@ -36,7 +33,7 @@ namespace EcommerceWebApp.Controllers
             try
             {
                 var response = await _apiService.PostDataAsync(
-                    GlobalConstants.LoginEndpoint, 
+                    GlobalConstants.LoginEndpoint,
                     JsonSerializer.Serialize(loginVM)
                 );
 
@@ -44,13 +41,14 @@ namespace EcommerceWebApp.Controllers
 
                 //HttpContext.Session.SetString("auth_token", tokenObj.Token);
                 //JWTAuth.SetUserFromToken(tokenObj.Token, _httpContextAccessor);
-            } catch (HttpRequestException e)
+            }
+            catch (HttpRequestException e)
             {
                 TempData["Error"] = e.Message;
                 return View(loginVM);
             }
-            
-            
+
+
 
             TempData["Success"] = "Login successful!";
             return RedirectToAction("Index", "Home");
@@ -72,8 +70,8 @@ namespace EcommerceWebApp.Controllers
 
             try
             {
-                var response = await _apiService.PostDataAsync( 
-                                    GlobalConstants.RegisterEndpoint, 
+                var response = await _apiService.PostDataAsync(
+                                    GlobalConstants.RegisterEndpoint,
                                     JsonSerializer.Serialize<RegisterViewModel>(registerVM));
             }
             catch (HttpRequestException e)
@@ -91,7 +89,8 @@ namespace EcommerceWebApp.Controllers
             {
                 await _apiService.PostDataAsync(GlobalConstants.LogoutEndpoint);
                 HttpContext.Session.Remove("CurrentUser");
-            } catch (HttpRequestException e)
+            }
+            catch (HttpRequestException e)
             {
                 TempData["Error"] = e.Message;
                 //return View();
@@ -106,7 +105,8 @@ namespace EcommerceWebApp.Controllers
             {
                 var response = _apiService.GetDataAsync(
                                 GlobalConstants.AccessDeniedEndpoint);
-            } catch(HttpRequestException e)
+            }
+            catch (HttpRequestException e)
             {
                 TempData["Error: "] = e.Message;
             }

@@ -21,28 +21,28 @@ namespace EcommerceWebApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-                List<NewProductViewModel> products = await ProductsEndpointsHelperFuncs.GetProducts(
-                                                            GlobalConstants.ProductsEndpoint, _apiService);
-                List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
-                                                            GlobalConstants.CategoriesEndpoint, _apiService);
+            List<NewProductViewModel> products = await ProductsEndpointsHelperFuncs.GetProducts(
+                                                        GlobalConstants.ProductsEndpoint, _apiService);
+            List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
+                                                        GlobalConstants.CategoriesEndpoint, _apiService);
 
-                ViewBag.FeaturedProduct = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(
-                                                            GlobalConstants.ProductsEndpoint, _apiService);
-                ViewBag.Categories = CategoriesEndpointsHelperFuncs.GetCategoriesDictionaryWithNameCodeFields(categories);
-                ViewBag.ProductsExists = products.Count > 0 ? true : false;
-                ViewBag.CategoriesExist = categories.Count > 0 ? true : false;
-                return View(products); // Return the view with the products data
+            ViewBag.FeaturedProduct = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(
+                                                        GlobalConstants.ProductsEndpoint, _apiService);
+            ViewBag.Categories = CategoriesEndpointsHelperFuncs.GetCategoriesDictionaryWithNameCodeFields(categories);
+            ViewBag.ProductsExists = products.Count > 0 ? true : false;
+            ViewBag.CategoriesExist = categories.Count > 0 ? true : false;
+            return View(products); // Return the view with the products data
         }
 
         public async Task<IActionResult> Details(int id)
         {
-                var endpoint = GlobalConstants.ProductsEndpoint + $"{id}";
-                var product = await ProductsEndpointsHelperFuncs.GetProductById(endpoint, _apiService);
+            var endpoint = $"{GlobalConstants.ProductsEndpoint}/{id}";
+            var product = await ProductsEndpointsHelperFuncs.GetProductById(endpoint, _apiService);
             if (product == null)
             {
                 return View("NotFound");
             }
-                return View(product); // Return the view with the product's data
+            return View(product); // Return the view with the product's data
         }
 
         //get: products/Create
@@ -81,7 +81,7 @@ namespace EcommerceWebApp.Controllers
             }
             catch (HttpRequestException ex)
             {
-                ViewBag.Error = ex.Message;
+                TempData["Error"] = ex.Message;
 
                 List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
                                                            GlobalConstants.CategoriesEndpoint, _apiService);
@@ -112,46 +112,53 @@ namespace EcommerceWebApp.Controllers
         //get: products/Edit/1
         public async Task<IActionResult> Edit(int id)
         {
-            
-                var product = await ProductsEndpointsHelperFuncs.GetProductById(
-                                                            GlobalConstants.ProductsEndpoint + $"{id}", _apiService);
 
-            if(product == null) { 
-                List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
-                                                               GlobalConstants.CategoriesEndpoint, _apiService);
-                List<SubcategoryViewModel> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
-                                                               GlobalConstants.SubCategoriesEndpoint, _apiService);
-                ViewBag.SubCategories = CategoriesEndpointsHelperFuncs
-                                                                            .GetSubCategoriesDictionaryWithNameCodeFields(subCategories)
-                                                                            .Select(kvp => new SelectListItem
-                                                                            {
-                                                                                Text = kvp.Key,
-                                                                                Value = kvp.Value
-                                                                            });
+            var product = await ProductsEndpointsHelperFuncs.GetProductById(
+                                                         $"{GlobalConstants.ProductsEndpoint}/{id}", _apiService);
 
-                ViewBag.Categories = CategoriesEndpointsHelperFuncs
-                                                            .GetCategoriesDictionaryWithNameCodeFields(categories)
-                                                            .Select(kvp => new SelectListItem
-                                                            {
-                                                                Text = kvp.Key,
-                                                                Value = kvp.Value
-                                                            });
+            if (product == null)
+            {
 
                 return View("NotFound");
             }
+
+            List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
+                                                           GlobalConstants.CategoriesEndpoint, _apiService);
+            List<SubcategoryViewModel> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
+                                                           GlobalConstants.SubCategoriesEndpoint, _apiService);
+            ViewBag.SubCategories = CategoriesEndpointsHelperFuncs
+                                                                  .GetSubCategoriesDictionaryWithNameCodeFields(subCategories)
+                                                                  .Select(kvp => new SelectListItem
+                                                                  {
+                                                                      Text = kvp.Key,
+                                                                      Value = kvp.Value,
+                                                                      Selected = kvp.Value == product.SubcategoryCode
+                                                                                                    ? true : false
+                                                                  });
+
+            ViewBag.Categories = CategoriesEndpointsHelperFuncs
+                                                        .GetCategoriesDictionaryWithNameCodeFields(categories)
+                                                        .Select(kvp => new SelectListItem
+                                                        {
+                                                            Text = kvp.Key,
+                                                            Value = kvp.Value,
+                                                            Selected = kvp.Value == product.CategoryCode ? true : false
+                                                        });
+
             var productUpdateVM = new ProductUpdateVM
             {
-                ProductId = product.Id,
+                Id = product.Id,
+                Code = product.Code,
                 Name = product.Name,
                 Brand = product.Brand,
                 Photo = product.Photo,
-                OtherPhotos = product.OtherPhotos,  
-                Price = product.Price,  
+                OtherPhotos = product.OtherPhotos,
+                Price = product.Price,
                 About = product.About,
                 LongAbout = product.LongAbout,
                 Stock = product.Stock,
                 SubcategoryCode = product.SubcategoryCode,
-                CategoryCode = product.CategoryCode,    
+                CategoryCode = product.CategoryCode,
                 IsActive = product.IsActive,
             };
             return View(productUpdateVM);
@@ -160,16 +167,16 @@ namespace EcommerceWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id, ProductUpdateVM product)
         {
-            if (id != product.ProductId) return View("NotFound");
+            if (id != product.Id) return View("NotFound");
 
             try
             {
-                await _apiService.UpdateDataAsync(GlobalConstants.ProductUpdateEndpoint + $"{id}",
+                await _apiService.UpdateDataAsync($"{GlobalConstants.ProductUpdateEndpoint}/{id}",
                                                     JsonSerializer.Serialize(product));
             }
             catch (HttpRequestException ex)
             {
-                ViewBag.Error = ex.Message;
+                TempData["Error"] = ex.Message;
 
                 List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
                                                            GlobalConstants.CategoriesEndpoint, _apiService);
@@ -177,19 +184,22 @@ namespace EcommerceWebApp.Controllers
                                                                GlobalConstants.SubCategoriesEndpoint, _apiService);
 
                 ViewBag.SubCategories = CategoriesEndpointsHelperFuncs
-                                                            .GetSubCategoriesDictionaryWithNameCodeFields(subCategories)
-                                                            .Select(kvp => new SelectListItem
-                                                            {
-                                                                Text = kvp.Key,
-                                                                Value = kvp.Value
-                                                            });
+                                                                  .GetSubCategoriesDictionaryWithNameCodeFields(subCategories)
+                                                                  .Select(kvp => new SelectListItem
+                                                                  {
+                                                                      Text = kvp.Key,
+                                                                      Value = kvp.Value,
+                                                                      Selected = kvp.Value == product.SubcategoryCode
+                                                                                                    ? true : false
+                                                                  });
 
                 ViewBag.Categories = CategoriesEndpointsHelperFuncs
                                                             .GetCategoriesDictionaryWithNameCodeFields(categories)
                                                             .Select(kvp => new SelectListItem
                                                             {
                                                                 Text = kvp.Key,
-                                                                Value = kvp.Value
+                                                                Value = kvp.Value,
+                                                                Selected = kvp.Value == product.CategoryCode ? true : false
                                                             });
 
                 return View(product);
@@ -202,7 +212,7 @@ namespace EcommerceWebApp.Controllers
         {
 
             var product = await ProductsEndpointsHelperFuncs.GetProductById(
-                                                        GlobalConstants.ProductDeleteEndpoint + $"{id}", _apiService);
+                                                         $"{GlobalConstants.ProductDeleteEndpoint}/{id}", _apiService);
 
             if (product == null)
             {

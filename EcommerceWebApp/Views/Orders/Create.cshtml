@@ -79,10 +79,49 @@ else
                 <input type="text" class="form-control" name="Order.Customer.PhoneNumber" id="Phone" asp-for="@Model.Customer.PhoneNumber" value="@Model.Customer.PhoneNumber" pattern=".{7,16}" required>
             </div>
         </div>
-        <div class="form-group">
-            <label for="Address">Adress</label>
-            <input type="text" class="form-control" name="Order.Address" id="Address" asp-for="@Model.Address" value="@Model.Address" pattern=".{,256}">
+        <div class="form-row">
+            <div class="form-group col-md-8">
+                <label for="Street">Street</label>
+                <input type="text" class="form-control" id="Street" name="Order.Street" asp-for="@Model.Street" value="@Model.Street" maxlength="100" required />
+            </div>
+            <div class="form-group col-md-2">
+                <label for="HouseNumber">House #</label>
+                <input type="text" class="form-control" id="HouseNumber" name="Order.HouseNumber" asp-for="@Model.HouseNumber" value="@Model.HouseNumber" maxlength="20" required />
+            </div>
+            <div class="form-group col-md-2">
+                <label for="FlatNumber">Flat #</label>
+                <input type="text" class="form-control" id="FlatNumber" name="Order.FlatNumber" asp-for="@Model.FlatNumber" value="@Model.FlatNumber" maxlength="20" />
+            </div>
         </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="City">City</label>
+                <input type="text" class="form-control" id="City" name="Order.City" asp-for="@Model.City" value="@Model.City" maxlength="50" required />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="State">State/Province</label>
+                <input type="text" class="form-control" id="State" name="Order.State" asp-for="@Model.State" value="@Model.State" maxlength="50" />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="PostalCode">Postal Code</label>
+                <input type="text" class="form-control" id="PostalCode" name="Order.PostalCode" asp-for="@Model.PostalCode" value="@Model.PostalCode" maxlength="10" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="CountryName">Country</label>
+            <select class="custom-select" id="CountryName" name="Order.CountryName" asp-for="CountryName" required>
+                <option value="">-- Select Country --</option>
+                @foreach (var country in ViewBag.Countries)
+                {
+                    <option value="@country" selected="@(country == Model.CountryName)">
+                        @country
+                    </option>
+                }
+            </select>
+        </div>
+
         <div class="row form-group">
            <div class="col-6">
     <select class="custom-select" onchange="OnShippingUpdate()" name="DeliveryMethod" id="ShippingType" asp-for="DeliveryMethod">

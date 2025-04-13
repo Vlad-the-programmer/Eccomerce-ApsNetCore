@@ -2,7 +2,6 @@
 using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -12,12 +11,10 @@ namespace EcommerceWebApp.Controllers
     public class OrdersController : Controller
     {
         private readonly IApiService _apiService;
-        private readonly UserManager<ApplicationUserViewModel> _userManager;
 
-        public OrdersController(IApiService apiService, UserManager<ApplicationUserViewModel> userManager)
+        public OrdersController(IApiService apiService)
         {
             _apiService = apiService;
-            _userManager = userManager;
         }
 
         [HttpGet]
@@ -45,17 +42,19 @@ namespace EcommerceWebApp.Controllers
         public async Task<IActionResult> Create()
         {
             var cartItems = new List<ShoppingCartItemVM>();
+            var countries = new List<string>();
             try
             {
                 await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
                 cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
-
+                countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
             }
             catch (HttpRequestException ex)
             {
                 TempData["Error"] = ex.Message;
             }
             ViewBag.CartItems = cartItems;
+            ViewBag.Countries = countries;
             return View();
         }
 

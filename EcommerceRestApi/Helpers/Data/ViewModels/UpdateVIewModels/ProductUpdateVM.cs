@@ -2,10 +2,13 @@
 
 namespace EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels
 {
-    public class ProductUpdateVM: BaseUpdateViewModel
+    public class ProductUpdateVM : BaseUpdateViewModel
     {
         [Display(Name = "Product name")]
         public string? Name { get; set; }
+
+        [Display(Name = "Code")]
+        public string Code { get; set; }
 
         [Display(Name = "Brand")]
         public string? Brand { get; set; }

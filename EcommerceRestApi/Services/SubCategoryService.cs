@@ -1,4 +1,5 @@
-﻿using EcommerceRestApi.Models;
+﻿using EcommerceRestApi.Helpers.Data.ViewModels;
+using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services.Base;
 using EcommerceWebApp.Models;
@@ -22,14 +23,27 @@ namespace EcommerceRestApi.Services
 
         public async Task<List<SubcategoryViewModel>> GetAllSubcategories()
         {
-            return ( await _context.Subcategories.ToListAsync() ) 
+            return (await _context.Subcategories.ToListAsync())
                         .Select(sc => new SubcategoryViewModel
                         {
                             Code = sc.Code,
                             CategoryId = sc.CategoryId,
                             About = sc.About,
                             Name = sc.Name,
-                            Products = (IList<Helpers.Data.ViewModels.NewProductViewModel>)sc.Products,
+                            Products = sc.Products.Select(p => new NewProductViewModel
+                            {
+                                Id = p.Id,
+                                Name = p.Name,
+                                Photo = p.Photo,
+                                OtherPhotos = p.OtherPhotos,
+                                CategoryCode = p.ProductCategories.FirstOrDefault()?.Category?.Code,
+                                SubcategoryCode = p.Subcategory.Code,
+                                About = p.About,
+                                Brand = p.Brand,
+                                LongAbout = p.LongAbout,
+                                Price = p.Price,
+                                Stock = p.Stock,
+                            }).ToList(),
                         }).ToList();
         }
 
@@ -44,7 +58,7 @@ namespace EcommerceRestApi.Services
                 Name = subCategory.Name,
                 Products = (IList<Helpers.Data.ViewModels.NewProductViewModel>)subCategory.Products,
             };
-                                            
+
         }
 
         public Task UpdateSubCategoryAsync(int id, SubcategoryViewModel data)

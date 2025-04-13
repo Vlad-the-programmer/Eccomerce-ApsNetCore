@@ -33,14 +33,14 @@
                                 {
                                     <li>
                                         <div class="alert alert-info" role="alert">
-                                            <span class="badge bg-success">@item.Quantity</span> [@item.UnitPrice.ToString("c")] - @item.Product.Name
+                                            <span class="badge bg-success">@item.Quantity</span> [@item.UnitPrice.ToString("c")] - @item.ProductName
                                         </div>
                                     </li>
                                 }
                             </ul>
                         </td>
                         <td class="align-middle">
-                            @order.OrderItems.Select(m => m.Product.Price * m.Quantity).Sum().ToString("c")
+                            @order.OrderItems.Select(m => m.UnitPrice * m.Quantity).Sum().ToString("c")
                         </td>
                         @if (User.Identity.IsAuthenticated)
                         {

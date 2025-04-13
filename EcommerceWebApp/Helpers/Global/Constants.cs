@@ -12,10 +12,10 @@ public static class GlobalConstants
     public const string CountriesEndpoint = "api/countries/";
 
     // Products
-    public const string ProductsEndpoint = "api/products/";
-    public const string ProductDeleteEndpoint = "api/products/delete/";
-    public const string ProductUpdateEndpoint = "api/products/update/";
-    public const string ProductCreateEndpoint = "api/products/create/";
+    public const string ProductsEndpoint = "api/products";
+    public const string ProductDeleteEndpoint = "api/products/delete";
+    public const string ProductUpdateEndpoint = "api/products/update";
+    public const string ProductCreateEndpoint = "api/products/create";
 
     // Products
     public const string OrdersEndpoint = "api/orders";
@@ -28,7 +28,7 @@ public static class GlobalConstants
     public const string SubCategoriesEndpoint = "api/subcategories/";
 
     // Users
-    public const string UsersEndpoint = "api/users/";
+    public const string UsersEndpoint = "api/account/users/";
     public const string LoginEndpoint = "api/account/login/";
     public const string RegisterEndpoint = "api/account/register/";
     public const string LogoutEndpoint = "api/account/logout/";

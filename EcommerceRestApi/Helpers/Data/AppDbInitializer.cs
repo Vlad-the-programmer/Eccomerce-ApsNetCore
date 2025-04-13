@@ -90,11 +90,11 @@ namespace EcommerceRestApi.Helpers.Data
                                 new Product { Name = "iPhone 13", Brand = "Apple", Code = "IP13", Price = 999, Stock = 10, SubcategoryId = context.Subcategories.First().Id, LongAbout = "Latest iPhone model", Photo = "https://tinyurl.com/2p8ypn72",
                                     OtherPhotos = "https://tinyurl.com/2p8ypn72", IsActive = true, DateCreated = DateTime.Now },
                                 new Product { Name = "Nike Sneakers", Brand = "Nike", Code = "NS001", Price = 120, Stock = 25, SubcategoryId = context.Subcategories.ToList().First().Id, LongAbout = "High-quality running shoes",
-                                    Photo = "https://acesse.one/QwFYy",
-                                    OtherPhotos = "https://acesse.one/QwFYy", IsActive = true, DateCreated = DateTime.Now },
+                                    Photo = "https://t.ly/y0Eky",
+                                    OtherPhotos = "https://t.ly/y0Eky", IsActive = true, DateCreated = DateTime.Now },
                                 new Product { Name = "Nike Sneakers", Brand = "Nike", Code = "NS002", Price = 120, Stock = 25, SubcategoryId = context.Subcategories.ToList().First().Id, LongAbout = "High-quality running shoes2",
-                                    Photo = "https://acesse.one/QwFYy",
-                                    OtherPhotos = "https://acesse.one/QwFYy", IsActive = true, DateCreated = DateTime.Now },
+                                    Photo = "https://t.ly/y0Eky",
+                                    OtherPhotos = "https://t.ly/y0Eky", IsActive = true, DateCreated = DateTime.Now },
 
 
                         });

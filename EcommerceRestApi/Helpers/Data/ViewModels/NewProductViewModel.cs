@@ -2,7 +2,7 @@
 
 namespace EcommerceRestApi.Helpers.Data.ViewModels
 {
-    public class NewProductViewModel:BaseViewModel
+    public class NewProductViewModel : BaseViewModel
     {
         public int Id { get; set; }
         [Display(Name = "Product name")]
@@ -10,6 +10,9 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         public string Name { get; set; }
 
         [Display(Name = "Brand")]
+        [Required(ErrorMessage = "Code is Requred")]
+        public string Code { get; set; }
+
         [Required(ErrorMessage = "Brand is Requred")]
         public string Brand { get; set; }
 

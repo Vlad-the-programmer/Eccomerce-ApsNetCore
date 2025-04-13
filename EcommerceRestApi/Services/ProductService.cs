@@ -1,10 +1,9 @@
-﻿using EcommerceRestApi.Models.Context;
-using EcommerceRestApi.Models;
-using EcommerceRestApi.Services.Base;
-using EcommerceRestApi.Helpers.Data.ViewModels;
-using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
+using EcommerceRestApi.Models;
+using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Services.Base;
+using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Services
 {
@@ -21,6 +20,7 @@ namespace EcommerceRestApi.Services
         {
             var newProduct = new Product()
             {
+                Code = data.Code,
                 Name = data.Name,
                 Brand = data.Brand,
                 Price = data.Price,
@@ -32,7 +32,7 @@ namespace EcommerceRestApi.Services
             };
 
             var subCategory = _context.Subcategories.FirstOrDefault(C => C.Code == data.SubcategoryCode);
-            if(subCategory != null)
+            if (subCategory != null)
             {
                 newProduct.SubcategoryId = subCategory.Id;
             }
@@ -71,18 +71,21 @@ namespace EcommerceRestApi.Services
         {
             return await _context.Products
                     .Include(p => p.Reviews)
-                    .Where(p => p.Id == id) 
+                    .Where(p => p.Id == id)
                     .FirstOrDefaultAsync();
         }
 
         public async Task UpdateProductAsync(int id, ProductUpdateVM data)
         {
+            var dbproduct = await _context.Products
+                .Include(p => p.ProductCategories) // important!
+                .FirstOrDefaultAsync(n => n.Id == id);
 
-            var dbproduct = await _context.Products.FirstOrDefaultAsync(n => n.Id == id);
             if (dbproduct != null)
             {
-
+                // Update product fields
                 dbproduct.Name = data.Name ?? dbproduct.Name;
+                dbproduct.Code = data.Code ?? dbproduct.Code;
                 dbproduct.Brand = data.Brand ?? dbproduct.Brand;
                 dbproduct.Price = data.Price ?? dbproduct.Price;
                 dbproduct.About = data.About ?? dbproduct.About;
@@ -90,24 +93,41 @@ namespace EcommerceRestApi.Services
                 dbproduct.Photo = data.Photo ?? dbproduct.Photo;
                 dbproduct.OtherPhotos = data.OtherPhotos ?? dbproduct.OtherPhotos;
                 dbproduct.Stock = data.Stock ?? dbproduct.Stock;
-
-                var subCategory = _context.Subcategories.FirstOrDefault(C => C.Code == data.SubcategoryCode);
-                if(subCategory != null)
-                {
-                    dbproduct.SubcategoryId = subCategory.Id;
-                }
                 dbproduct.IsActive = data.IsActive;
                 dbproduct.DateUpdated = DateTime.Now;
 
-                var category = _context.Categories.FirstOrDefault(C => C.Code == data.CategoryCode);
+                // Update Subcategory
+                var subCategory = await _context.Subcategories
+                    .FirstOrDefaultAsync(C => C.Code == data.SubcategoryCode);
+                if (subCategory != null)
+                {
+                    dbproduct.SubcategoryId = subCategory.Id;
+                }
+
+                // Update Category (remove all existing and add new one)
+                var category = await _context.Categories
+                    .FirstOrDefaultAsync(C => C.Code == data.CategoryCode);
+
                 if (category != null)
                 {
-                    dbproduct.ProductCategories.First().CategoryId = category.Id;
-                    dbproduct.ProductCategories.First().DateUpdated = DateTime.Now;
+                    var existingLinks = await _context.ProductCategories
+                        .Where(pc => pc.ProductId == dbproduct.Id)
+                        .ToListAsync();
+
+                    _context.ProductCategories.RemoveRange(existingLinks);
+
+                    dbproduct.ProductCategories.Add(new ProductCategory
+                    {
+                        ProductId = dbproduct.Id,
+                        CategoryId = category.Id,
+                        IsActive = true,
+                        DateCreated = DateTime.Now
+                    });
                 }
 
                 await _context.SaveChangesAsync();
             }
         }
+
     }
 }

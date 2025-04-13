@@ -1,16 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceWebApp.Models
 {
-    public class NewProductViewModel: BaseViewModel
+    public class NewProductViewModel : BaseViewModel
     {
-        public NewProductViewModel(): base("Create Product") { }
-        public int Id { get; set;  }
+        public NewProductViewModel() : base("Create Product") { }
+        public int Id { get; set; }
 
         [Display(Name = "Product name")]
         [Required(ErrorMessage = "Product name is Requred")]
         public string Name { get; set; }
+
+        [Display(Name = "Code")]
+        [Required(ErrorMessage = "Code is Requred")]
+        public string Code { get; set; }
 
         [Display(Name = "Brand")]
         [Required(ErrorMessage = "Brand is Requred")]

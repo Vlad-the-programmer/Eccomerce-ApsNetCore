@@ -20,6 +20,7 @@ namespace EcommerceRestApi.Services
         {
             var order = await _context.Orders
                 .Include(o => o.OrderItems)
+                .ThenInclude(o => o.Product)
                 .Include(o => o.Customer)
                 .Include(o => o.DeliveryMethodOrders)
                 .Include(o => o.Payments)
@@ -31,12 +32,21 @@ namespace EcommerceRestApi.Services
                 return null;
             }
 
+            var address = order.Customer.Addresses.FirstOrDefault();
             return new OrderViewModel
             {
                 Code = order.Code,
                 CustomerId = order.CustomerId,
                 OrderDate = order.OrderDate,
                 TotalAmount = order.TotalAmount,
+                Street = address?.Street,
+                City = address?.City,
+                FlatNumber = address?.FlatNumber,
+                HouseNumber = address?.HouseNumber,
+                State = address?.State,
+                PostalCode = address?.PostalCode,
+                CountryId = address?.CountryId,
+                CountryName = address?.CountryId != null ? _context.Countries.FirstOrDefault(c => c.Id == address.CountryId)?.CountryName : "",
                 OrderStatus = OrderProcessingFuncs.GetEnumValueForOrderStatus(order.Status),
                 PaymentMethod = OrderProcessingFuncs.GetEnumValueForPaymentMethod(order.Payments.FirstOrDefault()?.PaymentMethod?.PaymentType),
                 DeliveryMethod = OrderProcessingFuncs.GetEnumValueForDeliveryMethod(order.DeliveryMethodOrders.FirstOrDefault()?.DeliveryMethod.MethodName),
@@ -46,8 +56,8 @@ namespace EcommerceRestApi.Services
                     Quantity = oi.Quantity,
                     UnitPrice = oi.UnitPrice,
                     OrderId = oi.OrderId,
-                    Product = oi.Product,
-                    Order = oi.Order,
+                    ProductName = oi.Product.Name,
+                    ProductBrand = oi.Product.Brand,
                 }).ToList()
             };
         }
@@ -123,6 +133,31 @@ namespace EcommerceRestApi.Services
                     UnitPrice = item.UnitPrice,
                     DateCreated = DateTime.Now,
                 });
+            }
+
+            Address newAddress = new Address
+            {
+                Street = data.Street,
+                FlatNumber = data.FlatNumber,
+                HouseNumber = data.HouseNumber,
+                State = data.State,
+                PostalCode = data.PostalCode,
+                City = data.City,
+                CountryId = data.CountryId ?? _context.Countries.FirstOrDefault(c => c.CountryName == data.CountryName)?.Id,
+                CustomerId = data.CustomerId,
+                DateCreated = DateTime.Now,
+                IsActive = true
+            };
+
+            var oldAddress = order.Customer.Addresses.FirstOrDefault();
+            if (oldAddress != null)
+            {
+                oldAddress = newAddress;
+            }
+            else
+            {
+                _context.Addresses.Add(newAddress);
+                order.Customer.Addresses.Add(newAddress);
             }
 
             await _context.Orders.AddAsync(order);

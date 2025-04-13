@@ -1,10 +1,9 @@
-﻿using EcommerceRestApi.Models;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceWebApp.Models
 {
-    public class OrderItemViewModel: BaseViewModel
+    public class OrderItemViewModel : BaseViewModel
     {
         [Required(ErrorMessage = "Order ID is required.")]
         public int OrderId { get; set; }
@@ -21,8 +20,10 @@ namespace EcommerceWebApp.Models
         [Range(0.01, double.MaxValue, ErrorMessage = "Unit Price must be greater than 0.")]
         public decimal UnitPrice { get; set; }
 
-        public OrderViewModel Order { get; set; } = null!;
+        //public OrderViewModel Order { get; set; } = null!;
 
-        public NewProductViewModel Product { get; set; } = null!;
+        //public NewProductViewModel Product { get; set; } = null!;
+        public string ProductName { get; set; }
+        public string ProductBrand { get; set; }
     }
 }

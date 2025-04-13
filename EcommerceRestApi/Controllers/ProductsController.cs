@@ -1,13 +1,8 @@
 ﻿using EcommerceRestApi.Helpers.Data.ResponseModels;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
-using EcommerceRestApi.Helpers.Static;
-using EcommerceRestApi.Models;
-using EcommerceRestApi.Models.Common;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceRestApi.Controllers
@@ -74,13 +69,13 @@ namespace EcommerceRestApi.Controllers
             var product = await _service.GetProductByIDAsync(id);
             if (product == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
             return Ok(product);
         }
 
         // POST: api/products
-        [Authorize(Roles = UserRoles.Admin)]
+        //[Authorize(Roles = UserRoles.Admin)]
         [HttpPost("create")]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseModel))]
         public async Task<IActionResult> Create([FromBody] NewProductViewModel model)
@@ -89,8 +84,8 @@ namespace EcommerceRestApi.Controllers
             {
                 return BadRequest(new ResponseModel
                 {
-                                            Message = "Invalid input data.",
-                                            Errors = ModelState.Values
+                    Message = "Invalid input data.",
+                    Errors = ModelState.Values
                                             .SelectMany(v => v.Errors)
                                             .Select(e => e.ErrorMessage)
                                             .ToList()
@@ -102,7 +97,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         // PUT: api/products/5
-        [Authorize(Roles = UserRoles.Admin)]
+        //[Authorize(Roles = UserRoles.Admin)]
         [HttpPut("update/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest), ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -112,8 +107,8 @@ namespace EcommerceRestApi.Controllers
             {
                 return BadRequest(new ResponseModel
                 {
-                                            Message = "Invalid input data.",
-                                            Errors = ModelState.Values
+                    Message = "Invalid input data.",
+                    Errors = ModelState.Values
                                                 .SelectMany(v => v.Errors)
                                                 .Select(e => e.ErrorMessage)
                                                 .ToList()
