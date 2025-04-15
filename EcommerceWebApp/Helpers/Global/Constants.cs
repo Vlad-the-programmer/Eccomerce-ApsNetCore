@@ -33,8 +33,8 @@ public static class GlobalConstants
     public const string RegisterEndpoint = "api/account/register/";
     public const string LogoutEndpoint = "api/account/logout/";
     public const string AccessDeniedEndpoint = "api/account/access-denied/";
-    public const string UserDeleteEndpoint = "api/account/";
-    public const string UserUpdateEndpoint = "api/account/";
+    public const string UserDeleteEndpoint = "api/account";
+    public const string UserUpdateEndpoint = "api/account";
     public const string UserCreateEndpoint = "api/account/";
     public const string GetCurrentUserEndpoint = "api/account/get-current-user/";
 
@@ -45,6 +45,12 @@ public static class GlobalConstants
     public const string AddItemToCartEndpoint = "api/cart/"; //HTTP_POST
     public const string RemoveItemFromCartEndpoint = "api/cart/remove-item/"; // + id
     public const string GetCartProductById = "api/cart/cart-item/"; // + {product_id}/
+
+    // Reviews 
+    public const string ReviewsEndpoint = "api/reviews";
+    public const string ReviewCreateEndpoint = "api/reviews";
+    public const string ReviewUpdateEndpoint = "api/reviews";
+    public const string ReviewsDeleteEndpoint = "api/reviews";
 
     // Other Constants
     public const int MaxRetryAttempts = 3;

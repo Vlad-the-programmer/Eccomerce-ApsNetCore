@@ -58,7 +58,7 @@ namespace EcommerceRestApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            var products = await _service.GetAllAsync();
+            var products = await _service.GetProducts();
             return Ok(products);
         }
 

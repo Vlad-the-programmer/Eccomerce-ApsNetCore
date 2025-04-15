@@ -12,7 +12,7 @@ namespace EcommerceWebApp.Helpers.Cart
 
         private readonly ISession _session;
 
-        private ShoppingCart(ISession? session=null)
+        private ShoppingCart(ISession? session = null)
         {
             _session = session;
         }
@@ -28,7 +28,7 @@ namespace EcommerceWebApp.Helpers.Cart
 
         public void AddItemToCart(NewProductViewModel product)
         {
-            
+
         }
 
         public void RemoveItemFromCart(NewProductViewModel product)
@@ -43,7 +43,7 @@ namespace EcommerceWebApp.Helpers.Cart
         public double GetShoppingCartTotal()
         {
             var total = GetShoppingCartItems().Where(n => n.ShoppingCartId == ShoppingCartId).Select(n => n.Product.Price * n.Amount).Sum();
-            return total;
+            return (double)total;
         }
     }
 }

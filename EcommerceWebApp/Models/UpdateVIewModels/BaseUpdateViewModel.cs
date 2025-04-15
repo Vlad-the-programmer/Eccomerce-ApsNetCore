@@ -6,5 +6,7 @@ namespace EcommerceWebApp.Models.UpdateViewModels
     {
         [Display(Name = "IsActive")]
         public bool IsActive { get; set; }
+
+        public int Id { get; set; }
     }
 }

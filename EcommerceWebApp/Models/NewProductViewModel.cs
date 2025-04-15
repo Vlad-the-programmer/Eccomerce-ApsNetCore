@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace EcommerceWebApp.Models
 {
@@ -21,7 +22,7 @@ namespace EcommerceWebApp.Models
 
         [Display(Name = "Price")]
         [Required(ErrorMessage = "Price is Requred")]
-        public int Price { get; set; }
+        public decimal Price { get; set; }
 
         [Display(Name = "About")]
         public string? About { get; set; } = default!;
@@ -59,5 +60,9 @@ namespace EcommerceWebApp.Models
 
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; }
+        public IList<ReviewViewModel> Reviews { get; set; } = new List<ReviewViewModel>();
+
+        [JsonIgnore]
+        public ReviewViewModel ReviewForm { get; set; } = new ReviewViewModel();
     }
 }

@@ -3,6 +3,7 @@ using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services.Base;
+using Inventory_Management_Sustem.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Services
@@ -11,9 +12,11 @@ namespace EcommerceRestApi.Services
     {
 
         private readonly AppDbContext _context;
-        public ProductsService(AppDbContext context) : base(context)
+        private readonly IReviewsService _reviewsService;
+        public ProductsService(AppDbContext context, IReviewsService reviewsService) : base(context)
         {
             _context = context;
+            _reviewsService = reviewsService;
         }
 
         public async Task AddNewProductAsync(NewProductViewModel data)
@@ -67,12 +70,45 @@ namespace EcommerceRestApi.Services
         //    return response;
         //}
 
-        public async Task<Product?> GetProductByIDAsync(int id)
+        public async Task<ProductDto?> GetProductByIDAsync(int id)
         {
-            return await _context.Products
+            var product = await _context.Products
                     .Include(p => p.Reviews)
                     .Where(p => p.Id == id)
                     .FirstOrDefaultAsync();
+            if (product == null) return null;
+
+            //return new NewProductViewModel
+            //{
+            //    Id = product.Id,
+            //    About = product.About,
+            //    LongAbout = product.LongAbout,
+            //    Name = product.Name,
+            //    Photo = product.Photo,
+            //    OtherPhotos = product.OtherPhotos,
+            //    Price = product.Price,
+            //    Brand = product.Brand,
+            //    CategoryCode = product.ProductCategories.FirstOrDefault()?.Category?.Code,
+            //    SubcategoryCode = product.Subcategory.Code,
+            //    Code = product.Code,
+            //    Stock = product.Stock,
+            //    Reviews = await _reviewsService.GetReviews(),
+            //};
+            var p = ProductDto.ToDto(product);
+
+            return p;
+        }
+
+        public async Task<List<ProductDto>> GetProducts()
+        {
+            return await _context.Products
+                                 .Include(p => p.Reviews)
+                                 .ThenInclude(r => r.Customer)
+                                 .Include(p => p.ProductCategories)
+                                 .ThenInclude(pc => pc.Category)
+                                 .Include(p => p.Subcategory)
+                                 .Select(p => ProductDto.ToDto(p))
+                                 .ToListAsync();
         }
 
         public async Task UpdateProductAsync(int id, ProductUpdateVM data)

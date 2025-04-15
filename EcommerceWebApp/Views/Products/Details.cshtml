@@ -41,6 +41,150 @@
                     </div>
                 </div>
             </div>
+            @if (Model.Reviews.Any())
+            {
+                <div class="mt-5">
+                    <h4 class="text-center mb-4">Customer Reviews</h4>
+                    @foreach (var review in Model.Reviews)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    @review.Customer.UserName
+                                    <span class="text-warning ms-2">
+                                        @for (int i = 0; i < review.Rating; i++)
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                        @for (int i = review.Rating; i < 5; i++)
+                                        {
+                                            <i class="bi bi-star"></i>
+                                        }
+                                    </span>
+                                </h6>
+                                <p class="card-text">@review.ReviewText</p>
+
+                                @* @if (ViewBag.CurrentUserId == review.CustomerId.ToString()) *@
+                                @* { *@
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-outline-primary me-2 edit-review-btn" data-id="@review.Id">Edit</button>
+                                        <button class="btn btn-sm btn-outline-danger delete-review-btn" data-id="@review.Id">Delete</button>
+                                    </div>
+                                @* }  *@
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="mt-5 text-center">
+                    <p class="text-muted">No reviews yet.</p>
+                </div>
+            }
+            <div class="mt-4">
+                <button class="btn btn-outline-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#reviewFormCollapse" aria-expanded="false" aria-controls="reviewFormCollapse">
+                    <i class="bi bi-pencil-square"></i> Write a Review
+                </button>
+
+                <div class="collapse" id="reviewFormCollapse">
+                    <div class="card card-body border-0 shadow-sm">
+                        <form asp-controller="Reviews" asp-action="CreateOrUpdate" method="post" id="reviewForm">
+                            <input type="hidden" name="ProductId" id="ProductId" value="@Model.Id" />
+                            <input type="hidden" name="CustomerId" id="CustomerId" value="@ViewBag.CurrentUserId" />
+                            <input type="hidden" name="Id" id="Id" />
+                            <select name="Rating" id="Rating" class="form-select">
+                                <option value="">-- Select Rating --</option>
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <option value="@i">@i Star@(i > 1 ? "s" : "")</option>
+                                }
+                            </select>
+                            <textarea name="ReviewText" id="ReviewText" placeholder="Review" class="form-control" rows="4"></textarea>
+
+
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success review-submit-btn">Submit Review</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.delete-review-btn').click(function () {
+                const reviewId = $(this).data('id');
+
+                if (confirm("Are you sure you want to delete this review?")) {
+                    $.ajax({
+                        url: `/Reviews/${reviewId}`,
+                        method: 'DELETE',
+                        success: function () {
+                            location.reload(); // or remove the element from DOM for smoother UX
+                        },
+                        error: function () {
+                            alert("Failed to delete review.");
+                        }
+                    });
+                }
+            });
+        });
+
+            $(document).ready(function () {
+            $('.edit-review-btn').click(function () {
+                const reviewId = $(this).data('id');
+
+                $.get(`/Reviews/${reviewId}`, function (data) {
+                    // Populate form
+                    $('#Id').val(data.id);
+                    $('#ProductId').val(data.productId);
+                    $('#Rating').val(data.rating);
+                    $('#ReviewText').val(data.reviewText);
+
+
+                    // Open the form
+                    const collapse = bootstrap.Collapse.getOrCreateInstance(document.getElementById('reviewFormCollapse'));
+                    collapse.show();
+
+                    // Optionally change button text to "Update Review"
+                    $('.review-submit-btn').text("Update Review");
+                });
+            });
+        });
+
+           $('#reviewForm').submit(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function () {
+                    const productId = $('#ProductId').val();
+                    window.location.href = `/Products/Details/${productId}`;
+                },
+                error: function (xhr) {
+                    alert("Error: " + xhr.responseText);
+                }
+            });
+        });
+
+
+                    $('#reviewFormCollapse').on('show.bs.collapse', function () {
+                    $('#Id').val('');
+                    $('#Rating').val('');
+                    $('#ReviewText').val('');
+                    $('.review-submit-btn').text("Submit Review");
+        });
+
+    </script>
+}

@@ -16,9 +16,9 @@ public partial class Product : EntityBase
     [StringLength(30)]
     public string Code { get; set; } = null!;
 
-    public int Price { get; set; }
+    public decimal Price { get; set; }
 
-    public int? OldPrice { get; set; }
+    public decimal? OldPrice { get; set; }
 
     [StringLength(500)]
     public string? About { get; set; }

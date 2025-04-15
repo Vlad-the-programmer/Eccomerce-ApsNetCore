@@ -34,6 +34,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ISubcategoryService, SubCategoryService>();
+builder.Services.AddScoped<IReviewsService, ReviewService>();
 
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

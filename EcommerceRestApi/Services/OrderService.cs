@@ -19,13 +19,17 @@ namespace EcommerceRestApi.Services
         public async Task<OrderViewModel?> GetOrderByCodeAsync(string code)
         {
             var order = await _context.Orders
-                .Include(o => o.OrderItems)
-                .ThenInclude(o => o.Product)
-                .Include(o => o.Customer)
-                .Include(o => o.DeliveryMethodOrders)
-                .Include(o => o.Payments)
-                .Include(o => o.Shipments)
-                .FirstOrDefaultAsync(o => o.Code == code);
+                .Include(item => item.Customer)
+                                    .ThenInclude(item => item.User)
+                                    .Include(item => item.Customer.Addresses)
+                                    .Include(item => item.Shipments)
+                                    .ThenInclude(item => item.DeliveryMethod)
+                                    .ThenInclude(item => item.DeliveryMethodOrders)
+                                    .Include(item => item.Payments)
+                                    .Include(item => item.OrderItems)
+                                    .ThenInclude(item => item.Product)
+                                    .ThenInclude(item => item.ProductCategories)
+                                    .FirstOrDefaultAsync(o => o.Code == code);
 
             if (order == null)
             {
@@ -166,8 +170,17 @@ namespace EcommerceRestApi.Services
 
         public async Task<IEnumerable<OrderViewModel>> GetOrdersAsync()
         {
-            return await _context.Orders.Include(o => o.Customer)
-                                        .Include(o => o.OrderItems)
+            return await _context.Orders
+                                    .Include(item => item.Customer)
+                                    .ThenInclude(item => item.User)
+                                    .Include(item => item.Customer.Addresses)
+                                    .Include(item => item.Shipments)
+                                    .ThenInclude(item => item.DeliveryMethod)
+                                    .ThenInclude(item => item.DeliveryMethodOrders)
+                                    .Include(item => item.Payments)
+                                    .Include(item => item.OrderItems)
+                                    .ThenInclude(item => item.Product)
+                                    .ThenInclude(item => item.ProductCategories)
                                         .Select(o => new OrderViewModel
                                         {
                                             Code = o.Code,

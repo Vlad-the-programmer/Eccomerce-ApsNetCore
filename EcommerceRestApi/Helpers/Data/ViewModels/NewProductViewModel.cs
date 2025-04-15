@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EcommerceRestApi.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceRestApi.Helpers.Data.ViewModels
 {
@@ -7,7 +8,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         public int Id { get; set; }
         [Display(Name = "Product name")]
         [Required(ErrorMessage = "Product name is Requred")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [Display(Name = "Brand")]
         [Required(ErrorMessage = "Code is Requred")]
@@ -18,7 +19,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
 
         [Display(Name = "Price")]
         [Required(ErrorMessage = "Price is Requred")]
-        public int Price { get; set; }
+        public decimal Price { get; set; }
 
         [Display(Name = "About")]
         public string? About { get; set; } = default!;
@@ -38,13 +39,10 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         [Required(ErrorMessage = "Stock is Requred")]
         public int Stock { get; set; }
 
-        //[Display(Name = "Select Product SubCategory")]
-        //[Required(ErrorMessage = "Subcategory is Requred")]
-        //public int SubcategoryId { get; set; }
+        [Display(Name = "Is Active")]
 
-        //[Display(Name = "Select Product Category")]
-        //[Required(ErrorMessage = "Category is Requred")]
-        //public int CategoryId { get; set; }
+        public bool IsActive { get; set; }
+
 
         [Display(Name = "SubCategory Code")]
         [Required(ErrorMessage = "Subcategory Code is Requred")]
@@ -53,5 +51,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         [Display(Name = "Category Code")]
         [Required(ErrorMessage = "Category code is Requred")]
         public string CategoryCode { get; set; }
+
+        public IList<Review> Reviews { get; set; } = new List<Review>();
     }
 }

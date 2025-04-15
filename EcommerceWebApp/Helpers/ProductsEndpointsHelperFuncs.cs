@@ -13,7 +13,8 @@ namespace EcommerceWebApp.Helpers
             {
                 var response = await apiService.GetDataAsync(endpoint); // response is a string
                 products = JsonSerializer.Deserialize<List<NewProductViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
-            } catch(HttpRequestException ex) { }
+            }
+            catch (HttpRequestException ex) { }
 
             return products;
         }
@@ -48,9 +49,10 @@ namespace EcommerceWebApp.Helpers
             try
             {
                 var response = await apiService.GetDataAsync(endpoint); // response is a string
-                product = JsonSerializer.Deserialize<NewProductViewModel>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+                product = JsonSerializer.Deserialize<NewProductViewModel?>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
-            } catch(HttpRequestException ex) { product = null; }
+            }
+            catch (HttpRequestException ex) { product = null; }
             return product;
         }
     }

@@ -1,7 +1,5 @@
 ﻿using EcommerceRestApi.Models;
 using EcommerceWebApp.ApiServices;
-using EcommerceWebApp.Models;
-using System.ComponentModel;
 using System.Text.Json;
 
 namespace EcommerceWebApp.Helpers
@@ -19,11 +17,11 @@ namespace EcommerceWebApp.Helpers
         {
             var response = await apiService.GetDataAsync(endpoint); // response is a string
 
-            var cartItems = JsonSerializer.Deserialize<List<ShoppingCartItemVM>>(response, 
+            var cartItems = JsonSerializer.Deserialize<List<ShoppingCartItemVM>>(response,
                                                         GlobalConstants.JsonSerializerOptions); // Deserialize from string
             if (cartItems.Any())
             {
-                cartItems.ForEach(e => e.TotalPrice = e.Product.Price * e.Amount);
+                cartItems.ForEach(e => e.TotalPrice = (double)e.Product.Price * e.Amount);
                 return cartItems;
             }
             return new List<ShoppingCartItemVM>();
@@ -38,11 +36,12 @@ namespace EcommerceWebApp.Helpers
 
                 cartItem = JsonSerializer.Deserialize<ShoppingCartItemVM>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
-            } catch (HttpRequestException ex)
+            }
+            catch (HttpRequestException ex)
             {
                 cartItem = null;
             }
-                                                        
+
             return cartItem;
         }
 
@@ -61,8 +60,8 @@ namespace EcommerceWebApp.Helpers
             return string.Empty;
         }
 
-        public static async Task<string> RemoveItemFromCart(string endpoint,    
-                                                            IApiService apiService, 
+        public static async Task<string> RemoveItemFromCart(string endpoint,
+                                                            IApiService apiService,
                                                             ShoppingCartItemVM cartItem)
         {
             try
@@ -93,7 +92,7 @@ namespace EcommerceWebApp.Helpers
 
         public static async Task<double> GetShoppingCartTotal(IApiService apiService)
         {
-            var total = ( await GetCartItems(GlobalConstants.GetCartItemsEndpoint, apiService) )
+            var total = (double)(await GetCartItems(GlobalConstants.GetCartItemsEndpoint, apiService))
                                                 .Select(n => n.Product.Price * n.Amount).Sum();
             return total;
         }

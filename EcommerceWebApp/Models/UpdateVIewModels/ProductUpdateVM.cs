@@ -16,7 +16,7 @@ namespace EcommerceWebApp.Models.UpdateViewModels
         public string? Brand { get; set; }
 
         [Display(Name = "Price")]
-        public int? Price { get; set; }
+        public decimal? Price { get; set; }
 
         [Display(Name = "About")]
         public string? About { get; set; } = default!;

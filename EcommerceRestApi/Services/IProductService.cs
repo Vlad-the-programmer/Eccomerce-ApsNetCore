@@ -1,14 +1,15 @@
-﻿using EcommerceRestApi.Models;
-using EcommerceRestApi.Services.Base;
-using EcommerceRestApi.Helpers.Data.ViewModels;
+﻿using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
+using EcommerceRestApi.Models;
+using EcommerceRestApi.Services.Base;
+using Inventory_Management_Sustem.Models.Dtos;
 
 namespace EcommerceRestApi.Services
 {
     public interface IProductsService : IEntityBaseRepository<Product>
     {
-        Task<Product> GetProductByIDAsync(int id);
-        //Task<NewProductsDropDownsVm> GetNewProductsDropDownValues();
+        Task<ProductDto> GetProductByIDAsync(int id);
+        Task<List<ProductDto>> GetProducts();
 
         Task AddNewProductAsync(NewProductViewModel data);
 

@@ -14,8 +14,6 @@ namespace EcommerceRestApi.Models.Context
         public AppDbContext()
         {
         }
-        public virtual DbSet<Subcategory> Subcategories { get; set; }
-
         public virtual DbSet<Address> Addresses { get; set; }
 
         public virtual DbSet<Category> Categories { get; set; }
@@ -42,6 +40,7 @@ namespace EcommerceRestApi.Models.Context
 
         public virtual DbSet<Product> Products { get; set; }
 
+        public virtual DbSet<ProductCategory> ProductCategories { get; set; }
 
         public virtual DbSet<Review> Reviews { get; set; }
 
@@ -49,8 +48,11 @@ namespace EcommerceRestApi.Models.Context
 
         public virtual DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
 
-        // Many  to many  relationships
-        public virtual DbSet<ProductCategory> ProductCategories { get; set; }
+        public virtual DbSet<Subcategory> Subcategories { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+            => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=OnlineStore;Integrated Security=True; TrustServerCertificate=True;");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -78,27 +80,6 @@ namespace EcommerceRestApi.Models.Context
                 entity.Property(e => e.DateDeleted).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.DateUpdated).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.IsActive).HasDefaultValue(true);
-                // ✅ Configure One-to-Many: Category -> Subcategories
-                entity.HasMany(c => c.Subcategories)
-                    .WithOne(s => s.Category)
-                    .HasForeignKey(s => s.CategoryId)
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            // ✅ Configure Many-to-Many: Category <-> Products
-            modelBuilder.Entity<ProductCategory>(entity =>
-            {
-                entity.HasKey(pc => new { pc.ProductId, pc.CategoryId });
-
-                entity.HasOne(pc => pc.Product)
-                    .WithMany(p => p.ProductCategories)
-                    .HasForeignKey(pc => pc.ProductId)
-                    .OnDelete(DeleteBehavior.NoAction); // Prevent cascade delete
-
-                entity.HasOne(pc => pc.Category)
-                    .WithMany(c => c.ProductCategories)
-                    .HasForeignKey(pc => pc.CategoryId)
-                    .OnDelete(DeleteBehavior.NoAction); // Prevent cascade delete
             });
 
             modelBuilder.Entity<Country>(entity =>
@@ -118,14 +99,10 @@ namespace EcommerceRestApi.Models.Context
                 entity.Property(e => e.DateCreated).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.DateDeleted).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.DateUpdated).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.Points).HasDefaultValue(0);
                 entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.Points).HasDefaultValue(0);
 
-                entity.HasOne(d => d.User)
-                .WithMany(p => p.Customers)
-                .HasForeignKey(c => c.UserId)
-                .HasConstraintName("FK__Customers__UserI__5BE2A6F2")
-                .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.User).WithMany(p => p.Customers).HasConstraintName("FK__Customers__UserI__5BE2A6F2");
             });
 
             modelBuilder.Entity<DeliveryMethod>(entity =>
@@ -161,9 +138,7 @@ namespace EcommerceRestApi.Models.Context
                 entity.Property(e => e.DateUpdated).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.IsActive).HasDefaultValue(true);
 
-                entity.HasOne(d => d.Customer).WithMany(p => p.Invoices)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Invoice__Custome__32AB8735");
+                entity.HasOne(d => d.Customer).WithMany(p => p.Invoices).HasConstraintName("FK__Invoice__Custome__32AB8735");
 
                 entity.HasOne(d => d.Payment).WithMany(p => p.Invoices).HasConstraintName("FK__Invoice__Payment__339FAB6E");
             });
@@ -189,25 +164,21 @@ namespace EcommerceRestApi.Models.Context
                 entity.Property(e => e.DateCreated).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.DateDeleted).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.DateUpdated).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
                 entity.Property(e => e.OrderDate).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.Status).HasDefaultValue("Pending");
-                entity.Property(e => e.IsActive).HasDefaultValue(true);
 
                 entity.HasOne(d => d.Customer).WithMany(p => p.Orders).HasConstraintName("FK__Orders__Customer__6383C8BA");
             });
 
             modelBuilder.Entity<OrderItem>(entity =>
             {
-                entity.HasKey(e => e.Id);
+                entity.HasKey(e => e.Id).HasName("PK__OrderIte__3214EC07ABC16B2E");
 
                 entity.Property(e => e.DateCreated).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.DateDeleted).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.DateUpdated).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.IsActive).HasDefaultValue(true);
-
-                entity.HasOne(d => d.Order).WithMany(p => p.OrderItems).HasConstraintName("FK__OrderItem__Order__693CA210");
-
-                entity.HasOne(d => d.Product).WithMany(p => p.OrderItems).HasConstraintName("FK__OrderItem__Produ__6A30C649");
             });
 
             modelBuilder.Entity<Payment>(entity =>
@@ -217,15 +188,12 @@ namespace EcommerceRestApi.Models.Context
                 entity.Property(e => e.DateCreated).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.DateDeleted).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.DateUpdated).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.PaymentDate).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.PaymentDate).HasDefaultValueSql("(getdate())");
 
-                // Ensure that OrderId is nullable in the database
-                entity.HasOne(d => d.Order)
-                            .WithMany(p => p.Payments)
-                            .HasForeignKey(d => d.OrderId)
-                            .OnDelete(DeleteBehavior.SetNull) // SetNull behavior is correct here
-                            .HasConstraintName("FK__Payments__OrderI__75A278F5");
+                entity.HasOne(d => d.Order).WithMany(p => p.Payments)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("FK__Payments__OrderI__75A278F5");
             });
 
             modelBuilder.Entity<PaymentMethod>(entity =>
@@ -246,38 +214,6 @@ namespace EcommerceRestApi.Models.Context
                 entity.Property(e => e.DateDeleted).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.DateUpdated).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.IsActive).HasDefaultValue(true);
-
-                entity.HasOne(p => p.Subcategory)
-                .WithMany(s => s.Products)
-                .HasForeignKey(p => p.SubcategoryId)
-                .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<Subcategory>(entity =>
-            {
-                entity.HasKey(e => e.Id).HasName("PK_Subcategories");
-
-                entity.Property(e => e.DateCreated)
-                    .HasDefaultValueSql("GETDATE()");
-
-                entity.Property(e => e.DateDeleted)
-                    .HasDefaultValueSql("GETDATE()");
-
-                entity.Property(e => e.DateUpdated)
-                    .HasDefaultValueSql("GETDATE()");
-                entity.Property(e => e.IsActive).HasDefaultValue(true);
-
-                // ✅ Many-to-One: Subcategory → Category
-                entity.HasOne(s => s.Category)
-                    .WithMany(c => c.Subcategories)
-                    .HasForeignKey(s => s.CategoryId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                // ✅ One-to-Many: Subcategory → Products
-                entity.HasMany(s => s.Products)
-                    .WithOne(p => p.Subcategory)
-                    .HasForeignKey(p => p.SubcategoryId)
-                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<ProductCategory>(entity =>
@@ -288,9 +224,13 @@ namespace EcommerceRestApi.Models.Context
                 entity.Property(e => e.DateDeleted).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.DateUpdated).HasDefaultValueSql("(getdate())");
 
-                entity.HasOne(d => d.Category).WithMany(p => p.ProductCategories).HasConstraintName("FK__ProductCa__Categ__5535A963");
+                entity.HasOne(d => d.Category).WithMany(p => p.ProductCategories)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ProductCa__Categ__5535A963");
 
-                entity.HasOne(d => d.Product).WithMany(p => p.ProductCategories).HasConstraintName("FK__ProductCa__Produ__5441852A");
+                entity.HasOne(d => d.Product).WithMany(p => p.ProductCategories)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ProductCa__Produ__5441852A");
             });
 
             modelBuilder.Entity<Review>(entity =>
@@ -322,10 +262,13 @@ namespace EcommerceRestApi.Models.Context
                 entity.HasOne(d => d.Order).WithMany(p => p.Shipments).HasConstraintName("FK__Shipments__Order__1EA48E88");
             });
 
-            modelBuilder.Entity<ShoppingCartItem>()
-               .HasOne(s => s.Product) // ShoppingCartItem has one Product
-               .WithMany(p => p.ShoppingCartItems) // Product has many ShoppingCartItems
-               .HasForeignKey(s => s.ProductId); // Foreign key is ProductId
+            modelBuilder.Entity<Subcategory>(entity =>
+            {
+                entity.Property(e => e.DateCreated).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.DateDeleted).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.DateUpdated).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+            });
 
             // Explicitly configure the primary key for IdentityUserLogin
             modelBuilder.Entity<IdentityUserLogin<string>>()
