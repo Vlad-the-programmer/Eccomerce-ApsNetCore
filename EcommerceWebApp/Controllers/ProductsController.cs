@@ -11,10 +11,10 @@ namespace EcommerceWebApp.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<ProductsController> _logger;
         private readonly IApiService _apiService;
 
-        public ProductsController(ILogger<HomeController> logger, IApiService apiService)
+        public ProductsController(ILogger<ProductsController> logger, IApiService apiService)
         {
             _apiService = apiService;
             _logger = logger;

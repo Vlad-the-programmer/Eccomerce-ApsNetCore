@@ -165,6 +165,8 @@ namespace EcommerceRestApi.Services
             }
 
             await _context.Orders.AddAsync(order);
+            await InvoicePaymentHelperFuncs.GenerateInvoice(order, _context);
+
             await _context.SaveChangesAsync();
         }
 

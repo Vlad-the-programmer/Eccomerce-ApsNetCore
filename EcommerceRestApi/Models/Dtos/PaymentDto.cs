@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EcommerceRestApi.Models.Dtos
+﻿namespace EcommerceRestApi.Models.Dtos
 {
     public class PaymentDto
     {
@@ -18,5 +11,17 @@ namespace EcommerceRestApi.Models.Dtos
         public decimal Amount { get; set; }
 
         public DateTime PaymentDate { get; set; }
+
+        public static PaymentDto ToDto(Payment payment)
+        {
+            return new PaymentDto
+            {
+                Id = payment.Id,
+                OrderId = payment.OrderId,
+                Amount = payment.Amount,
+                PaymentDate = payment.PaymentDate,
+                PaymentMethodId = payment.PaymentMethodId
+            };
+        }
     }
 }

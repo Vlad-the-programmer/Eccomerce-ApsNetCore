@@ -51,7 +51,7 @@ namespace EcommerceWebApp.Controllers
 
 
             TempData["Success"] = "Login successful!";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Products");
         }
         public async Task<IActionResult> Register()
         {
@@ -96,7 +96,7 @@ namespace EcommerceWebApp.Controllers
                 //return View();
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Products");
         }
 
         public IActionResult AccessDenied(string ReturnUrl)
@@ -130,7 +130,7 @@ namespace EcommerceWebApp.Controllers
 
             try
             {
-                await _apiService.UpdateDataAsync(GlobalConstants.UserUpdateEndpoint + "{id}",
+                await _apiService.UpdateDataAsync($"{GlobalConstants.UserUpdateEndpoint}/{id}",
                                                     JsonSerializer.Serialize(updatedUser));
             }
             catch (HttpRequestException ex)
@@ -147,7 +147,7 @@ namespace EcommerceWebApp.Controllers
         {
             try
             {
-                await _apiService.DeleteDataAsync(GlobalConstants.UserDeleteEndpoint + "{id}");
+                await _apiService.DeleteDataAsync($"{GlobalConstants.UserDeleteEndpoint}/{id}");
                 //HttpContext.Session.Remove("auth_token");
             }
             catch (HttpRequestException e)

@@ -1,19 +1,17 @@
 ﻿using EcommerceRestApi.Models;
 using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
-using EcommerceWebApp.Helpers.Cart;
 using EcommerceWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace EcommerceWebApp.Controllers
 {
-    [Route("cart")]
     public class CartController : Controller
     {
         private readonly IApiService _apiService;
 
-        public CartController(IApiService apiService) 
+        public CartController(IApiService apiService)
         {
             _apiService = apiService;
         }
@@ -28,7 +26,8 @@ namespace EcommerceWebApp.Controllers
                 cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
                 cartTotal = await CartEndpointsHelperFuncs.GetShoppingCartTotal(_apiService);
 
-            } catch (HttpRequestException ex)
+            }
+            catch (HttpRequestException ex)
             {
                 TempData["Error"] = ex.Message;
                 Debug.WriteLine($"Error: {ex.Message}");
@@ -46,7 +45,8 @@ namespace EcommerceWebApp.Controllers
         {
             var cartItem = await CartEndpointsHelperFuncs.GetProductById(GlobalConstants.GetCartProductById + $"{product_id}", _apiService);
 
-            if (cartItem == null) {
+            if (cartItem == null)
+            {
                 return RedirectToAction(nameof(Index));
             }
 
@@ -66,7 +66,7 @@ namespace EcommerceWebApp.Controllers
 
             var message = await CartEndpointsHelperFuncs.RemoveItemFromCart(GlobalConstants.RemoveItemFromCartEndpoint,
                                                                                     _apiService, cartItem);
-           
+
             return RedirectToAction(nameof(Index));
         }
 
