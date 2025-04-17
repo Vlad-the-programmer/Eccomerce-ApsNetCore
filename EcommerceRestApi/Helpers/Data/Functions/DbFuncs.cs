@@ -163,7 +163,7 @@ namespace EcommerceRestApi.Helpers.Data.Functions
                 Role = registerVM.IsAdmin ? UserRoles.Admin : UserRoles.User,
                 PhoneNumber = registerVM.PhoneNumber,
                 IsActive = registerVM.IsActive,
-                IsAdmin = registerVM.IsActive,
+                IsAdmin = registerVM.IsAdmin,
                 DateCreated = DateTime.Now
             };
 

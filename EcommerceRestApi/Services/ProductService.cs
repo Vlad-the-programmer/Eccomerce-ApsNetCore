@@ -12,11 +12,9 @@ namespace EcommerceRestApi.Services
     {
 
         private readonly AppDbContext _context;
-        private readonly IReviewsService _reviewsService;
-        public ProductsService(AppDbContext context, IReviewsService reviewsService) : base(context)
+        public ProductsService(AppDbContext context) : base(context)
         {
             _context = context;
-            _reviewsService = reviewsService;
         }
 
         public async Task AddNewProductAsync(NewProductViewModel data)
@@ -27,6 +25,7 @@ namespace EcommerceRestApi.Services
                 Name = data.Name,
                 Brand = data.Brand,
                 Price = data.Price,
+                OldPrice = data.Price,
                 About = data.About,
                 LongAbout = data.LongAbout,
                 Photo = data.Photo,
@@ -58,17 +57,6 @@ namespace EcommerceRestApi.Services
 
         }
 
-        //public async Task<NewProductsDropDownsVm> GetNewProductsDropDownValues()
-        //{
-        //    var response = new NewProductsDropDownsVm()
-        //    {
-        //        Suppliers = await _context.Suppliers.OrderBy(n => n.FullName).ToListAsync(),
-        //        Companies = await _context.Companies.OrderBy(n => n.Name).ToListAsync(),
-        //        Brands = await _context.Brands.OrderBy(n => n.FullName).ToListAsync()
-
-        //    };
-        //    return response;
-        //}
 
         public async Task<ProductDto?> GetProductByIDAsync(int id)
         {
@@ -76,24 +64,9 @@ namespace EcommerceRestApi.Services
                     .Include(p => p.Reviews)
                     .Where(p => p.Id == id)
                     .FirstOrDefaultAsync();
+
             if (product == null) return null;
 
-            //return new NewProductViewModel
-            //{
-            //    Id = product.Id,
-            //    About = product.About,
-            //    LongAbout = product.LongAbout,
-            //    Name = product.Name,
-            //    Photo = product.Photo,
-            //    OtherPhotos = product.OtherPhotos,
-            //    Price = product.Price,
-            //    Brand = product.Brand,
-            //    CategoryCode = product.ProductCategories.FirstOrDefault()?.Category?.Code,
-            //    SubcategoryCode = product.Subcategory.Code,
-            //    Code = product.Code,
-            //    Stock = product.Stock,
-            //    Reviews = await _reviewsService.GetReviews(),
-            //};
             var p = ProductDto.ToDto(product);
 
             return p;

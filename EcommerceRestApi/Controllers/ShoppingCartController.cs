@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using EcommerceRestApi.Helpers.Data.ResponseModels;
+using EcommerceRestApi.Models;
+using EcommerceRestApi.Models.Context;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using EcommerceRestApi.Models.Context;
 using Microsoft.EntityFrameworkCore;
-using EcommerceRestApi.Models;
-using EcommerceRestApi.Helpers.Data.ResponseModels;
 
 namespace EcommerceRestApi.Controllers
 {
@@ -23,12 +22,13 @@ namespace EcommerceRestApi.Controllers
             _serviceProvider = services;
             _context = context;
             _session = _serviceProvider.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session;
+            ShoppingCartId = _session.GetString("CartId") ?? string.Empty;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetCreateCart()
         {
-            var context = _serviceProvider.GetService<AppDbContext>();
+            //var context = _serviceProvider.GetService<AppDbContext>();
 
             ShoppingCartId = _session.GetString("CartId") ?? Guid.NewGuid().ToString();
             _session.SetString("CartId", ShoppingCartId);
@@ -38,7 +38,6 @@ namespace EcommerceRestApi.Controllers
         [HttpGet("items")]
         public async Task<IActionResult> GetCartItems()
         {
-            ShoppingCartId = _session.GetString("CartId") ?? string.Empty;
 
             if (ShoppingCartId == string.Empty)
             {
@@ -51,17 +50,15 @@ namespace EcommerceRestApi.Controllers
                 return BadRequest(new ResponseModel { Message = "Your cart is empty." });
             }
 
-           var ShoppingCartItems = _context.ShoppingCartItems
-                                                    .Where(n => n.ShoppingCartId == ShoppingCartId).ToList();
-                
-           return Ok(ShoppingCartItems);
+            var ShoppingCartItems = _context.ShoppingCartItems
+                                                     .Where(n => n.ShoppingCartId == ShoppingCartId).ToList();
+
+            return Ok(ShoppingCartItems);
         }
 
         [HttpGet("cart-item/{product_id}")]
         public async Task<IActionResult> GetCartItem(int product_id)
         {
-            ShoppingCartId = _session.GetString("CartId") ?? string.Empty;
-
             if (ShoppingCartId == string.Empty)
             {
                 return NotFound(new ResponseModel { Message = "Cart does not exist!" });
@@ -124,8 +121,6 @@ namespace EcommerceRestApi.Controllers
         [HttpPost("remove-item/{id}")]
         public async Task<IActionResult> RemoveItemFromCart(ShoppingCartItemVM cartItem)
         {
-            ShoppingCartId = _session.GetString("CartId") ?? string.Empty;
-
             if (ShoppingCartId == string.Empty)
             {
                 return NotFound(new ResponseModel { Message = "Cart does not exist!" });
@@ -168,8 +163,7 @@ namespace EcommerceRestApi.Controllers
         [HttpDelete]
         public async Task<IActionResult> ClearCart()
         {
-            string cratId = _session.GetString("CartId");
-            if (string.IsNullOrEmpty(cratId))
+            if (string.IsNullOrEmpty(ShoppingCartId))
             {
                 return NotFound(new ResponseModel { Message = "Cart does not exist" });
             }

@@ -1,5 +1,7 @@
-﻿using EcommerceRestApi.Helpers.Enums;
+﻿using EcommerceRestApi.Helpers.Data.Functions;
+using EcommerceRestApi.Helpers.Enums;
 using EcommerceRestApi.Models;
+using EcommerceRestApi.Models.Context;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -65,6 +67,37 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         public string? CountryName { get; set; }
         public int? CountryId { get; set; }
 
-    }
+        public static OrderViewModel OrderToVm(Order order, AppDbContext context)
+        {
+            var address = order.Customer.Addresses.FirstOrDefault();
 
+            return new OrderViewModel
+            {
+                Code = order.Code,
+                CustomerId = order.CustomerId,
+                OrderDate = order.OrderDate,
+                TotalAmount = order.TotalAmount,
+                Street = address?.Street,
+                City = address?.City,
+                FlatNumber = address?.FlatNumber,
+                HouseNumber = address?.HouseNumber,
+                State = address?.State,
+                PostalCode = address?.PostalCode,
+                CountryId = address?.CountryId,
+                CountryName = address?.CountryId != null ? context.Countries.FirstOrDefault(c => c.Id == address.CountryId)?.CountryName : "",
+                OrderStatus = OrderProcessingFuncs.GetEnumValueForOrderStatus(order.Status),
+                PaymentMethod = OrderProcessingFuncs.GetEnumValueForPaymentMethod(order.Payments.FirstOrDefault()?.PaymentMethod?.PaymentType),
+                DeliveryMethod = OrderProcessingFuncs.GetEnumValueForDeliveryMethod(order.DeliveryMethodOrders.FirstOrDefault()?.DeliveryMethod.MethodName),
+                OrderItems = order.OrderItems.Select(oi => new OrderItemViewModel
+                {
+                    ProductId = oi.ProductId,
+                    Quantity = oi.Quantity,
+                    UnitPrice = oi.UnitPrice,
+                    OrderId = oi.OrderId,
+                    ProductName = oi.Product.Name,
+                    ProductBrand = oi.Product.Brand,
+                }).ToList()
+            };
+        }
+    }
 }

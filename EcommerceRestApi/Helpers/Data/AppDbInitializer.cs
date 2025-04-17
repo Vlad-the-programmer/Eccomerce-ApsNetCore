@@ -85,19 +85,49 @@ namespace EcommerceRestApi.Helpers.Data
                 {
                     if (context.Subcategories.ToList().Count > 0)
                     {
-                        context.Products.AddRange(new List<Product>
+                        var products = new List<Product>
                             {
-                                new Product { Name = "iPhone 13", Brand = "Apple", Code = "IP13", Price = 999, Stock = 10, SubcategoryId = context.Subcategories.First().Id, LongAbout = "Latest iPhone model", Photo = "https://tinyurl.com/2p8ypn72",
-                                    OtherPhotos = "https://tinyurl.com/2p8ypn72", IsActive = true, DateCreated = DateTime.Now },
-                                new Product { Name = "Nike Sneakers", Brand = "Nike", Code = "NS001", Price = 120, Stock = 25, SubcategoryId = context.Subcategories.ToList().First().Id, LongAbout = "High-quality running shoes",
-                                    Photo = "https://t.ly/y0Eky",
-                                    OtherPhotos = "https://t.ly/y0Eky", IsActive = true, DateCreated = DateTime.Now },
-                                new Product { Name = "Nike Sneakers", Brand = "Nike", Code = "NS002", Price = 120, Stock = 25, SubcategoryId = context.Subcategories.ToList().First().Id, LongAbout = "High-quality running shoes2",
-                                    Photo = "https://t.ly/y0Eky",
-                                    OtherPhotos = "https://t.ly/y0Eky", IsActive = true, DateCreated = DateTime.Now },
+                                new Product { Name = "iPhone 13", Brand = "Apple", Code = "IP13", Price = 999, Stock = 10,
+                                                SubcategoryId = context.Subcategories.First().Id, LongAbout = "Latest iPhone model",
+                                                Photo = "https://tinyurl.com/2p8ypn72", OtherPhotos = "https://tinyurl.com/2p8ypn72",
+                                                IsActive = true, DateCreated = DateTime.Now },
+                                new Product { Name = "Nike Sneakers", Brand = "Nike", Code = "NS001",
+                                            Price = 120, Stock = 25, SubcategoryId = context.Subcategories.ToList().First().Id,
+                                            LongAbout = "High-quality running shoes", Photo = "https://t.ly/y0Eky",
+                                            OtherPhotos = "https://t.ly/y0Eky", IsActive = true, DateCreated = DateTime.Now },
+                                new Product { Name = "Nike Sneakers", Brand = "Nike", Code = "NS002", Price = 120, Stock = 25,
+                                              SubcategoryId = context.Subcategories.ToList().First().Id,
+                                              LongAbout = "High-quality running shoes2", Photo = "https://t.ly/y0Eky",
+                                              OtherPhotos = "https://t.ly/y0Eky", IsActive = true, DateCreated = DateTime.Now },
 
+                        };
 
+                        products.ForEach(p =>
+                        {
+                            if (p.Code == products[0].Code)
+                            {
+                                p.ProductCategories.Add(new ProductCategory
+                                {
+                                    CategoryId = context.Categories.First().Id,
+                                    IsActive = true,
+                                    DateCreated = DateTime.Now
+                                });
+                            }
+                            else
+                            {
+                                p.ProductCategories.Add(new ProductCategory
+                                {
+                                    CategoryId = context.Categories.ToArray()[1].Id,
+                                    IsActive = true,
+                                    DateCreated = DateTime.Now
+                                });
+                            }
+                            p.OldPrice = p.Price;
                         });
+
+                        context.Products.AddRange();
+
+
                         context.SaveChanges();
                     }
                 }

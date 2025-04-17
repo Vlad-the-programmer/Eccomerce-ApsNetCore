@@ -37,33 +37,7 @@ namespace EcommerceRestApi.Services
             }
 
             var address = order.Customer.Addresses.FirstOrDefault();
-            return new OrderViewModel
-            {
-                Code = order.Code,
-                CustomerId = order.CustomerId,
-                OrderDate = order.OrderDate,
-                TotalAmount = order.TotalAmount,
-                Street = address?.Street,
-                City = address?.City,
-                FlatNumber = address?.FlatNumber,
-                HouseNumber = address?.HouseNumber,
-                State = address?.State,
-                PostalCode = address?.PostalCode,
-                CountryId = address?.CountryId,
-                CountryName = address?.CountryId != null ? _context.Countries.FirstOrDefault(c => c.Id == address.CountryId)?.CountryName : "",
-                OrderStatus = OrderProcessingFuncs.GetEnumValueForOrderStatus(order.Status),
-                PaymentMethod = OrderProcessingFuncs.GetEnumValueForPaymentMethod(order.Payments.FirstOrDefault()?.PaymentMethod?.PaymentType),
-                DeliveryMethod = OrderProcessingFuncs.GetEnumValueForDeliveryMethod(order.DeliveryMethodOrders.FirstOrDefault()?.DeliveryMethod.MethodName),
-                OrderItems = order.OrderItems.Select(oi => new OrderItemViewModel
-                {
-                    ProductId = oi.ProductId,
-                    Quantity = oi.Quantity,
-                    UnitPrice = oi.UnitPrice,
-                    OrderId = oi.OrderId,
-                    ProductName = oi.Product.Name,
-                    ProductBrand = oi.Product.Brand,
-                }).ToList()
-            };
+            return OrderViewModel.OrderToVm(order, _context);
         }
 
         public async Task UpdateOrderAsync(string code, OrderViewModel data)
@@ -183,24 +157,9 @@ namespace EcommerceRestApi.Services
                                     .Include(item => item.OrderItems)
                                     .ThenInclude(item => item.Product)
                                     .ThenInclude(item => item.ProductCategories)
-                                        .Select(o => new OrderViewModel
-                                        {
-                                            Code = o.Code,
-                                            CustomerId = o.CustomerId,
-                                            OrderDate = o.OrderDate,
-                                            TotalAmount = o.TotalAmount,
-                                            OrderStatus = OrderProcessingFuncs.GetEnumValueForOrderStatus(o.Status),
-                                            PaymentMethod = OrderProcessingFuncs.GetEnumValueForPaymentMethod(o.Payments.FirstOrDefault().PaymentMethod.PaymentType),
-                                            DeliveryMethod = OrderProcessingFuncs.GetEnumValueForDeliveryMethod(o.DeliveryMethodOrders.FirstOrDefault().DeliveryMethod.MethodName),
-                                            OrderItems = o.OrderItems.Select(oi => new OrderItemViewModel
-                                            {
-                                                ProductId = oi.ProductId,
-                                                Quantity = oi.Quantity,
-                                                UnitPrice = oi.UnitPrice,
-                                                OrderId = oi.OrderId
-                                            }).ToList()
-
-                                        }).ToListAsync();
+                                        .Select(o =>
+                                            OrderViewModel.OrderToVm(o, _context)
+                                        ).ToListAsync();
         }
     }
 }

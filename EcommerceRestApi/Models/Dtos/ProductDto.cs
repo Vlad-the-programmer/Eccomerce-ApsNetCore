@@ -11,7 +11,6 @@ namespace Inventory_Management_Sustem.Models.Dtos
         public string Code { get; set; }
         public decimal Price { get; set; }
         public int Stock { get; set; }
-        public int SubcategoryId { get; set; }
         public string? Photo { get; set; } = default!;
         public string? OtherPhotos { get; set; } = default!;
         public string? About { get; set; } = default!;
@@ -29,6 +28,8 @@ namespace Inventory_Management_Sustem.Models.Dtos
             dto.SubcategoryCode = product.Subcategory?.Code ?? string.Empty;
             dto.CategoryCode = product.ProductCategories.FirstOrDefault()?.Category?.Code ?? string.Empty;
             dto.Reviews = product.Reviews?.Select(ReviewDto.FromEntity).ToList() ?? new();
+            dto.RatingSum = product.RatingSum ?? 0;
+            dto.RatingVotes = product.RatingVotes ?? 0;
             return dto;
         }
     }

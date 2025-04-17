@@ -1,8 +1,4 @@
-﻿using EcommerceWebApp.AppGlobals;
-using EcommerceWebApp.Models.AppViewModels;
-using System.Diagnostics;
-using System.Net;
-using System.Net.Http.Headers;
+﻿using EcommerceWebApp.Models.AppViewModels;
 using System.Text;
 using System.Text.Json;
 
@@ -11,23 +7,24 @@ namespace EcommerceWebApp.ApiServices
     public class ApiService : IApiService
     {
         private readonly HttpClient _httpClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        //private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ApiService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
+        public ApiService(HttpClient httpClient)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _httpClient = httpClient;
+            //_httpContextAccessor = httpContextAccessor;
 
-            var handler = new HttpClientHandler
-            {
-                UseCookies = true,  // Enable cookies
-                AllowAutoRedirect = true, // Follow redirects
-                CookieContainer = new CookieContainer() // Store cookies
-            };
+            //var handler = new HttpClientHandler
+            //{
+            //    UseCookies = true,  // Enable cookies
+            //    AllowAutoRedirect = true, // Follow redirects
+            //    CookieContainer = new CookieContainer(), // Store cookies
+            //};
 
-            _httpClient = new HttpClient(handler)
-            {
-                BaseAddress = new Uri(AppConstants.BASE_URL)
-            };
+            //_httpClient = new HttpClient(handler)
+            //{
+            //    BaseAddress = new Uri(AppConstants.BASE_URL)
+            //};
 
             // Retrieve token from session if needed
             //var token = _httpContextAccessor.HttpContext?.Session.GetString("auth_token");
@@ -36,7 +33,7 @@ namespace EcommerceWebApp.ApiServices
             //    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             //}
 
-            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            //_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         public async Task<string> GetDataAsync(string endpoint)

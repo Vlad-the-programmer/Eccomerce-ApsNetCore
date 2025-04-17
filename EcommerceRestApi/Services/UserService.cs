@@ -37,12 +37,12 @@ namespace EcommerceRestApi.Services
             return await _context.Users.ToListAsync();
         }
 
-        public async Task<ApplicationUser> GetUserByIDAsync(string id)
+        public async Task<ApplicationUser?> GetUserByIDAsync(string id)
         {
-            return await _context.Users 
+            return await _context.Users
                 .Include(u => u.Customers)
                 .ThenInclude(c => c.Orders)
-            .ThenInclude(o => o.Payments)
+                .ThenInclude(o => o.Payments)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
@@ -50,7 +50,7 @@ namespace EcommerceRestApi.Services
         {
             ApplicationUser? updatedUser = _context.Users.FirstOrDefault(u => u.Id == id);
 
-            if(updatedUser != null)
+            if (updatedUser != null)
             {
                 updatedUser.UserName = userUpdateVM.Username ?? updatedUser.UserName;
                 updatedUser.Email = userUpdateVM.Email ?? updatedUser.Email;
@@ -84,8 +84,9 @@ namespace EcommerceRestApi.Services
                     updatedUser.Customers.First().Addresses.Add(address);
                 }
 
-                await  _context.SaveChangesAsync();
-            };
+                await _context.SaveChangesAsync();
+            }
+            ;
         }
     }
 }

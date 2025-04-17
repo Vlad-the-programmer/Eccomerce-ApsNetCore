@@ -4,6 +4,21 @@
         <name>EcommerceRestApi</name>
     </assembly>
     <members>
+        <member name="M:EcommerceRestApi.Helpers.Data.Functions.InvoicePaymentHelperFuncs.GenerateInvoiceNumber">
+            <summary>
+            Generates a unique invoice number.
+            </summary>
+        </member>
+        <member name="M:EcommerceRestApi.Helpers.Data.Functions.InvoicePaymentHelperFuncs.GenerateInvoice(EcommerceRestApi.Models.Order,EcommerceRestApi.Models.Context.AppDbContext)">
+            <summary>
+            Generates an invoice for a completed payment.
+            </summary>
+        </member>
+        <member name="M:EcommerceRestApi.Helpers.Data.Functions.InvoicePaymentHelperFuncs.MarkInvoiceAsPaid(System.Int32,EcommerceRestApi.Models.Context.AppDbContext)">
+            <summary>
+            Marks an invoice as paid.
+            </summary>
+        </member>
         <member name="T:EcommerceRestApi.Helpers.Data.ViewModels.RegisterViewModel">
             <summary>
             Represents the view model for user registration.

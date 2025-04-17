@@ -1,9 +1,10 @@
 using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.AppGlobals;
 using EcommerceWebApp.Helpers.Cart;
-using EcommerceWebApp.Models;
 using EcommerceWebApp.Models.AppViewModels;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -41,10 +42,26 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization();
 
 // Add services to the container.
-builder.Services.AddHttpContextAccessor(); // Register IHttpContextAccessor
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddHttpClient<IApiService, ApiService>();
+builder.Services.AddSingleton<CookieContainer>();
+builder.Services.AddHttpClient<IApiService, ApiService>()
+        .ConfigureHttpClient((provider, client) =>
+        {
+            client.BaseAddress = new Uri(AppConstants.BASE_URL);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        })
+        .ConfigurePrimaryHttpMessageHandler(provider =>
+        {
+            return new HttpClientHandler
+            {
+                UseCookies = true,
+                CookieContainer = provider.GetRequiredService<CookieContainer>(),
+                AllowAutoRedirect = true
+            };
+        });
+
 
 
 var app = builder.Build();
@@ -56,7 +73,8 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-} else
+}
+else
 {
     app.UseDeveloperExceptionPage();
 }
@@ -83,19 +101,14 @@ app.Use(async (context, next) =>
 
         if (string.IsNullOrEmpty(userJson))
         {
-            // Not cached yet, fetch from API
-            var client = new HttpClient(new HttpClientHandler { UseCookies = true })
+            // Resolve IApiService from DI container
+            var apiService = context.RequestServices.GetRequiredService<IApiService>();
+
+            var responseJson = await apiService.GetDataAsync(GlobalConstants.GetCurrentUserEndpoint);
+
+            if (!string.IsNullOrEmpty(responseJson))
             {
-                BaseAddress = new Uri(AppConstants.BASE_URL)
-            };
-
-            var response = await client.GetAsync(GlobalConstants.GetCurrentUserEndpoint);
-
-            if (response.IsSuccessStatusCode)
-            {
-                userJson = await response.Content.ReadAsStringAsync();
-
-                // Cache it
+                userJson = responseJson;
                 session.SetString("CurrentUser", userJson);
             }
         }
@@ -103,7 +116,7 @@ app.Use(async (context, next) =>
         // Deserialize from cached string (whether newly fetched or already in session)
         if (!string.IsNullOrEmpty(userJson))
         {
-            user = JsonSerializer.Deserialize<CurrentUserViewModel>(userJson);
+            user = JsonSerializer.Deserialize<CurrentUserViewModel>(userJson, GlobalConstants.JsonSerializerOptions);
 
             if (user != null)
             {
@@ -129,9 +142,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Products}/{action=Index}/{id?}")
     .WithStaticAssets();
-
-
-
-
 
 app.Run();

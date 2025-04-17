@@ -53,5 +53,23 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         public string CategoryCode { get; set; }
 
         public IList<Review> Reviews { get; set; } = new List<Review>();
+
+        public static NewProductViewModel FromProductToVm(Product p)
+        {
+            return new NewProductViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Photo = p.Photo,
+                OtherPhotos = p.OtherPhotos,
+                CategoryCode = p.ProductCategories.FirstOrDefault()?.Category?.Code,
+                SubcategoryCode = p.Subcategory.Code,
+                About = p.About,
+                Brand = p.Brand,
+                LongAbout = p.LongAbout,
+                Price = p.Price,
+                Stock = p.Stock,
+            };
+        }
     }
 }

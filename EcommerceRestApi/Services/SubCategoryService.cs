@@ -30,20 +30,7 @@ namespace EcommerceRestApi.Services
                             CategoryId = sc.CategoryId,
                             About = sc.About,
                             Name = sc.Name,
-                            Products = sc.Products.Select(p => new NewProductViewModel
-                            {
-                                Id = p.Id,
-                                Name = p.Name,
-                                Photo = p.Photo,
-                                OtherPhotos = p.OtherPhotos,
-                                CategoryCode = p.ProductCategories.FirstOrDefault()?.Category?.Code,
-                                SubcategoryCode = p.Subcategory.Code,
-                                About = p.About,
-                                Brand = p.Brand,
-                                LongAbout = p.LongAbout,
-                                Price = p.Price,
-                                Stock = p.Stock,
-                            }).ToList(),
+                            Products = sc.Products.Select(p => NewProductViewModel.FromProductToVm(p)).ToList(),
                         }).ToList();
         }
 

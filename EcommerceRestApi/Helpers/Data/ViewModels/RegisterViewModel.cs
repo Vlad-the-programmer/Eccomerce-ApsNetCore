@@ -1,7 +1,4 @@
-﻿using EcommerceRestApi.Helpers.Data.Functions;
-using EcommerceRestApi.Helpers.Static;
-using EcommerceRestApi.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceRestApi.Helpers.Data.ViewModels

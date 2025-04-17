@@ -1,23 +1,16 @@
-﻿using EcommerceRestApi.Helpers.Data.Auth;
-using EcommerceRestApi.Helpers.Data.Functions;
+﻿using EcommerceRestApi.Helpers.Data.Functions;
+using EcommerceRestApi.Helpers.Data.ResponseModels;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Helpers.Static;
-using EcommerceRestApi.Models;
-using EcommerceRestApi.Models.Common;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using EcommerceRestApi.Helpers.Data.ResponseModels;
-using System.Linq.Expressions;
 
 namespace EcommerceRestApi.Controllers
 {
@@ -57,11 +50,13 @@ namespace EcommerceRestApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ResponseModel { Message = "Invalid input data.",
-                                                      Errors = ModelState.Values
-                                                                        .SelectMany(v => v.Errors)
-                                                                        .Select(e => e.ErrorMessage)
-                                                                        .ToList()
+                return BadRequest(new ResponseModel
+                {
+                    Message = "Invalid input data.",
+                    Errors = ModelState.Values
+                                             .SelectMany(v => v.Errors)
+                                             .Select(e => e.ErrorMessage)
+                                             .ToList()
                 });
             }
 
@@ -94,13 +89,8 @@ namespace EcommerceRestApi.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
-            //Response.Cookies.Append("user", "cookie_value", new CookieOptions
-            //{
-            //    HttpOnly = true,
-            //    Secure = true, // Ensure it's sent only over HTTPS
-            //    SameSite = SameSiteMode.Lax, // Allow cross-site requests
-            //    Expires = DateTime.UtcNow.AddMinutes(60) // Cookie expiration
-            //});
+            user.IsAuthenticated = true;
+            await _userManager.UpdateAsync(user);
 
             return Ok(new ResponseModel { Message = "Login successful." });
         }
@@ -115,12 +105,14 @@ namespace EcommerceRestApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ResponseModel { Message = "Invalid input data.", 
-                                                      Errors = ModelState.Values
-                                                                        .SelectMany(v => v.Errors)
-                                                                        .Select(e => e.ErrorMessage)
-                                                                        .ToList()
-                                                       });
+                return BadRequest(new ResponseModel
+                {
+                    Message = "Invalid input data.",
+                    Errors = ModelState.Values
+                                             .SelectMany(v => v.Errors)
+                                             .Select(e => e.ErrorMessage)
+                                             .ToList()
+                });
             }
 
             var user = await _userManager.FindByEmailAsync(registerVM.Email);
@@ -132,17 +124,21 @@ namespace EcommerceRestApi.Controllers
             var newUser = await DbFuncs.GetApplicationUserObjForRegister(registerVM, _context);
 
 
-            //await _context.Customers.AddAsync(newUser.Customers.First());
-
-
             var newUserResponse = await _userManager.CreateAsync(newUser, registerVM.Password);
             if (!newUserResponse.Succeeded)
             {
-                return BadRequest(new ResponseModel { Message = "User registration failed.",
-                                              Errors = newUserResponse.Errors.Select(e => e.Description) });
+                return BadRequest(new ResponseModel
+                {
+                    Message = "User registration failed.",
+                    Errors = newUserResponse.Errors.Select(e => e.Description)
+                });
             }
 
             await _userManager.AddToRoleAsync(newUser, UserRoles.User);
+
+            newUser.IsAdmin = true;
+            newUser.IsAdmin = false;
+            await _userManager.UpdateAsync(newUser);
 
             return Ok(new ResponseModel { Message = "User registered successfully." });
         }
@@ -163,7 +159,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         // POST: api/account/logout
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize]
         [HttpPost("logout")]
         //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseModel))]
         //[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -184,13 +180,14 @@ namespace EcommerceRestApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ResponseModel {   
-                                                        Message = "Invalid model data", 
-                                                        Errors = ModelState.Values
-                                                                                .SelectMany(v => v.Errors)
-                                                                                .Select(e => e.ErrorMessage)
-                                                                                .ToList()
-                                                        });
+                return BadRequest(new ResponseModel
+                {
+                    Message = "Invalid model data",
+                    Errors = ModelState.Values
+                                             .SelectMany(v => v.Errors)
+                                             .Select(e => e.ErrorMessage)
+                                             .ToList()
+                });
             }
 
             var user = await _context.Users.FindAsync(id);
@@ -223,7 +220,7 @@ namespace EcommerceRestApi.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ResponseModel))]
         public IActionResult AccessDenied()
         {
-            return Unauthorized(new ResponseModel{ Message = "Access denied. You do not have permission to access this resource." });
+            return Unauthorized(new ResponseModel { Message = "Access denied. You do not have permission to access this resource." });
         }
     }
 }
