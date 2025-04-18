@@ -122,7 +122,11 @@ app.Use(async (context, next) =>
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.FullName ?? "Unknown")
+                    new Claim(ClaimTypes.Name, user.FullName ?? "Guest"),
+                    new Claim(ClaimTypes.Email, user.Email ?? ""),
+                    new Claim("UserName", user.UserName ?? ""),  // Custom claim for username
+                    new Claim("IsAdmin", user.IsAdmin.ToString()),  // Custom claim for admin status
+                    new Claim("CustomerId", user.CustomerId?.ToString() ?? "")
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

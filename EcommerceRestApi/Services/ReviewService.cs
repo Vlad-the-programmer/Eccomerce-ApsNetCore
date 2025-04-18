@@ -37,29 +37,24 @@ namespace EcommerceRestApi.Services
 
         public async Task<ReviewDto?> GetReviewByIDAsync(int id)
         {
-            var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == id);
+            var review = await _context.Reviews
+                                .Include(r => r.Customer)
+                                .ThenInclude(c => c.User)
+                                //.Where(r => r.IsActive)
+                                .FirstOrDefaultAsync(r => r.Id == id);
+
             if (review == null) return null;
 
-            //return new ReviewViewModel
-            //{
-            //    Id = review.Id,
-            //    Rating = review.Rating,
-            //    ReviewText = review.ReviewText,
-            //    Customer = review.Customer,
-            //    CustomerId = review.CustomerId,
-            //    ProductId = review.ProductId,
-            //    DateCreated = review.DateCreated,
-            //    DateUpdated = review.DateUpdated,
-            //};
-            return (ReviewDto)review;
+            return ReviewDto.FromEntity(review);
         }
 
         public async Task<List<ReviewDto>> GetReviews()
         {
             return await _context.Reviews
                                 .Include(r => r.Customer)
+                                .ThenInclude(c => c.User)
                                 .Where(r => r.IsActive)
-                                .Select(r => (ReviewDto)r)
+                                .Select(r => ReviewDto.FromEntity(r))
                                 .ToListAsync();
         }
 

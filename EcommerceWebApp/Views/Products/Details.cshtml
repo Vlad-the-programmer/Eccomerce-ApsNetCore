@@ -92,7 +92,7 @@
                     <div class="card card-body border-0 shadow-sm">
                         <form asp-controller="Reviews" asp-action="CreateOrUpdate" method="post" id="reviewForm">
                             <input type="hidden" name="ProductId" id="ProductId" value="@Model.Id" />
-                            <input type="hidden" name="CustomerId" id="CustomerId" value="@ViewBag.CurrentUserId" />
+                            <input type="hidden" name="CustomerId" id="CustomerId" value="@ViewBag.CustomerId" />
                             <input type="hidden" name="Id" id="Id" />
                             <select name="Rating" id="Rating" class="form-select">
                                 <option value="">-- Select Rating --</option>

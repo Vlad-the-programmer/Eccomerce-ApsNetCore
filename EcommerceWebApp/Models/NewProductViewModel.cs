@@ -42,14 +42,6 @@ namespace EcommerceWebApp.Models
         [Required(ErrorMessage = "Stock is Requred")]
         public int Stock { get; set; }
 
-        //[Display(Name = "Select Product SubCategory")]
-        //[Required(ErrorMessage = "Subcategory is Requred")]
-        //public int SubcategoryId { get; set; }
-
-        //[Display(Name = "Select Product Category")]
-        //[Required(ErrorMessage = "Category is Requred")]
-        //public int CategoryId { get; set; }
-
         [Display(Name = "SubCategory Code")]
         [Required(ErrorMessage = "Subcategory Code is Requred")]
         public string SubcategoryCode { get; set; }

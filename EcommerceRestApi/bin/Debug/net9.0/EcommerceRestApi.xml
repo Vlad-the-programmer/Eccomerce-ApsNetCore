@@ -179,17 +179,6 @@
             The postal code of the user.
             </summary>
         </member>
-        <member name="M:EcommerceRestApi.Helpers.ModelsUtils.PropertyUtil.CopyProperties``2(``0,``1)">
-            <summary>
-            Extension method for copying property values from one object to another. 
-            Property must have the same type and name in order to be copied.
-            </summary>
-            <typeparam name="TargetType">Target type to which values will be copied.</typeparam>
-            <typeparam name="SourceType">Source type from which values will be copied.</typeparam>
-            <param name="targetObject">Target object to which values will be copied.</param>
-            <param name="sourceObject">Source object from which values will be copied.</param>
-            <returns>Target object.</returns>
-        </member>
         <member name="T:EcommerceRestApi.Migrations.InitialDb">
             <inheritdoc />
         </member>

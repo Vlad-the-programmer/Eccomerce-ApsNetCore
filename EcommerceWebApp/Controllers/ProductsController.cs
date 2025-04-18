@@ -4,7 +4,6 @@ using EcommerceWebApp.Models;
 using EcommerceWebApp.Models.UpdateViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Security.Claims;
 using System.Text.Json;
 
 namespace EcommerceWebApp.Controllers
@@ -44,7 +43,10 @@ namespace EcommerceWebApp.Controllers
                 return View("NotFound");
             }
 
-            ViewBag.CurrentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var customerIdClaim = User.FindFirst("CustomerId");
+            int? customerId = customerIdClaim != null && int.TryParse(customerIdClaim.Value, out var tempId) ? tempId : null;
+
+            ViewBag.CustomerId = customerId;
 
             return View(product); // Return the view with the product's data
         }

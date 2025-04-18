@@ -1,7 +1,6 @@
 ﻿using EcommerceRestApi.Helpers.Data.ResponseModels;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
-using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,12 +11,10 @@ namespace EcommerceRestApi.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly AppDbContext _dbContext;
         private readonly IProductsService _service;
 
-        public ProductsController(AppDbContext dbContext, IProductsService service)
+        public ProductsController(IProductsService service)
         {
-            _dbContext = dbContext;
             _service = service;
         }
 

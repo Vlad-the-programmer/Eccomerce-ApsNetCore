@@ -61,9 +61,14 @@ namespace EcommerceRestApi.Services
         public async Task<ProductDto?> GetProductByIDAsync(int id)
         {
             var product = await _context.Products
-                    .Include(p => p.Reviews)
-                    .Where(p => p.Id == id)
-                    .FirstOrDefaultAsync();
+                                 .Include(p => p.Reviews)
+                                 .ThenInclude(r => r.Customer)
+                                 .ThenInclude(c => c.User)
+                                 .Include(p => p.ProductCategories)
+                                 .ThenInclude(pc => pc.Category)
+                                 .Include(p => p.Subcategory)
+                                 .Where(p => p.Id == id)
+                                 .FirstOrDefaultAsync();
 
             if (product == null) return null;
 
@@ -77,6 +82,7 @@ namespace EcommerceRestApi.Services
             return await _context.Products
                                  .Include(p => p.Reviews)
                                  .ThenInclude(r => r.Customer)
+                                 .ThenInclude(c => c.User)
                                  .Include(p => p.ProductCategories)
                                  .ThenInclude(pc => pc.Category)
                                  .Include(p => p.Subcategory)

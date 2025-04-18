@@ -1,4 +1,5 @@
-﻿using EcommerceRestApi.Helpers.Data.Functions;
+﻿using EcommerceRestApi.Helpers.Data.AuthVms;
+using EcommerceRestApi.Helpers.Data.Functions;
 using EcommerceRestApi.Helpers.Data.ResponseModels;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace EcommerceRestApi.Controllers
@@ -146,13 +148,15 @@ namespace EcommerceRestApi.Controllers
         [HttpGet("get-current-user")]
         public async Task<IActionResult> GetCurrentAuthenticatedUser()
         {
-            // 1. Get authenticated user details
             if (User.Identity.IsAuthenticated)
             {
-                ApplicationUser? user = await _userManager.GetUserAsync(User);
+                ApplicationUser? user = await _userManager.Users
+                                     .Include(u => u.Customers)
+                                     .FirstOrDefaultAsync(u => u.Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
+
                 if (user != null)
                 {
-                    return Ok(user);
+                    return Ok((CurrentUserViewModel)user);
                 }
             }
             return NotFound();
