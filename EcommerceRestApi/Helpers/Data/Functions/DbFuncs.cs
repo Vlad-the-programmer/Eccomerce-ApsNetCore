@@ -8,11 +8,20 @@ namespace EcommerceRestApi.Helpers.Data.Functions
 {
     public class DbFuncs
     {
-        // Countries
-        //public static List<string> GetCountriesNamesList()
-        //{
-        //    return GetCountriesList().Select(c => c.CountryName).ToList();
-        //}
+        // Reviews 
+        public static void UpdateRatingSum(Product product)
+        {
+            if (product.Reviews == null || !product.Reviews.Any()) return;
+
+            product.RatingSum = product.Reviews.Sum(r => r.Rating);
+        }
+
+        public static void UpdateRatingVotesCount(Product product)
+        {
+            if (product.Reviews == null || !product.Reviews.Any()) return;
+
+            product.RatingVotes = product.Reviews.Count;
+        }
 
         public static List<CountryViewModel> GetCountriesList(AppDbContext context)
         {
@@ -157,7 +166,7 @@ namespace EcommerceRestApi.Helpers.Data.Functions
             {
                 FullName = registerVM.FirstName + " " + registerVM.LastName,
                 Email = registerVM.Email,
-                UserName = registerVM.Username ?? registerVM.Email.Split("@")[1],
+                UserName = registerVM.Username ?? registerVM.Email.Split("@")[0],
                 FirstName = registerVM.FirstName,
                 LastName = registerVM.LastName,
                 Role = registerVM.IsAdmin ? UserRoles.Admin : UserRoles.User,

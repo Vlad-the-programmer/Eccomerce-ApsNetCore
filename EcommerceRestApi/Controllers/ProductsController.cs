@@ -20,12 +20,12 @@ namespace EcommerceRestApi.Controllers
 
 
         [HttpGet("filter")]
-        public async Task<IActionResult> Filter(string searchString)
+        public async Task<IActionResult> Filter([FromQuery] string searchString)
         {
             try
             {
                 // Fetch all products
-                var allProducts = await _service.GetAllAsync(n => n.ProductCategories);
+                var allProducts = await _service.GetProducts();
 
                 // Filter products if searchString is provided
                 if (!string.IsNullOrEmpty(searchString))
@@ -33,7 +33,7 @@ namespace EcommerceRestApi.Controllers
                     var filteredResult = allProducts
                         .Where(n => n.Name.ToLower().Contains(searchString.ToLower()) ||
                                     n.LongAbout.ToLower().Contains(searchString.ToLower()) ||
-                                    n.LongAbout.ToLower().Contains(searchString.ToLower()))
+                                    n.About.ToLower().Contains(searchString.ToLower()))
                         .ToList();
 
                     return Ok(filteredResult); // Return 200 OK with filtered results

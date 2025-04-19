@@ -83,7 +83,7 @@ namespace EcommerceRestApi.Controllers
             var review = await _context.Reviews.FindAsync(id);
             if (review == null) return NotFound();
 
-            await _reviewsService.DeleteAsync(id);
+            await _reviewsService.DeleteReviewAsync(id);
 
             return NoContent();
         }

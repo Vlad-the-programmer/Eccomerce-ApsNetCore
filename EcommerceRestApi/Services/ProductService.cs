@@ -86,7 +86,7 @@ namespace EcommerceRestApi.Services
                                  .Include(p => p.ProductCategories)
                                  .ThenInclude(pc => pc.Category)
                                  .Include(p => p.Subcategory)
-                                 .Select(p => ProductDto.ToDto(p))
+                                 .Select(p => ProductDto.ToDto(p, true))
                                  .ToListAsync();
         }
 

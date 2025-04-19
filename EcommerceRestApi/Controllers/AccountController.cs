@@ -138,7 +138,7 @@ namespace EcommerceRestApi.Controllers
 
             await _userManager.AddToRoleAsync(newUser, UserRoles.User);
 
-            newUser.IsAdmin = true;
+            newUser.IsActive = true;
             newUser.IsAdmin = false;
             await _userManager.UpdateAsync(newUser);
 
@@ -165,13 +165,9 @@ namespace EcommerceRestApi.Controllers
         // POST: api/account/logout
         [Authorize]
         [HttpPost("logout")]
-        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseModel))]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Logout()
         {
-            //await _signInManager.SignOutAsync();
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            //HttpContext.Session.Clear();
             return Ok();
         }
 

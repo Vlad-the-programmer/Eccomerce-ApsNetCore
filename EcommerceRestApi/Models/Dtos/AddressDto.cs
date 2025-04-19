@@ -1,10 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EcommerceRestApi.Helpers.ModelsUtils;
 
 namespace EcommerceRestApi.Models.Dtos
 {
@@ -19,5 +13,15 @@ namespace EcommerceRestApi.Models.Dtos
         public string? City { get; set; }
         public string? State { get; set; }
         public string? PostalCode { get; set; }
+
+        public static AddressDto ToDto(Address? address)
+        {
+            if (address == null) return new();
+            var dto = new AddressDto();
+            dto.CopyProperties(address);
+
+            dto.CountryName = address?.Country?.CountryName ?? string.Empty;
+            return dto;
+        }
     }
 }

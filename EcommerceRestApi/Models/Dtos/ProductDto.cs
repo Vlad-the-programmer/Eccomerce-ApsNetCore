@@ -22,15 +22,27 @@ namespace Inventory_Management_Sustem.Models.Dtos
         public bool IsActive { get; set; }
         public IList<ReviewDto> Reviews { get; set; } = new List<ReviewDto>();
 
-        public static ProductDto ToDto(Product product)
+        public static ProductDto ToDto(Product product, bool includeReviews = true)
         {
+            if (product == null) return new();
+
             var dto = new ProductDto().CopyProperties(product);
             dto.SubcategoryCode = product.Subcategory?.Code ?? string.Empty;
             dto.CategoryCode = product.ProductCategories.FirstOrDefault()?.Category?.Code ?? string.Empty;
-            dto.Reviews = product.Reviews?.Select(ReviewDto.FromEntity).ToList() ?? new();
             dto.RatingSum = product.RatingSum ?? 0;
             dto.RatingVotes = product.RatingVotes ?? 0;
+
+            if (includeReviews)
+            {
+                // Prevent nested loop by calling FromEntity with includeProduct = false
+                dto.Reviews = product.Reviews?
+                                        .Where(r => r.IsActive)
+                                        .Select(r => ReviewDto.FromEntity(r, includeProduct: false))
+                                        .ToList() ?? new();
+            }
+
             return dto;
         }
+
     }
 }

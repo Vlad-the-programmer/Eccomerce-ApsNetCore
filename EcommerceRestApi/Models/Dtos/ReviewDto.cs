@@ -12,6 +12,8 @@ namespace Inventory_Management_Sustem.Models.Dtos
         public string ReviewText { get; set; } = null!;
         public int ProductId { get; set; }
         public int CustomerId { get; set; }
+        public string? UserName { get; set; }
+
         public CustomerDto Customer { get; set; } = null!;
         public ProductDto Product { get; set; } = null!;
         public DateTime DateCreated { get; set; } = DateTime.Now;
@@ -23,14 +25,19 @@ namespace Inventory_Management_Sustem.Models.Dtos
         //public static implicit operator ReviewDto(Review review)
         //    => new Review().CopyProperties(review);
 
-        public static ReviewDto FromEntity(Review review)
+        public static ReviewDto FromEntity(Review review, bool includeProduct = true)
         {
             if (review == null) return new();
             var dto = new ReviewDto();
             dto.CopyProperties(review);
 
             dto.Customer = CustomerDto.ToDto(review.Customer);
-            dto.Product = ProductDto.ToDto(review.Product);
+            dto.UserName = review.Customer.User.UserName;
+
+            if (includeProduct)
+            {
+                dto.Product = ProductDto.ToDto(review.Product, includeReviews: false);
+            }
             return dto;
             //return new ReviewDto
             //{

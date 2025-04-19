@@ -2,10 +2,10 @@
 
 namespace EcommerceWebApp.Models
 {
-    public class ApplicationUserViewModel: BaseViewModel
+    public class ApplicationUserViewModel : BaseViewModel
     {
         public ApplicationUserViewModel() { }
-        public ApplicationUserViewModel(string title): base(title) { }
+        public ApplicationUserViewModel(string title) : base(title) { }
 
         [Display(Name = "Name")]
         //[Required(ErrorMessage = "Name is Required")]
@@ -38,11 +38,11 @@ namespace EcommerceWebApp.Models
         public string? Nip { get; set; } = string.Empty;
 
         [Display(Name = "Role")]
-        public string? Role { get; set; } = default!;
+        public string? Role { get; set; }
 
         public bool IsActive { get; set; }
         public bool IsAdmin { get; set; }
-        public bool IsAuthenticated { get; set; } = default!;
+        public bool IsAuthenticated { get; set; }
 
         //public int? CountryId { get; set; }
 

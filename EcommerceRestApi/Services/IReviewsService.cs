@@ -13,6 +13,7 @@ namespace EcommerceRestApi.Services
 
         Task AddNewReviewAsync(ReviewViewModel data);
 
-        Task UpdateReviewAsync(int id, ReviewUpdateViewModel data);
+        Task<bool> UpdateReviewAsync(int id, ReviewUpdateViewModel data);
+        Task<bool> DeleteReviewAsync(int id);
     }
 }

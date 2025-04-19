@@ -45,7 +45,6 @@ namespace EcommerceRestApi.Helpers.ModelsUtils
         {
             if (type == null) return false;
 
-            // Handle nullable value types
             var underlyingType = Nullable.GetUnderlyingType(type);
             if (underlyingType != null)
             {
@@ -61,5 +60,6 @@ namespace EcommerceRestApi.Helpers.ModelsUtils
                 || type == typeof(Guid)
                 || type.IsEnum;
         }
+
     }
 }

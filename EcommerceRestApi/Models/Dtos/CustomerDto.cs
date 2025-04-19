@@ -7,7 +7,7 @@ namespace EcommerceRestApi.Models.Dtos
         public int Id { get; set; }
         public string? CountryName { get; set; } = null;
         public string FullName { get; set; } = null!;
-        public Address? Address { get; set; } = null;
+        public AddressDto? Address { get; set; } = null;
         public string? Email { get; set; } = null!;
         public string? Nip { get; set; } = null!;
         public int? Points { get; set; }
@@ -16,12 +16,14 @@ namespace EcommerceRestApi.Models.Dtos
 
         public static CustomerDto ToDto(Customer customer)
         {
+            if (customer == null) return new();
+
             var dto = new CustomerDto();
             dto.CopyProperties(customer);
 
             dto.CountryName = customer.Addresses.FirstOrDefault()?.Country?.CountryName;
             dto.FullName = customer.User.FullName;
-            dto.Address = customer.Addresses.FirstOrDefault();
+            dto.Address = AddressDto.ToDto(customer.Addresses.FirstOrDefault());
             dto.Email = customer.User?.Email;
 
             return dto;

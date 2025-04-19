@@ -55,5 +55,18 @@ namespace EcommerceWebApp.Helpers
             catch (HttpRequestException ex) { product = null; }
             return product;
         }
+
+        public async static Task<List<NewProductViewModel>> GetFilteredProducts(string endpoint, string searchString, IApiService apiService)
+        {
+            var products = new List<NewProductViewModel>();
+            try
+            {
+                var response = await apiService.GetDataAsync($"{endpoint}?searchString={searchString}"); // response is a string
+                products = JsonSerializer.Deserialize<List<NewProductViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+            }
+            catch (HttpRequestException ex) { }
+
+            return products;
+        }
     }
 }

@@ -34,6 +34,21 @@ namespace EcommerceWebApp.Controllers
             return View(products); // Return the view with the products data
         }
 
+        public async Task<IActionResult> Filter([FromQuery] string searchString)
+        {
+            List<NewProductViewModel> fileteredProducts = await ProductsEndpointsHelperFuncs.GetFilteredProducts(
+                                                        GlobalConstants.FilterProductsEndpoint, searchString, _apiService);
+            List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
+                                                        GlobalConstants.CategoriesEndpoint, _apiService);
+
+            ViewBag.FeaturedProduct = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(
+                                                       GlobalConstants.ProductsEndpoint, _apiService);
+            ViewBag.Categories = CategoriesEndpointsHelperFuncs.GetCategoriesDictionaryWithNameCodeFields(categories);
+            ViewBag.ProductsExists = fileteredProducts.Count > 0 ? true : false;
+            ViewBag.CategoriesExist = categories.Count > 0 ? true : false;
+            return View("Index", fileteredProducts); // Return the view with the products data
+        }
+
         public async Task<IActionResult> Details(int id)
         {
             var endpoint = $"{GlobalConstants.ProductsEndpoint}/{id}";
