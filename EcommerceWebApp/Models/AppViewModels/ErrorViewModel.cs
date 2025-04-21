@@ -8,6 +8,6 @@ namespace EcommerceWebApp.Models.AppViewModels
         public string Message { get; set; }
 
         [JsonPropertyName("errors")]
-        public IEnumerable<string> Errors { get; set; } = new List<string>();
+        public IList<string> Errors { get; set; } = new List<string>();
     }
 }

@@ -43,9 +43,9 @@ public static class GlobalConstants
     public const string GetCartEndpoint = "api/cart/";
     public const string GetCartItemsEndpoint = "api/cart/items/";
     public const string ClearCartEndpoint = "api/cart/"; //HTTP_Delete
-    public const string AddItemToCartEndpoint = "api/cart/"; //HTTP_POST
-    public const string RemoveItemFromCartEndpoint = "api/cart/remove-item/"; // + id
-    public const string GetCartProductById = "api/cart/cart-item/"; // + {product_id}/
+    public const string AddItemToCartEndpoint = "api/cart"; //HTTP_POST
+    public const string RemoveItemFromCartEndpoint = "api/cart/remove-item"; // + id
+    public const string GetCartProductById = "api/cart/cart-item"; // + {product_id}/
 
     // Reviews 
     public const string ReviewsEndpoint = "api/reviews";

@@ -26,6 +26,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
 });
 
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 //Services Configuration
 builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -37,7 +39,6 @@ builder.Services.AddScoped<ISubcategoryService, SubCategoryService>();
 builder.Services.AddScoped<IReviewsService, ReviewService>();
 
 
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 
 //authontication and authorization

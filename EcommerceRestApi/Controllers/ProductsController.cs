@@ -46,7 +46,7 @@ namespace EcommerceRestApi.Controllers
                 return StatusCode(500, new ResponseModel
                 {
                     Message = "An error occurred while filtering products.",
-                    Errors = new List<string>().Append(ex.Message)
+                    Errors = new List<string>().Append(ex.Message).ToList()
                 });
             }
         }

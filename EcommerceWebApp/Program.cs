@@ -12,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<ShoppingCart>(sc =>
-    ShoppingCart.GetShoppingCart(sc, sc.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session));
+    ShoppingCart.GetShoppingCart(sc,
+            sc.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -125,7 +126,7 @@ app.Use(async (context, next) =>
                     new Claim(ClaimTypes.Name, user.FullName ?? "Guest"),
                     new Claim(ClaimTypes.Email, user.Email ?? ""),
                     new Claim("UserName", user.UserName ?? ""),  // Custom claim for username
-                    new Claim("IsAdmin", user.IsAdmin.ToString()),  // Custom claim for admin status
+                    new Claim("Admin", user.IsAdmin.ToString()),  // Custom claim for admin status
                     new Claim("CustomerId", user.CustomerId?.ToString() ?? "")
                 };
 

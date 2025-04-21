@@ -29,7 +29,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index"><i class="bi bi-shop"></i> Products</a>
                         </li>
 
-                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"));
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -39,8 +39,8 @@
 
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" asp-controller="Products" asp-action="Create"><i class="bi bi-building"></i> Create product</a>
-                                    <a class="dropdown-item" asp-controller="Brands" asp-action="Index"><i class="bi bi-tags"></i> Brands</a>
-                                    <a class="dropdown-item" asp-controller="Suppliers" asp-action="Index"><i class="bi bi-people-fill"></i> Suppliers</a>
+                                    <a class="dropdown-item" asp-controller="Cart" asp-action="Index"><i class="bi bi-tags"></i> Cart</a>
+                                    <a class="dropdown-item" asp-controller="Orders" asp-action="Index"><i class="bi bi-people-fill"></i> Orders</a>
                                 </div>
 
                             </li>

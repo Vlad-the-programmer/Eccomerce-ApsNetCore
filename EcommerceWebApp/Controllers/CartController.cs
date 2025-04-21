@@ -1,5 +1,4 @@
-﻿using EcommerceRestApi.Models;
-using EcommerceWebApp.ApiServices;
+﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -18,54 +17,46 @@ namespace EcommerceWebApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var cartItems = new List<ShoppingCartItemVM>();
-            var cartTotal = 0.0;
+            var cart = new ShoppingCartViewModel();
             try
             {
-                await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
-                cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
-                cartTotal = await CartEndpointsHelperFuncs.GetShoppingCartTotal(_apiService);
-
+                cart = await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
             }
             catch (HttpRequestException ex)
             {
                 TempData["Error"] = ex.Message;
                 Debug.WriteLine($"Error: {ex.Message}");
+                cart = new ShoppingCartViewModel();
             }
 
-            var model = new ShoppingCartViewModel()
-            {
-                ShoppingCartItems = cartItems,
-                CartTotal = cartTotal,
-            };
-            return View(model);
+            return View(cart);
         }
 
-        public async Task<IActionResult> AddItemToCart(int product_id)
+        public async Task<IActionResult> AddItemToCart(int productId)
         {
-            var cartItem = await CartEndpointsHelperFuncs.GetProductById(GlobalConstants.GetCartProductById + $"{product_id}", _apiService);
+            var product = await ProductsEndpointsHelperFuncs.GetProductById($"{GlobalConstants.ProductsEndpoint}/{productId}", _apiService);
 
-            if (cartItem == null)
+            if (product == null)
             {
                 return RedirectToAction(nameof(Index));
             }
 
-            var message = await CartEndpointsHelperFuncs.AddItemToCart(GlobalConstants.AddItemToCartEndpoint, _apiService, cartItem);
-
+            var message = await CartEndpointsHelperFuncs.AddItemToCart(GlobalConstants.AddItemToCartEndpoint, _apiService, productId);
+            Debug.WriteLine($"Error cart: {message}");
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> RemoveItemFromCart(int product_id)
+        public async Task<IActionResult> RemoveItemFromCart(int productId)
         {
-            var cartItem = await CartEndpointsHelperFuncs.GetProductById(GlobalConstants.GetCartProductById + $"{product_id}", _apiService);
+            var product = await ProductsEndpointsHelperFuncs.GetProductById($"{GlobalConstants.ProductsEndpoint}/{productId}", _apiService);
 
-            if (cartItem == null)
+            if (product == null)
             {
                 return RedirectToAction(nameof(Index));
             }
 
             var message = await CartEndpointsHelperFuncs.RemoveItemFromCart(GlobalConstants.RemoveItemFromCartEndpoint,
-                                                                                    _apiService, cartItem);
+                                                                                    _apiService, productId);
 
             return RedirectToAction(nameof(Index));
         }

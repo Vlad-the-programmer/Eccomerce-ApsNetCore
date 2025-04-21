@@ -1,4 +1,5 @@
-﻿using EcommerceRestApi.Helpers.Data.Functions;
+﻿using EcommerceRestApi.Helpers.Cart;
+using EcommerceRestApi.Helpers.Data.Functions;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
@@ -10,10 +11,12 @@ namespace EcommerceRestApi.Services
     public class OrderService : EntityBaseRepository<Order>, IOrderService
     {
         private readonly AppDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public OrderService(AppDbContext context) : base(context)
+        public OrderService(AppDbContext context, IHttpContextAccessor httpContextAccessor) : base(context)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<OrderViewModel?> GetOrderByCodeAsync(string code)
@@ -74,12 +77,14 @@ namespace EcommerceRestApi.Services
 
             var order = new Order
             {
-                Code = data.Code,
+                Code = data.Code ?? Guid.NewGuid().ToString(),
                 CustomerId = data.CustomerId,
-                OrderDate = data.OrderDate,
-                TotalAmount = data.TotalAmount,
+                OrderDate = DateTime.Now,
                 OrderItems = new List<OrderItem>()
             };
+
+            await new ShoppingCart(_context, _httpContextAccessor.HttpContext.Session)
+                                                    .ConvertToOrder(order);
 
             order.Status = OrderProcessingFuncs.GetStringValue(data.OrderStatus);
             order.Payments.Add(new Payment
@@ -101,17 +106,6 @@ namespace EcommerceRestApi.Services
                 IsActive = true,
                 DateCreated = DateTime.Now
             });
-
-            foreach (var item in data.OrderItems)
-            {
-                order.OrderItems.Add(new OrderItem
-                {
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    UnitPrice = item.UnitPrice,
-                    DateCreated = DateTime.Now,
-                });
-            }
 
             Address newAddress = new Address
             {
@@ -137,6 +131,7 @@ namespace EcommerceRestApi.Services
                 _context.Addresses.Add(newAddress);
                 order.Customer.Addresses.Add(newAddress);
             }
+
 
             await _context.Orders.AddAsync(order);
             await InvoicePaymentHelperFuncs.GenerateInvoice(order, _context);

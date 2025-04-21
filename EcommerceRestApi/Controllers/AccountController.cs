@@ -132,7 +132,7 @@ namespace EcommerceRestApi.Controllers
                 return BadRequest(new ResponseModel
                 {
                     Message = "User registration failed.",
-                    Errors = newUserResponse.Errors.Select(e => e.Description)
+                    Errors = newUserResponse.Errors.Select(e => e.Description).ToList()
                 });
             }
 

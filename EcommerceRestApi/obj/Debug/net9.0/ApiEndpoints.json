@@ -198,9 +198,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "cartItem",
-        "Type": "EcommerceRestApi.Models.ShoppingCartItem",
-        "IsRequired": true
+        "Name": "productId",
+        "Type": "System.Int32",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -218,13 +218,13 @@
   {
     "ContainingType": "EcommerceRestApi.Controllers.ShoppingCartController",
     "Method": "GetCartItem",
-    "RelativePath": "api/cart/cart-item/{product_id}",
+    "RelativePath": "api/cart/cart-item/{productId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "product_id",
+        "Name": "productId",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -244,19 +244,14 @@
   {
     "ContainingType": "EcommerceRestApi.Controllers.ShoppingCartController",
     "Method": "RemoveItemFromCart",
-    "RelativePath": "api/cart/remove-item/{id}",
+    "RelativePath": "api/cart/remove-item/{productId}",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "cartItem",
-        "Type": "EcommerceRestApi.Models.ShoppingCartItemVM",
-        "IsRequired": true
-      },
-      {
-        "Name": "id",
-        "Type": "",
+        "Name": "productId",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

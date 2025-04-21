@@ -1,11 +1,10 @@
-﻿using EcommerceRestApi.Helpers.Data.Functions;
+﻿using EcommerceRestApi.Models;
 
 namespace EcommerceRestApi.Helpers.Data.ViewModels
 {
     public class ShoppingCartVM
     {
-        //public ShoppingCart shoppingCart { get; set; }
-
-        //public double shoppingCartTotal { get; set; }
+        public List<ShoppingCartItem> ShoppingCartItems { get; set; }
+        public double CartTotal { get; set; }
     }
 }

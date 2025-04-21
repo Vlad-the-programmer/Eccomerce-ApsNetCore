@@ -50,10 +50,16 @@ namespace EcommerceWebApp.ApiServices
             if (!response.IsSuccessStatusCode)
             {
                 var errorJson = await response.Content.ReadAsStringAsync();
-
-                var errorResponse = errorJson != "" ? JsonSerializer.Deserialize<ErrorViewModel>(errorJson) : new ErrorViewModel();
-                var errorMessage = string.Join(Environment.NewLine, errorResponse?.Errors ?? new List<string>());
-                throw new HttpRequestException(errorMessage);
+                try
+                {
+                    var errorResponse = errorJson != "" ? JsonSerializer.Deserialize<ErrorViewModel>(errorJson, GlobalConstants.JsonSerializerOptions) : new ErrorViewModel();
+                    var errorMessage = string.Join(Environment.NewLine, errorResponse?.Errors ?? new List<string>());
+                    throw new HttpRequestException(errorMessage);
+                }
+                catch (JsonException ex)
+                {
+                    throw new HttpRequestException(errorJson);
+                }
             }
             return await response.Content.ReadAsStringAsync();
         }

@@ -54,7 +54,7 @@
                                 <i class="bi bi-eye-fill"></i> Show Details
                             </a>
                             <a class="btn btn-success @((!item.IsActive) ? "disabled" : "") text-white" asp-controller="Cart"
-                               asp-action="AddItemToCart" asp-route-id="@item.Id">
+                               asp-action="AddItemToCart" asp-route-productId="@item.Id">
                                 <i class="bi bi-cart-plus"></i> Add to Cart ($ @item.Price.ToString(".00"))
                             </a>
                         </div>

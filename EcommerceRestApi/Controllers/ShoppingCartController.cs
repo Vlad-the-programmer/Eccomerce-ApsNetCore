@@ -1,9 +1,10 @@
-﻿using EcommerceRestApi.Helpers.Data.ResponseModels;
-using EcommerceRestApi.Models;
+﻿using EcommerceRestApi.Helpers.Cart;
+using EcommerceRestApi.Helpers.Data.ResponseModels;
+using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Models.Context;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace EcommerceRestApi.Controllers
 {
@@ -11,28 +12,32 @@ namespace EcommerceRestApi.Controllers
     [ApiController]
     public class ShoppingCartController : ControllerBase
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AppDbContext _context;
-        private readonly ISession _session;
+        private readonly ISession? _session;
+        private readonly ShoppingCart _cart;
 
         public string ShoppingCartId { get; set; }
 
-        public ShoppingCartController(IServiceProvider services, AppDbContext context)
+        public ShoppingCartController(IHttpContextAccessor httpContextAccessor, AppDbContext context)
         {
-            _serviceProvider = services;
+            _httpContextAccessor = httpContextAccessor;
             _context = context;
-            _session = _serviceProvider.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session;
-            ShoppingCartId = _session.GetString("CartId") ?? string.Empty;
+            _session = _httpContextAccessor?.HttpContext?.Session;
+            _cart = new ShoppingCart(_context, _session).GetShoppingCart();
+            ShoppingCartId = _cart.IdCartSession;
+            Debug.WriteLine($"Shopping cart id: {ShoppingCartId}");
         }
 
         [HttpGet]
         public async Task<IActionResult> GetCreateCart()
         {
-            //var context = _serviceProvider.GetService<AppDbContext>();
-
-            ShoppingCartId = _session.GetString("CartId") ?? Guid.NewGuid().ToString();
-            _session.SetString("CartId", ShoppingCartId);
-            return Ok(ShoppingCartId);
+            var cartVM = new ShoppingCartVM
+            {
+                ShoppingCartItems = await _cart.GetCartItems(),
+                CartTotal = (double)await _cart.GetTotal()
+            };
+            return Ok(cartVM);
         }
 
         [HttpGet("items")]
@@ -56,9 +61,14 @@ namespace EcommerceRestApi.Controllers
             return Ok(ShoppingCartItems);
         }
 
-        [HttpGet("cart-item/{product_id}")]
-        public async Task<IActionResult> GetCartItem(int product_id)
+        [HttpGet("cart-item/{productId}")]
+        public async Task<IActionResult> GetCartItem(int productId)
         {
+            if (await _context.Products.FindAsync(productId) == null)
+            {
+                return NotFound();
+            }
+
             if (ShoppingCartId == string.Empty)
             {
                 return NotFound(new ResponseModel { Message = "Cart does not exist!" });
@@ -66,7 +76,7 @@ namespace EcommerceRestApi.Controllers
 
             var shoppingCartItem = _context.ShoppingCartItems
                                                      .FirstOrDefault(n => n.ShoppingCartId == ShoppingCartId
-                                                                        && n.ProductId == product_id);
+                                                                        && n.ProductId == productId);
 
             if (shoppingCartItem == null)
             {
@@ -76,51 +86,25 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddItemToCart(ShoppingCartItem cartItem)
+        public async Task<IActionResult> AddItemToCart(int productId)
         {
-            if (cartItem == null)
+            if (await _context.Products.FindAsync(productId) == null)
             {
-                return BadRequest(new ResponseModel { Message = "Invalid cartItem!" });
+                return NotFound();
             }
 
-            try
-            {
-                var existingCartItem = _context.ShoppingCartItems
-                                               .FirstOrDefault(n => n.Id == cartItem.Id
-                                                                 && n.ShoppingCartId == ShoppingCartId);
-
-                if (existingCartItem != null)
-                {
-                    // Product exists in the cart, increase the quantity
-                    existingCartItem.Amount++;
-                }
-                else
-                {
-                    // Add a new item to the cart
-                    var shoppingCartItem = new ShoppingCartItem
-                    {
-                        ShoppingCartId = ShoppingCartId,
-                        ProductId = cartItem.Product.Id, // Avoid direct object assignment
-                        Amount = 1
-                    };
-
-                    _context.ShoppingCartItems.Add(shoppingCartItem);
-                }
-
-                await _context.SaveChangesAsync(); // Use async saving
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                var errorsList = new List<string>();
-                errorsList.Add(ex.Message);
-                return StatusCode(500, new ResponseModel { Message = "An error occurred!", Errors = errorsList });
-            }
+            await _cart.AddToCartHandler(productId);
+            return Ok();
         }
 
-        [HttpPost("remove-item/{id}")]
-        public async Task<IActionResult> RemoveItemFromCart(ShoppingCartItemVM cartItem)
+        [HttpPost("remove-item/{productId}")]
+        public async Task<IActionResult> RemoveItemFromCart(int productId)
         {
+            if (await _context.Products.FindAsync(productId) == null)
+            {
+                return NotFound();
+            }
+
             if (ShoppingCartId == string.Empty)
             {
                 return NotFound(new ResponseModel { Message = "Cart does not exist!" });
@@ -132,32 +116,9 @@ namespace EcommerceRestApi.Controllers
                 return BadRequest(new ResponseModel { Message = "Your cart is empty." });
             }
 
-            try
-            {
-                var ShoppingCartItem = _context.ShoppingCartItems
-                                                    .FirstOrDefault(n => n.Product.Id == cartItem.Product.Id
-                                                                    && n.ShoppingCartId == ShoppingCartId);
-                if (ShoppingCartItem != null)
-                {
-                    if (ShoppingCartItem.Amount > 1)
-                    {
-                        ShoppingCartItem.Amount--;
-                    }
-                    else
-                    {
-                        _context.ShoppingCartItems.Remove(ShoppingCartItem);
-                    }
 
-                }
-                _context.SaveChanges();
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                var errorsList = new List<string>();
-                errorsList.Add(ex.Message);
-                return StatusCode(500, new ResponseModel { Message = "An error occurred!", Errors = errorsList });
-            }
+            await _cart.DeleteFromCartHandler(productId);
+            return Ok();
         }
 
         [HttpDelete]
