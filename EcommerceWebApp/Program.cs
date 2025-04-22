@@ -126,9 +126,13 @@ app.Use(async (context, next) =>
                     new Claim(ClaimTypes.Name, user.FullName ?? "Guest"),
                     new Claim(ClaimTypes.Email, user.Email ?? ""),
                     new Claim("UserName", user.UserName ?? ""),  // Custom claim for username
-                    new Claim("Admin", user.IsAdmin.ToString()),  // Custom claim for admin status
                     new Claim("CustomerId", user.CustomerId?.ToString() ?? "")
                 };
+
+                if (user.IsAdmin)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                }
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 context.User = new ClaimsPrincipal(identity);
@@ -140,7 +144,7 @@ app.Use(async (context, next) =>
         Console.WriteLine($"[Middleware] Exception: {ex.Message}");
     }
 
-    await next.Invoke();
+    await next(context);
 });
 
 app.MapControllerRoute(

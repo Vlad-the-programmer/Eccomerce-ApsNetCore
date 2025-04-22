@@ -191,8 +191,18 @@
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.ShoppingCartController",
-    "Method": "AddItemToCart",
+    "Method": "ClearCart",
     "RelativePath": "api/cart",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.ShoppingCartController",
+    "Method": "AddItemToCart",
+    "RelativePath": "api/cart/{productId}",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -200,19 +210,9 @@
       {
         "Name": "productId",
         "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "EcommerceRestApi.Controllers.ShoppingCartController",
-    "Method": "ClearCart",
-    "RelativePath": "api/cart",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": []
   },
   {

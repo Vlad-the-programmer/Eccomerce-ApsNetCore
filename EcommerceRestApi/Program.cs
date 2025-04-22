@@ -1,8 +1,8 @@
 using EcommerceRestApi.AppGlobals;
-using EcommerceRestApi.Helpers.Data;
 using EcommerceRestApi.Helpers.Data.Auth;
+using EcommerceRestApi.Helpers.Data.DbInitializer;
+using EcommerceRestApi.Helpers.Data.Roles;
 using EcommerceRestApi.Helpers.Data.ViewModels;
-using EcommerceRestApi.Helpers.Static;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -13,11 +13,9 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 

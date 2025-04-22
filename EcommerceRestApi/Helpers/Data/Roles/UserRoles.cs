@@ -1,4 +1,4 @@
-﻿namespace EcommerceRestApi.Helpers.Static
+﻿namespace EcommerceRestApi.Helpers.Data.Roles
 {
     public static class UserRoles
     {

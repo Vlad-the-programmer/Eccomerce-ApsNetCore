@@ -38,12 +38,11 @@
 
                     <div class="mt-4">
                         <a class="btn btn-outline-secondary me-2" asp-action="Index">Back to List</a>
-                        <a class="btn btn-primary text-white @(Model.IsActive ? "" : "disabled")"
-                        asp-controller="Cart"
-                        asp-action="AddItemToCart"
-                        asp-route-productId="@Model.Id">
-                            <i class="bi bi-cart-plus"></i> Add to Cart
-                        </a>
+                        <form asp-controller="Cart" asp-action="AddItemToCart" asp-route-productId="@Model.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-success @(!Model.IsActive ? "disabled" : "") text-white">
+                                <i class="bi bi-cart-plus"></i> Add to Cart ($@Model.Price.ToString(".00"))
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

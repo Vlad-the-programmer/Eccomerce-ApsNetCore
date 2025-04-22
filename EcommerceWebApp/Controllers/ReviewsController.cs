@@ -6,6 +6,7 @@ using System.Text.Json;
 
 namespace EcommerceWebApp.Controllers
 {
+    [Route("userReviews")]
     public class ReviewsController : Controller
     {
         private readonly IApiService _apiService;

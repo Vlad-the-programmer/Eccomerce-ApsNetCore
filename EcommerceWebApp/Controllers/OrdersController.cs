@@ -20,7 +20,6 @@ namespace EcommerceWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            //var order = await OrdersEndpointsHelperFuncs.GetOrderByCode(GlobalConstants.OrdersEndpoint, code, _apiService);
             var orders = await OrdersEndpointsHelperFuncs.GetOrders(GlobalConstants.OrdersEndpoint, _apiService);
             return View(orders);
         }
@@ -111,7 +110,7 @@ namespace EcommerceWebApp.Controllers
         }
 
         [HttpPut("update/{code}")]
-        public async Task<IActionResult> Update(string code, OrderViewModel order)
+        public async Task<IActionResult> Edit(string code, OrderViewModel order)
         {
             try
             {

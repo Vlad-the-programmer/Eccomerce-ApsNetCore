@@ -17,13 +17,13 @@ public partial class DeliveryMethodOrder
     public bool IsActive { get; set; }
 
     [Column(TypeName = "datetime")]
-    public DateTime DateCreated { get; set; }
+    public DateTime? DateCreated { get; set; }
 
     [Column(TypeName = "datetime")]
-    public DateTime DateUpdated { get; set; }
+    public DateTime? DateUpdated { get; set; }
 
     [Column(TypeName = "datetime")]
-    public DateTime DateDeleted { get; set; }
+    public DateTime? DateDeleted { get; set; }
 
     [ForeignKey("DeliveryMethodId")]
     [InverseProperty("DeliveryMethodOrders")]

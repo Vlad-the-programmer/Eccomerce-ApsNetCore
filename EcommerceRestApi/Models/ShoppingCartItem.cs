@@ -11,7 +11,7 @@ public partial class ShoppingCartItem : EntityBase
 
     public int Amount { get; set; }
 
-    [StringLength(20)]
+    [StringLength(50)]
     public string ShoppingCartId { get; set; } = null!;
 
     [ForeignKey("ProductId")]

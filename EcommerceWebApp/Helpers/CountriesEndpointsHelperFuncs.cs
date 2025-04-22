@@ -15,19 +15,23 @@ namespace EcommerceWebApp.Helpers
 
                 countries = JsonSerializer.Deserialize<List<CountryViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
-            } catch(HttpRequestException ex) { }
+            }
+            catch (HttpRequestException ex) { }
             return countries;
         }
 
         public async static Task<List<string>> GetCountriesNames(string endpoint, IApiService apiService)
         {
-            var countriesNames = new List<string>();    
+            var countriesNames = new List<string>();
             try
             {
                 countriesNames = (await GetCountries(endpoint, apiService)).Select(c => c.CountryName).ToList();
-            } catch (ArgumentNullException ex) { 
             }
-           return countriesNames;  
+            catch (ArgumentNullException ex)
+            {
+                countriesNames = new List<string>();
+            }
+            return countriesNames;
         }
     }
 }

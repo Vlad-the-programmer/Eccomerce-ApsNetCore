@@ -2,7 +2,6 @@
 using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace EcommerceWebApp.Controllers
 {
@@ -15,6 +14,7 @@ namespace EcommerceWebApp.Controllers
             _apiService = apiService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var cart = new ShoppingCartViewModel();
@@ -25,26 +25,27 @@ namespace EcommerceWebApp.Controllers
             catch (HttpRequestException ex)
             {
                 TempData["Error"] = ex.Message;
-                Debug.WriteLine($"Error: {ex.Message}");
                 cart = new ShoppingCartViewModel();
             }
 
-            return View(cart);
+            return View("Index", cart);
         }
 
+        [HttpPost("add/{productId}")]
         public async Task<IActionResult> AddItemToCart(int productId)
         {
             var product = await ProductsEndpointsHelperFuncs.GetProductById($"{GlobalConstants.ProductsEndpoint}/{productId}", _apiService);
 
             if (product == null)
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
 
             var message = await CartEndpointsHelperFuncs.AddItemToCart(GlobalConstants.AddItemToCartEndpoint, _apiService, productId);
-            Debug.WriteLine($"Error cart: {message}");
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
+
+        [HttpPost("remove/{productId}")]
 
         public async Task<IActionResult> RemoveItemFromCart(int productId)
         {
@@ -61,7 +62,7 @@ namespace EcommerceWebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
+        [HttpPost]
         public async Task<IActionResult> ClearCart()
         {
             var response = await CartEndpointsHelperFuncs.ClearCart(GlobalConstants.ClearCartEndpoint, _apiService);

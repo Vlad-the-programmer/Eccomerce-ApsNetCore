@@ -27,6 +27,12 @@ namespace EcommerceRestApi.Helpers.Cart
 
         public async Task AddToCartHandler(int productId)
         {
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null)
+            {
+                return;
+            }
+
             //check if item is already in cart!
             var cartItem =
                 (
@@ -41,7 +47,7 @@ namespace EcommerceRestApi.Helpers.Cart
                 {
                     ProductId = productId,
                     ShoppingCartId = this.IdCartSession,
-                    Product = await _context.Products.FindAsync(productId) ?? new(),
+                    Product = product,
                     Amount = 1,
                     DateCreated = DateTime.Now,
                     IsActive = true

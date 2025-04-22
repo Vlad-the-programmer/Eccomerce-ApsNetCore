@@ -1,11 +1,11 @@
 ﻿using EcommerceRestApi.Helpers.Data.Functions;
+using EcommerceRestApi.Helpers.Data.Roles;
 using EcommerceRestApi.Helpers.Data.ViewModels;
-using EcommerceRestApi.Helpers.Static;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
 using Microsoft.AspNetCore.Identity;
 
-namespace EcommerceRestApi.Helpers.Data
+namespace EcommerceRestApi.Helpers.Data.DbInitializer
 {
     public class AppDbInitializer
     {

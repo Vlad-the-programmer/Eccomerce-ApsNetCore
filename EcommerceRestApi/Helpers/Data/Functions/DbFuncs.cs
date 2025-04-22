@@ -1,5 +1,5 @@
-﻿using EcommerceRestApi.Helpers.Data.ViewModels;
-using EcommerceRestApi.Helpers.Static;
+﻿using EcommerceRestApi.Helpers.Data.Roles;
+using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services;

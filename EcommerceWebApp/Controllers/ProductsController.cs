@@ -19,6 +19,7 @@ namespace EcommerceWebApp.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             List<NewProductViewModel> products = await ProductsEndpointsHelperFuncs.GetProducts(
@@ -49,6 +50,7 @@ namespace EcommerceWebApp.Controllers
             return View("Index", fileteredProducts); // Return the view with the products data
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var endpoint = $"{GlobalConstants.ProductsEndpoint}/{id}";
@@ -67,6 +69,7 @@ namespace EcommerceWebApp.Controllers
         }
 
         //get: products/Create
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
             List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(

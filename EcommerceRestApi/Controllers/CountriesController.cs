@@ -1,8 +1,5 @@
-﻿using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
-using EcommerceRestApi.Helpers.Static;
-using EcommerceRestApi.Models.Context;
+﻿using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceRestApi.Controllers

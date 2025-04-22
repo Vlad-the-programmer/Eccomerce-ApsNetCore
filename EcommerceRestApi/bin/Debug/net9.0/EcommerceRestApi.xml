@@ -275,5 +275,29 @@
         <member name="M:EcommerceRestApi.Migrations.ChangedPriceTypeIntToDecimal.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:EcommerceRestApi.Migrations.MadeDateTimeFieldsNullable">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.MadeDateTimeFieldsNullable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.MadeDateTimeFieldsNullable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.MadeDateTimeFieldsNullable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.IncreasedShoppingCartIdFieldLengthLonger">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.IncreasedShoppingCartIdFieldLengthLonger.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.IncreasedShoppingCartIdFieldLengthLonger.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.IncreasedShoppingCartIdFieldLengthLonger.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
     </members>
 </doc>

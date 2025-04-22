@@ -85,7 +85,7 @@ namespace EcommerceRestApi.Controllers
             return Ok(shoppingCartItem);
         }
 
-        [HttpPost]
+        [HttpPost("{productId}")]
         public async Task<IActionResult> AddItemToCart(int productId)
         {
             if (await _context.Products.FindAsync(productId) == null)

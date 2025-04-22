@@ -18,17 +18,18 @@ namespace EcommerceWebApp.Helpers
 
         public static async Task<List<ShoppingCartItemVM>> GetCartItems(string endpoint, IApiService apiService)
         {
-            var cartVM = new ShoppingCartViewModel();
+            var cartItems = new List<ShoppingCartItemVM>();
             try
             {
-                cartVM = await GetCreateCart(endpoint, apiService);
+                var response = await apiService.GetDataAsync(endpoint);
+                cartItems = JsonSerializer.Deserialize<List<ShoppingCartItemVM>>(response, GlobalConstants.JsonSerializerOptions);
             }
             catch (Exception ex)
             {
-                cartVM = new ShoppingCartViewModel();
+                cartItems = new List<ShoppingCartItemVM>();
             }
 
-            return cartVM.ShoppingCartItems;
+            return cartItems;
         }
 
         public static async Task<ShoppingCartItemVM?> GetProductById(string endpoint, int productId, IApiService apiService)
