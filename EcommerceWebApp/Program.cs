@@ -90,7 +90,6 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseRouting();
 app.Use(async (context, next) =>
 {
     try

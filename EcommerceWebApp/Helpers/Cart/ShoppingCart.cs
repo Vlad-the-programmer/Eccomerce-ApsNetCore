@@ -42,7 +42,7 @@ namespace EcommerceWebApp.Helpers.Cart
 
         public double GetShoppingCartTotal()
         {
-            var total = GetShoppingCartItems().Where(n => n.ShoppingCartId == ShoppingCartId).Select(n => n.Product.Price * n.Amount).Sum();
+            var total = GetShoppingCartItems().Where(n => n.ShoppingCartId == ShoppingCartId).Select(n => n.ProductPrice * n.Amount).Sum();
             return (double)total;
         }
     }

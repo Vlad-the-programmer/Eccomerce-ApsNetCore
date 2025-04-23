@@ -7,7 +7,7 @@ namespace EcommerceWebApp.Models
         public ShoppingCartViewModel() : base("Cart") { }
 
         public List<ShoppingCartItemVM> ShoppingCartItems { get; set; } = new List<ShoppingCartItemVM>();
-        public double CartTotal { get; set; } = 0.0;
+        public decimal CartTotal { get; set; } = decimal.Zero;
 
     }
 }

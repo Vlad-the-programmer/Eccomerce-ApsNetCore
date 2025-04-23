@@ -160,9 +160,10 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseCors("AllowSpecificOrigins");
+app.UseRouting();
+app.UseSession();
 app.UseAuthentication(); // Enable authentication
 app.UseAuthorization();
-app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

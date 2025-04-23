@@ -35,7 +35,7 @@ namespace EcommerceRestApi.Controllers
             var cartVM = new ShoppingCartVM
             {
                 ShoppingCartItems = await _cart.GetCartItems(),
-                CartTotal = (double)await _cart.GetTotal()
+                CartTotal = await _cart.GetTotal()
             };
             return Ok(cartVM);
         }
@@ -55,8 +55,7 @@ namespace EcommerceRestApi.Controllers
                 return BadRequest(new ResponseModel { Message = "Your cart is empty." });
             }
 
-            var ShoppingCartItems = _context.ShoppingCartItems
-                                                     .Where(n => n.ShoppingCartId == ShoppingCartId).ToList();
+            var ShoppingCartItems = await _cart.GetCartItems();
 
             return Ok(ShoppingCartItems);
         }

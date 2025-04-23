@@ -62,19 +62,38 @@ namespace EcommerceRestApi.Helpers.Cart
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteFromCartHandler(int idCartItem)
+        public async Task DeleteFromCartHandler(int productId)
         {
-            var cartItem = await _context.ShoppingCartItems.FindAsync(idCartItem);
+            var cartItem = await _context.ShoppingCartItems.FirstOrDefaultAsync(item => item.ShoppingCartId == IdCartSession
+                                                                                        && item.ProductId == productId);
             if (cartItem != null)
             {
-                _context.Remove(cartItem);
+                if (cartItem.Amount <= 1)
+                {
+                    _context.Remove(cartItem);
+                }
+                else
+                {
+                    cartItem.Amount--;
+                    _context.Entry(cartItem).State = EntityState.Modified;
+                }
                 await _context.SaveChangesAsync();
             }
         }
-        public async Task<List<ShoppingCartItem>> GetCartItems()
+        public async Task<List<ShoppingCartItemVM>> GetCartItems()
             => await _context.ShoppingCartItems
                 .Where(item => item.ShoppingCartId == IdCartSession)
                 .Include(item => item.Product)
+                .Select(item => new ShoppingCartItemVM
+                {
+                    Id = item.Id,
+                    Amount = item.Amount,
+                    ShoppingCartId = IdCartSession,
+                    ProductId = item.ProductId,
+                    ProductName = item.Product.Name,
+                    ProductPrice = item.Product.Price,
+                    DateCreated = DateTime.Now
+                })
                 .ToListAsync();
 
 
@@ -92,7 +111,10 @@ namespace EcommerceRestApi.Helpers.Cart
 
         public async Task<Order> ConvertToOrder(Order order)
         {
-            var orderItems = await GetCartItems();
+            var orderItems = await _context.ShoppingCartItems
+                                    .Where(item => item.ShoppingCartId == IdCartSession)
+                                    .Include(item => item.Product)
+                                    .ToListAsync();
             order.TotalAmount = await GetTotal();
 
             foreach (var item in orderItems)

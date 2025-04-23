@@ -4,7 +4,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
 {
     public class ShoppingCartVM
     {
-        public List<ShoppingCartItem> ShoppingCartItems { get; set; }
-        public double CartTotal { get; set; }
+        public List<ShoppingCartItemVM> ShoppingCartItems { get; set; }
+        public decimal CartTotal { get; set; }
     }
 }

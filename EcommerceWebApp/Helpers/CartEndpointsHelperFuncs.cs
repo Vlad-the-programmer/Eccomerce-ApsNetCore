@@ -24,7 +24,7 @@ namespace EcommerceWebApp.Helpers
                 var response = await apiService.GetDataAsync(endpoint);
                 cartItems = JsonSerializer.Deserialize<List<ShoppingCartItemVM>>(response, GlobalConstants.JsonSerializerOptions);
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
                 cartItems = new List<ShoppingCartItemVM>();
             }
@@ -95,10 +95,10 @@ namespace EcommerceWebApp.Helpers
             return string.Empty;
         }
 
-        public static async Task<double> GetShoppingCartTotal(IApiService apiService)
+        public static async Task<decimal> GetShoppingCartTotal(IApiService apiService)
         {
-            var total = (double)(await GetCartItems(GlobalConstants.GetCartItemsEndpoint, apiService))
-                                                .Select(n => n.Product.Price * n.Amount).Sum();
+            var total = (await GetCartItems(GlobalConstants.GetCartItemsEndpoint, apiService))
+                                                .Select(n => n.ProductPrice * n.Amount).Sum();
             return total;
         }
     }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceWebApp.Controllers
 {
+    [Route("cart")]
     public class CartController : Controller
     {
         private readonly IApiService _apiService;
@@ -28,7 +29,7 @@ namespace EcommerceWebApp.Controllers
                 cart = new ShoppingCartViewModel();
             }
 
-            return View("Index", cart);
+            return View(cart);
         }
 
         [HttpPost("add/{productId}")]
@@ -62,7 +63,7 @@ namespace EcommerceWebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
+        [HttpGet("clear")]
         public async Task<IActionResult> ClearCart()
         {
             var response = await CartEndpointsHelperFuncs.ClearCart(GlobalConstants.ClearCartEndpoint, _apiService);
