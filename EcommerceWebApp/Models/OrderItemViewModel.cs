@@ -20,9 +20,6 @@ namespace EcommerceWebApp.Models
         [Range(0.01, double.MaxValue, ErrorMessage = "Unit Price must be greater than 0.")]
         public decimal UnitPrice { get; set; }
 
-        //public OrderViewModel Order { get; set; } = null!;
-
-        //public NewProductViewModel Product { get; set; } = null!;
         public string ProductName { get; set; }
         public string ProductBrand { get; set; }
     }

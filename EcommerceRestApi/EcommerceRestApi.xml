@@ -299,5 +299,17 @@
         <member name="M:EcommerceRestApi.Migrations.IncreasedShoppingCartIdFieldLengthLonger.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:EcommerceRestApi.Migrations.ChangeInvoiceNumber16to25length">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.ChangeInvoiceNumber16to25length.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.ChangeInvoiceNumber16to25length.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.ChangeInvoiceNumber16to25length.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
     </members>
 </doc>

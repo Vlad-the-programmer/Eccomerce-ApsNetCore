@@ -1,27 +1,21 @@
-﻿using EcommerceWebApp.Helpers.Cart;
+﻿using EcommerceWebApp.ApiServices;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EcommerceWebApp.Helpers.ViewComponents
 {
-     public class ShoppingCartSummary : ViewComponent
+    public class ShoppingCartSummaryViewComponent : ViewComponent
+    {
+        public readonly IApiService _apiService;
+
+        public ShoppingCartSummaryViewComponent(IApiService apiService)
         {
-            public readonly ShoppingCart _shoppingCart;
-
-            public ShoppingCartSummary(ShoppingCart shoppingCart)
-            {
-                _shoppingCart = shoppingCart;
-            }
-
-            public IViewComponentResult Invoke()
-            {
-                var items = _shoppingCart.GetShoppingCartItems();
-                return View(items.Count);
-            }
+            _apiService = apiService;
         }
 
-
+        public async Task<IViewComponentResult> InvokeAsync()
+        {
+            var items = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
+            return View(items.Count);
+        }
+    }
 }

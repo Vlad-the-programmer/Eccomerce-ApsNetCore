@@ -24,40 +24,27 @@ namespace EcommerceWebApp.Controllers
             return View(orders);
         }
 
-        //[HttpGet("/{code}")]
-        //public async Task<IActionResult> GetOrder(string code)
-        //{
-        //    var order = await OrdersEndpointsHelperFuncs.GetOrderByCode(GlobalConstants.OrdersEndpoint, code, _apiService);
-
-        //    if (order == null)
-        //    {
-        //        return View("NotFound");
-        //    }
-
-        //    return View("Status.html", order);
-        //}
-
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
             var cartItems = new List<ShoppingCartItemVM>();
             var countries = new List<string>();
-            try
-            {
-                //await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
-                cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
-                countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["Error"] = ex.Message;
-            }
+            var orderModel = new OrderViewModel();
+
+
+            //await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
+            cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
+            countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
+            orderModel = await OrdersEndpointsHelperFuncs.GetOrderCreateTemplate(GlobalConstants.GetOrderCreateModelEndpoint, _apiService);
+
+
             ViewBag.CartItems = cartItems;
             ViewBag.Countries = countries;
-            return View();
+            return View(orderModel);
         }
 
         [HttpPost("create")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OrderViewModel order)
         {
             try
@@ -94,19 +81,23 @@ namespace EcommerceWebApp.Controllers
             return View(order);
         }
 
-        [HttpDelete("cancel/{code}")]
-        public async Task<IActionResult> Cancel(string code)
+        [HttpPost("cancel/{code}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Cancel(string code, string _method)
         {
-            try
+            if (_method == "DELETE")
             {
-                await _apiService.DeleteDataAsync($"{GlobalConstants.OrderDeleteEndpoint}/{code}");
+                try
+                {
+                    await _apiService.DeleteDataAsync($"{GlobalConstants.OrderDeleteEndpoint}/{code}");
+                }
+                catch (HttpRequestException ex)
+                {
+                    TempData["Error"] = ex.Message;
+                }
+                return RedirectToAction("Index");
             }
-            catch (HttpRequestException ex)
-            {
-                TempData["Error"] = ex.Message;
-            }
-
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Status), new { code = code });
         }
 
         [HttpPut("update/{code}")]

@@ -116,22 +116,16 @@ namespace EcommerceRestApi.Helpers.Cart
                                     .Include(item => item.Product)
                                     .ToListAsync();
             order.TotalAmount = await GetTotal();
-
+            order.OrderItems = orderItems.Select(cartItem =>
+                                    OrderItem.CartItemToOrderItem(cartItem, order.Id))
+                                .ToList();
             foreach (var item in orderItems)
             {
                 if (item == null)
                 {
                     continue;
                 }
-                var orderItem = new OrderItem
-                {
-                    ProductId = item.ProductId,
-                    Quantity = item.Amount,
-                    UnitPrice = item.Product.Price,
-                    DateCreated = DateTime.Now,
-                    IsActive = item.IsActive,
-                    OrderId = order.Id,
-                };
+                var orderItem = OrderItem.CartItemToOrderItem(item, order.Id);
                 await _context.OrderItems.AddAsync(orderItem);
             }
             await _context.SaveChangesAsync();

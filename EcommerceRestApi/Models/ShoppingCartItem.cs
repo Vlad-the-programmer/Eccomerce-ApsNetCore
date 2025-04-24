@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EcommerceRestApi.Helpers.ModelsUtils;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,4 +18,10 @@ public partial class ShoppingCartItem : EntityBase
     [ForeignKey("ProductId")]
     [InverseProperty("ShoppingCartItems")]
     public virtual Product Product { get; set; } = null!;
+
+    public static explicit operator ShoppingCartItem(ShoppingCartItemVM cartItemVM)
+    {
+        var cartItem = new ShoppingCartItem().CopyProperties(cartItemVM);
+        return cartItem;
+    }
 }

@@ -444,6 +444,16 @@
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.OrdersController",
+    "Method": "CreateOrderCreateTemplate",
+    "RelativePath": "api/Orders/get-order-create-model",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.OrdersController",
     "Method": "UpdateOrder",
     "RelativePath": "api/Orders/update/{code}",
     "HttpMethod": "PUT",

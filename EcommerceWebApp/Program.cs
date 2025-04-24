@@ -1,6 +1,5 @@
 using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.AppGlobals;
-using EcommerceWebApp.Helpers.Cart;
 using EcommerceWebApp.Models.AppViewModels;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Net;
@@ -11,9 +10,9 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped<ShoppingCart>(sc =>
-    ShoppingCart.GetShoppingCart(sc,
-            sc.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session));
+//builder.Services.AddScoped<ShoppingCart>(sc =>
+//    ShoppingCart.GetShoppingCart(sc,
+//            sc.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

@@ -23,6 +23,7 @@ public static class GlobalConstants
     public const string OrderDeleteEndpoint = "api/orders/delete";
     public const string OrderUpdateEndpoint = "api/orders/update";
     public const string OrderCreateEndpoint = "api/orders/create";
+    public const string GetOrderCreateModelEndpoint = "api/orders/get-order-create-model";
 
     // Categories
     public const string CategoriesEndpoint = "api/categories/";

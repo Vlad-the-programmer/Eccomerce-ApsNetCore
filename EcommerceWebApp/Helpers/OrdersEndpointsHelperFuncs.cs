@@ -33,9 +33,26 @@ namespace EcommerceWebApp.Helpers
             catch (HttpRequestException ex)
             {
                 Debug.WriteLine("OrderByCode: " + ex);
-                order = null;
+                order = new OrderViewModel();
             }
             return order;
+        }
+
+        public async static Task<OrderViewModel?> GetOrderCreateTemplate(string endpoint, IApiService apiService)
+        {
+            var orderModel = new OrderViewModel();
+            try
+            {
+                var response = await apiService.GetDataAsync(endpoint); // response is a string
+                orderModel = JsonSerializer.Deserialize<OrderViewModel>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine("OrderCreate model error: " + ex);
+                orderModel = new OrderViewModel();
+            }
+            return orderModel;
         }
 
         public async static Task<string> SubmitOrder(string endpoint, OrderViewModel order, IApiService apiService)

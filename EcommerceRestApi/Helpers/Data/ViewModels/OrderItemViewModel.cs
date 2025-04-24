@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EcommerceRestApi.Models;
+using EcommerceRestApi.Models.Context;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcommerceRestApi.Helpers.Data.ViewModels
@@ -25,5 +28,30 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         //public virtual Product Product { get; set; } = null!;
         public string ProductName { get; set; }
         public string ProductBrand { get; set; }
+
+        public static async Task<OrderItemViewModel> ToOrderItemVM(ShoppingCartItemVM cartItemVM, AppDbContext context)
+        {
+            var product = await context.Products.FindAsync(cartItemVM.ProductId);
+            var lastOrder = await context.Orders
+                            .OrderByDescending(o => o.Id)
+                            .FirstOrDefaultAsync();
+
+            var orderId = (lastOrder?.Id ?? 0) + 1;
+
+            if (product == null)
+            {
+                return new OrderItemViewModel();
+            }
+
+            return new OrderItemViewModel
+            {
+                OrderId = orderId,
+                ProductBrand = product.Brand,
+                ProductName = product.Name,
+                UnitPrice = cartItemVM.ProductPrice,
+                Quantity = cartItemVM.Amount,
+                ProductId = cartItemVM.ProductId
+            };
+        }
     }
 }

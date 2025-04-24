@@ -11,7 +11,7 @@ public partial class Invoice : EntityBase
 {
     public int CustomerId { get; set; }
 
-    [StringLength(16)]
+    [StringLength(25)]
     [Unicode(false)]
     public string Number { get; set; } = null!;
 

@@ -33,10 +33,14 @@ namespace EcommerceRestApi.Helpers.Data.Functions
 
             invoice.PaymentId = (await GetPaymentByOrderId(item.Id, context))?.Id;
 
+            await context.Invoices.AddAsync(invoice);
+            await context.SaveChangesAsync();
+
             foreach (var orderItem in item.OrderItems)
             {
                 InvoiceItem invoiceItem = new InvoiceItem()
                 {
+                    InvoiceId = invoice.Id,
                     BasePricePerUnit = orderItem.UnitPrice,
                     DateCreated = DateTime.Now,
                     Discount = 0,
@@ -45,19 +49,21 @@ namespace EcommerceRestApi.Helpers.Data.Functions
                     Quantity = orderItem.Quantity,
                     TaxRate = 1.2,
                 };
-                invoice.InvoiceItems.Add(invoiceItem);
-
-                if (invoice.PaymentId != null)
-                {
-                    await MarkInvoiceAsPaid(invoice.Id, context);
-                }
 
                 await context.InvoiceItems.AddAsync(invoiceItem);
-                await context.SaveChangesAsync();
             }
-            await context.Invoices.AddAsync(invoice);
+
+            await context.SaveChangesAsync();
+
+            // Mark as paid if needed (after invoice has an Id)
+            if (invoice.PaymentId != null)
+            {
+                await MarkInvoiceAsPaid(invoice.Id, context);
+            }
+
             return invoice;
         }
+
 
         /// <summary>
         /// Marks an invoice as paid.

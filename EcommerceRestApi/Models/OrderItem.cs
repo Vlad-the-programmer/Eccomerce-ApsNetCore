@@ -20,4 +20,17 @@ public partial class OrderItem : EntityBase
     [ForeignKey("ProductId")]
     [InverseProperty("OrderItems")]
     public virtual Product Product { get; set; } = null!;
+
+    public static OrderItem CartItemToOrderItem(ShoppingCartItem cartItem, int orderId)
+    {
+        return new OrderItem
+        {
+            ProductId = cartItem.ProductId,
+            Quantity = cartItem.Amount,
+            UnitPrice = cartItem.Product.Price,
+            DateCreated = DateTime.Now,
+            IsActive = cartItem.IsActive,
+            OrderId = orderId,
+        };
+    }
 }

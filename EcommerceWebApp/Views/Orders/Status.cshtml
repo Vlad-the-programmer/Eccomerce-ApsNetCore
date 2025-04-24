@@ -32,17 +32,53 @@
         @if (Model.OrderStatus == EcommerceWebApp.Helpers.Enums.OrderStatuses.Paid)
         {
             <li class="list-group-item list-group-item-success d-flex">
-                Paid  -  @((Model.TotalAmount / 100).ToString("C"))
+                Paid - @Model.TotalAmount.GetValueOrDefault().ToString("C", new System.Globalization.CultureInfo("us-Us"))
             </li>
         }
         else
         {
             <li class="list-group-item list-group-item-danger d-flex">
-                UnPaid  -  @((Model.TotalAmount / 100).ToString("C"))
+                UnPaid - @Model.TotalAmount.GetValueOrDefault().ToString("C", new System.Globalization.CultureInfo("us-Us"))
             </li>
         }
+
         <li class="list-group-item list-group-item d-flex">
             Status  -  @OrderProcessingFuncs.GetStringValue(Model.OrderStatus)
         </li>
+        @using (Html.BeginForm("Cancel", "Orders", new { code = Model.Code }, FormMethod.Post, true, new { id = "cancelForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <!-- Hidden field to simulate DELETE -->
+            <input type="hidden" name="_method" value="DELETE" />
+
+            <button type="submit" class="btn btn-danger">Cancel Order</button>
+        }
+
+
     </ul>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // This submits the form with DELETE request when clicking the "Cancel Order" button.
+            $('#cancelForm').submit(function (event) {
+                event.preventDefault();
+                var form = $(this);
+                $.ajax({
+                    url: form.attr('action'),
+                    console.log(form.attr('action'));
+                    type: 'DELETE',
+                    data: form.serialize(),
+                    success: function (data) {
+                        window.location.href = '@Url.Action("Index", "Orders")';
+                    },
+                    error: function (error) {
+                        alert('Error: ' + error.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+}

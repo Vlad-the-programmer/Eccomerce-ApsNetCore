@@ -1,7 +1,6 @@
 ﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Models;
-using EcommerceWebApp.Models.ResponseModels;
 using EcommerceWebApp.Models.UpdateViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -23,24 +22,23 @@ namespace EcommerceWebApp.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public IActionResult Login() => View(new LoginViewModel());
+        [HttpGet]
+        public IActionResult Login(string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View(new LoginViewModel());
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel loginVM)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel loginVM, string returnUrl = null)
         {
-            //if (!ModelState.IsValid) return View(loginVM);
-            TokenResponse? tokenObj = new TokenResponse();
             try
             {
                 var response = await _apiService.PostDataAsync(
                     GlobalConstants.LoginEndpoint,
                     JsonSerializer.Serialize(loginVM)
                 );
-
-                //tokenObj = JsonSerializer.Deserialize<TokenResponse>(response, GlobalConstants.JsonSerializerOptions);
-
-                //HttpContext.Session.SetString("auth_token", tokenObj.Token);
-                //JWTAuth.SetUserFromToken(tokenObj.Token, _httpContextAccessor);
             }
             catch (HttpRequestException e)
             {
@@ -48,9 +46,13 @@ namespace EcommerceWebApp.Controllers
                 return View(loginVM);
             }
 
-
-
             TempData["Success"] = "Login successful!";
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
             return RedirectToAction("Index", "Products");
         }
         public async Task<IActionResult> Register()

@@ -1,4 +1,5 @@
 using EcommerceRestApi.AppGlobals;
+using EcommerceRestApi.Helpers.Cart;
 using EcommerceRestApi.Helpers.Data.Auth;
 using EcommerceRestApi.Helpers.Data.DbInitializer;
 using EcommerceRestApi.Helpers.Data.Roles;
@@ -25,6 +26,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+builder.Services.AddScoped<ShoppingCart>(sp =>
+{
+    var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+    var session = httpContextAccessor.HttpContext!.Session;
+    var context = sp.GetRequiredService<AppDbContext>();
+
+    return new ShoppingCart(context, session);
+});
 
 //Services Configuration
 builder.Services.AddScoped<ICountryService, CountryService>();
