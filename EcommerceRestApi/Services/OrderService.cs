@@ -33,6 +33,7 @@ namespace EcommerceRestApi.Services
                                             .ThenInclude(c => c.Invoices)
                                     .Include(c => c.Customer)
                                             .ThenInclude(c => c.Addresses)
+                                                .ThenInclude(a => a.Country)
                                     .Include(item => item.Shipments)
                                             .ThenInclude(item => item.DeliveryMethod)
                                             .ThenInclude(item => item.DeliveryMethodOrders)
@@ -168,39 +169,52 @@ namespace EcommerceRestApi.Services
                                         c => c.CountryName == data.Customer.CountryName)?.Id,
                 CustomerId = data.CustomerId ?? 0,
                 DateCreated = DateTime.Now,
-                IsActive = true
+                IsActive = true,
             };
 
-            var oldAddress = _context.Customers.FirstOrDefault(
-                                    c => c.Id == data.CustomerId)
-                            ?.Addresses
-                            .FirstOrDefault();
+            var oldAddress = _context.Customers
+                                        .Include(c => c.Addresses)
+                                            .ThenInclude(a => a.Country)
+                                        .FirstOrDefault(
+                                                c => c.Id == data.CustomerId)
+                                        ?.Addresses
+                                        .FirstOrDefault();
 
             if (oldAddress != null)
             {
-                oldAddress = newAddress;
-                _context.Entry(oldAddress).State = EntityState.Modified;
+                oldAddress.Street = newAddress.Street ?? oldAddress.Street;
+                oldAddress.FlatNumber = newAddress.FlatNumber ?? oldAddress.FlatNumber;
+                oldAddress.HouseNumber = newAddress.HouseNumber ?? oldAddress.HouseNumber;
+                oldAddress.State = newAddress.State ?? oldAddress.State;
+                oldAddress.PostalCode = newAddress.PostalCode ?? oldAddress.PostalCode;
+                oldAddress.City = newAddress.City ?? oldAddress.City;
+                oldAddress.CountryId = newAddress.CountryId ?? oldAddress.CountryId;
+                oldAddress.DateUpdated = DateTime.Now;
+                oldAddress.IsActive = newAddress.IsActive != oldAddress.IsActive
+                                            ? newAddress.IsActive
+                                            : oldAddress.IsActive;
             }
             else
             {
                 _context.Addresses.Add(newAddress);
             }
 
+
             var estimatedArrivalDateShippment = order.OrderDate;
 
             switch (data.DeliveryMethod)
             {
                 case DeliveryMethods.Delivery:
-                    estimatedArrivalDateShippment = order.OrderDate.AddDays(2);
+                    estimatedArrivalDateShippment = estimatedArrivalDateShippment.AddDays(2);
                     break;
                 case DeliveryMethods.Courier:
-                    estimatedArrivalDateShippment = order.OrderDate.AddDays(2.5);
+                    estimatedArrivalDateShippment = estimatedArrivalDateShippment.AddDays(2.5);
                     break;
                 case DeliveryMethods.ParcelLocker:
-                    estimatedArrivalDateShippment = order.OrderDate.AddDays(1.5);
+                    estimatedArrivalDateShippment = estimatedArrivalDateShippment.AddDays(1.5);
                     break;
                 case DeliveryMethods.TakeAway:
-                    estimatedArrivalDateShippment = order.OrderDate.AddDays(1);
+                    estimatedArrivalDateShippment = estimatedArrivalDateShippment.AddDays(1);
                     break;
             }
 
@@ -237,6 +251,7 @@ namespace EcommerceRestApi.Services
             var orders = await _context.Orders
                              .Include(o => o.Customer)
                                  .ThenInclude(c => c.Addresses)
+                                    .ThenInclude(a => a.Country)
                              .Include(o => o.Customer)
                                  .ThenInclude(c => c.User)
                              .Include(o => o.Customer)

@@ -25,7 +25,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         [Range(0.01, double.MaxValue, ErrorMessage = "Total amount must be greater than zero.")]
         public decimal? TotalAmount { get; set; }
 
-        public CustomerViewModel? Customer { get; set; }
+        public CustomerViewModel? Customer { get; set; } = new CustomerViewModel();
         public IList<OrderItemViewModel> OrderItems { get; set; } = new List<OrderItemViewModel>();
         public DeliveryMethods DeliveryMethod { get; set; }
 
@@ -57,22 +57,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
                 }).ToList(),
                 Customer = new CustomerViewModel()
             };
-            //orderVm.Customer.Street = address?.Street;
-            //orderVm.Customer.City = address?.City;
-            //orderVm.Customer.FlatNumber = address?.FlatNumber;
-            //orderVm.Customer.HouseNumber = address?.HouseNumber;
-            //orderVm.Customer.State = address?.State;
-            //orderVm.Customer.PostalCode = address?.PostalCode;
-            //orderVm.Customer.CountryName = address?.CountryId != null
-            //                               ? context.Countries.FirstOrDefault(
-            //                                            c => c.Id == address.CountryId)
-            //                                                ?.CountryName : string.Empty;
-            //orderVm.Customer.FirstName = order.Customer.User.FirstName;
-            //orderVm.Customer.LastName = order.Customer.User.LastName;
-            //orderVm.Customer.UserName = order.Customer.User.UserName;
-            //orderVm.Customer.Role = order.Customer.User.Role;
-            //orderVm.Customer.IsActive = order.Customer.IsActive;
-            //orderVm.Customer.IsAdmin = order.Customer.IsA;
+
             orderVm.Customer = CustomerViewModel.ToVM(order.Customer, userManager);
             return orderVm;
         }

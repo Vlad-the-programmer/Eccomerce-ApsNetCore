@@ -57,12 +57,17 @@ namespace EcommerceRestApi.Controllers
 
             var model = new OrderViewModel();
             model.Customer = new CustomerViewModel();
-            var customer = _userManager.Users
-                                            .Include(u => u.Customers)
-                                                .ThenInclude(c => c.Addresses)
-                                            .FirstOrDefault(u => u.Id == _userManager.GetUserId(User))
-                                            ?.Customers.FirstOrDefault();
-
+            //var customer = _userManager.Users
+            //                                .Include(u => u.Customers)
+            //                                    .ThenInclude(c => c.Addresses)
+            //                                .FirstOrDefault(u => u.Id == _userManager.GetUserId(User))
+            //                                ?.Customers.FirstOrDefault();
+            var customer = await _context.Customers
+                                            .Include(c => c.User)
+                                            .Include(c => c.Addresses)
+                                                .ThenInclude(a => a.Country)
+                                            .Where(c => c.UserId == _userManager.GetUserId(User))
+                                            .FirstOrDefaultAsync();
             if (customer != null)
             {
                 model.CustomerId = customer.Id;

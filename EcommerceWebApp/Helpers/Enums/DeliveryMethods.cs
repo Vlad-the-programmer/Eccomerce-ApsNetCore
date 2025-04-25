@@ -2,7 +2,7 @@
 {
     public enum DeliveryMethods
     {
-        Delivery,
+        Delivery = 1,
         Courier,
         TakeAway,
         ParcelLocker

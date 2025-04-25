@@ -26,23 +26,23 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         public static CustomerViewModel ToVM(Customer? customer, UserManager<ApplicationUser> _userManager)
         {
             if (customer == null) return new();
-            var user = _userManager.Users.FirstOrDefault(u => u.Id == customer.UserId);
+            var user = customer.User;
             var address = customer.Addresses.FirstOrDefault();
 
             return new CustomerViewModel
             {
-                FlatNumber = address?.FlatNumber,
-                HouseNumber = address?.HouseNumber,
-                City = address?.City,
-                PostalCode = address?.PostalCode,
-                State = address?.State,
-                Street = address?.Street,
-                CountryName = address?.Country?.CountryName,
+                FlatNumber = address?.FlatNumber ?? string.Empty,
+                HouseNumber = address?.HouseNumber ?? string.Empty,
+                City = address?.City ?? string.Empty,
+                PostalCode = address?.PostalCode ?? string.Empty,
+                State = address?.State ?? string.Empty,
+                Street = address?.Street ?? string.Empty,
+                CountryName = address?.Country?.CountryName ?? string.Empty,
                 Email = user?.Email ?? string.Empty,
                 FirstName = user?.FirstName ?? string.Empty,
                 LastName = user?.LastName ?? string.Empty,
                 PhoneNumber = user?.PhoneNumber ?? string.Empty,
-                Nip = customer?.Nip,
+                Nip = customer?.Nip ?? string.Empty,
                 IsActive = customer.IsActive,
                 IsAdmin = customer.User.IsAdmin,
                 IsAuthenticated = customer.User.IsAuthenticated,

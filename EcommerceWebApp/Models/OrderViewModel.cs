@@ -1,5 +1,4 @@
 ﻿using EcommerceWebApp.Helpers.Enums;
-using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceWebApp.Models
 {
@@ -18,25 +17,6 @@ namespace EcommerceWebApp.Models
         public ApplicationUserViewModel Customer { get; set; } = new ApplicationUserViewModel();
 
         public IList<OrderItemViewModel> OrderItems { get; set; } = new List<OrderItemViewModel>();
-
-        [StringLength(100)]
-        public string? Street { get; set; }
-
-        [StringLength(20)]
-        public string? HouseNumber { get; set; }
-
-        [StringLength(20)]
-        public string? FlatNumber { get; set; }
-
-        [StringLength(50)]
-        public string? City { get; set; }
-
-        [StringLength(50)]
-        public string? State { get; set; }
-
-        [StringLength(10)]
-        public string? PostalCode { get; set; }
-        public string? CountryName { get; set; }
 
         public DeliveryMethods DeliveryMethod { get; set; }
 

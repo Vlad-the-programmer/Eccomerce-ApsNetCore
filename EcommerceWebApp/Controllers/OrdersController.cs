@@ -31,8 +31,6 @@ namespace EcommerceWebApp.Controllers
             var countries = new List<string>();
             var orderModel = new OrderViewModel();
 
-
-            //await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
             cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
             countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
             orderModel = await OrdersEndpointsHelperFuncs.GetOrderCreateTemplate(GlobalConstants.GetOrderCreateModelEndpoint, _apiService);

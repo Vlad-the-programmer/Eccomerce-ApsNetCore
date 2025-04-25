@@ -78,79 +78,71 @@ else
             </button>
         </div>
     }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <span style="white-space: pre-line">@TempData["Error"]</span>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    }
+    
     <form method="post" id="orderForm">
         @if (!User.Identity.IsAuthenticated)
         {
             <div id="formOverlay"></div>
         }
-        <input type="hidden" name="Order.Code" value="@Model.Code" />
+        <input type="hidden" name="Code" asp-for="Code" />
 
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="FirstName">First Name</label>
-                <input type="text" class="form-control" name="Order.Customer.FirstName" id="FirstName" asp-for="@Model.Customer.FirstName" value="@Model.Customer.FirstName" pattern=".{3,64}" required>
+                <input type="text" class="form-control" asp-for="Customer.FirstName" pattern=".{3,64}" required>
             </div>
             <div class="form-group col-md-6">
                 <label for="LastName">Last Name</label>
-                <input type="text" class="form-control" name="Order.Customer.LastName" id="LastName" asp-for="@Model.Customer.LastName" value="@Model.Customer.LastName" pattern=".{3,64}" required>
+                <input type="text" class="form-control" asp-for="Customer.LastName" pattern=".{3,64}" required>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="Email">Email</label>
-                <input type="email" class="form-control" name="Order.Customer.Email" id="Email" asp-for="@Model.Customer.Email" value="@Model.Customer.Email" pattern=".{5,128}" required>
+                <input type="email" class="form-control" asp-for="Customer.Email" pattern=".{5,128}" required>
             </div>
             <div class="form-group col-md-6">
                 <label for="Phone">Phone number</label>
-                <input type="text" class="form-control" name="Order.Customer.PhoneNumber" id="Phone" asp-for="@Model.Customer.PhoneNumber" value="@Model.Customer.PhoneNumber" pattern=".{7,16}" required>
+                <input type="text" class="form-control" asp-for="Customer.PhoneNumber" pattern=".{7,16}" required>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-8">
                 <label for="Street">Street</label>
-                <input type="text" class="form-control" id="Street" name="Order.Street" asp-for="@Model.Street" value="@Model.Street" maxlength="100" required />
+                <input type="text" class="form-control" name="Customer.Street" asp-for="Customer.Street" required />
             </div>
             <div class="form-group col-md-2">
                 <label for="HouseNumber">House #</label>
-                <input type="text" class="form-control" id="HouseNumber" name="Order.HouseNumber" asp-for="@Model.HouseNumber" value="@Model.HouseNumber" maxlength="20" required />
+                <input type="text" class="form-control" asp-for="Customer.HouseNumber" required />
             </div>
             <div class="form-group col-md-2">
                 <label for="FlatNumber">Flat #</label>
-                <input type="text" class="form-control" id="FlatNumber" name="Order.FlatNumber" asp-for="@Model.FlatNumber" value="@Model.FlatNumber" maxlength="20" />
+                <input type="text" class="form-control" asp-for="Customer.FlatNumber" />
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label for="City">City</label>
-                <input type="text" class="form-control" id="City" name="Order.City" asp-for="@Model.City" value="@Model.City" maxlength="50" required />
+                <input type="text" class="form-control" asp-for="Customer.City" required />
             </div>
             <div class="form-group col-md-4">
                 <label for="State">State/Province</label>
-                <input type="text" class="form-control" id="State" name="Order.State" asp-for="@Model.State" value="@Model.State" maxlength="50" />
+                <input type="text" class="form-control" asp-for="Customer.State" />
             </div>
             <div class="form-group col-md-4">
                 <label for="PostalCode">Postal Code</label>
-                <input type="text" class="form-control" id="PostalCode" name="Order.PostalCode" asp-for="@Model.PostalCode" value="@Model.PostalCode" maxlength="10" required />
+                <input type="text" class="form-control" asp-for="Customer.PostalCode" required />
             </div>
         </div>
 
         <div class="form-group">
             <label for="CountryName">Country</label>
-            <select class="custom-select" id="CountryName" name="Order.CountryName" asp-for="CountryName" required>
+            <select class="custom-select" asp-for="Customer.CountryName" required>
                 <option value="">-- Select Country --</option>
                 @foreach (var country in ViewBag.Countries)
                 {
-                    <option value="@country" selected="@(country == Model.CountryName)">
+                    <option value="@country" selected="@(country == Model.Customer.CountryName)">
                         @country
                     </option>
                 }
@@ -159,7 +151,7 @@ else
 
         <div class="row form-group">
            <div class="col-6">
-    <select class="custom-select" onchange="OnShippingUpdate()" name="DeliveryMethod" id="ShippingType" asp-for="DeliveryMethod">
+    <select class="custom-select" onchange="OnShippingUpdate()"  asp-for="DeliveryMethod">
         <option value="">-- Select Delivery Method --</option>
         <option value="1" selected="@(Model.DeliveryMethod == DeliveryMethods.Courier)">Courier (+20 zł)</option>
         <option value="2" selected="@(Model.DeliveryMethod == DeliveryMethods.ParcelLocker)">Parcel Locker (+8,99 zł)</option>
@@ -168,7 +160,7 @@ else
 </div>
 
             <div class="col-6">
-                <select class="custom-select" name="Order.PaymentMethod" id="PaymentMethod" asp-for="@Model.PaymentMethod">
+                <select class="custom-select" asp-for="PaymentMethod">
                     <option value="1" selected="@(Model.PaymentMethod == PaymentMethods.Card)">Debit card</option>
                     <option value="2" selected="@(Model.PaymentMethod == PaymentMethods.Transaction)">Bank transaction</option>
                     <option value="3" selected="@(Model.PaymentMethod == PaymentMethods.Cash)">Pay with cash when getting the parcel</option>
