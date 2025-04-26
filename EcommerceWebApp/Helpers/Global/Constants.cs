@@ -54,6 +54,12 @@ public static class GlobalConstants
     public const string ReviewUpdateEndpoint = "api/reviews";
     public const string ReviewsDeleteEndpoint = "api/reviews";
 
+    // DeliveryMethods
+    public const string DeliveryMethodsEndpoint = "api/DeliveryMethods";
+
+    // PaymentMethods
+    public const string PaymentMethodsEndpoint = "api/PaymentMethods";
+
     // Other Constants
     public const int MaxRetryAttempts = 3;
     public const string DefaultCulture = "en-US";

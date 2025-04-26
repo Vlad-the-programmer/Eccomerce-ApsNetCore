@@ -14,7 +14,10 @@ namespace EcommerceWebApp.Helpers
                 var response = await apiService.GetDataAsync(endpoint); // response is a string
                 products = JsonSerializer.Deserialize<List<NewProductViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
             }
-            catch (HttpRequestException ex) { }
+            catch (HttpRequestException ex)
+            {
+                products = new List<NewProductViewModel>();
+            }
 
             return products;
         }

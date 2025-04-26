@@ -1,7 +1,7 @@
-﻿using EcommerceRestApi.Models;
-using EcommerceWebApp.ApiServices;
+﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Models;
+using EcommerceWebApp.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -27,17 +27,17 @@ namespace EcommerceWebApp.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            var cartItems = new List<ShoppingCartItemVM>();
-            var countries = new List<string>();
-            var orderModel = new OrderViewModel();
-
-            cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
-            countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
-            orderModel = await OrdersEndpointsHelperFuncs.GetOrderCreateTemplate(GlobalConstants.GetOrderCreateModelEndpoint, _apiService);
+            var deliveryMethods = await DeliveryMethodsEndpointsHelperFuncs.GetDeliveryMethods(GlobalConstants.DeliveryMethodsEndpoint, _apiService);
+            var paymentMethods = await PaymentMethodsEndpointsHelperFuncs.GetPaymentMethods(GlobalConstants.PaymentMethodsEndpoint, _apiService);
+            var cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
+            var countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
+            var orderModel = await OrdersEndpointsHelperFuncs.GetOrderCreateTemplate(GlobalConstants.GetOrderCreateModelEndpoint, _apiService);
 
 
             ViewBag.CartItems = cartItems;
             ViewBag.Countries = countries;
+            ViewBag.DeliveryMethods = deliveryMethods;
+            ViewBag.PaymentMethods = paymentMethods;
             return View(orderModel);
         }
 
@@ -68,7 +68,7 @@ namespace EcommerceWebApp.Controllers
                 return View("NotFound");
             }
 
-            Dictionary<OrderItemViewModel, int> products = new Dictionary<OrderItemViewModel, int>();
+            Dictionary<OrderItemDTO, int> products = new Dictionary<OrderItemDTO, int>();
 
             foreach (var item in order.OrderItems)
             {

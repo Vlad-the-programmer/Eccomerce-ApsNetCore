@@ -1,6 +1,7 @@
 ﻿@using EcommerceWebApp.Helpers.Orders
+@using EcommerceWebApp.Models.Dtos
 @using EcommerceWebApp.AppGlobals
-@model OrderViewModel
+@model OrderDTO
 @{
     Layout = "_Layout";
 }
@@ -16,7 +17,7 @@
 <div class="row">
     <ul class="list-group col-sm-8">
         <li class="list-group-item list-group-item-primary">Products</li>
-        @foreach (KeyValuePair<OrderItemViewModel, int> kvp in ViewBag.Products)
+        @foreach (KeyValuePair<OrderItemDTO, int> kvp in ViewBag.Products)
         {
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <a href=@Url.Action("Details", "Products", new { id = kvp.Key.ProductId }) class="text-dark nounderline">@kvp.Key.ProductBrand @kvp.Key.ProductName</a>
@@ -29,21 +30,21 @@
     </ul>
     <ul class="list-group col-sm-4">
         <li class="list-group-item list-group-item-primary">Status</li>
-        @if (Model.OrderStatus == EcommerceWebApp.Helpers.Enums.OrderStatuses.Paid)
+        @if (Model.IsPaid)
         {
             <li class="list-group-item list-group-item-success d-flex">
-                Paid - @Model.TotalAmount.GetValueOrDefault().ToString("C", new System.Globalization.CultureInfo("us-Us"))
+                Paid - @Model.TotalAmount.ToString("C")
             </li>
         }
         else
         {
             <li class="list-group-item list-group-item-danger d-flex">
-                UnPaid - @Model.TotalAmount.GetValueOrDefault().ToString("C", new System.Globalization.CultureInfo("us-Us"))
+                UnPaid - @Model.TotalAmount.ToString("C")
             </li>
         }
 
         <li class="list-group-item list-group-item d-flex">
-            Status  -  @OrderProcessingFuncs.GetStringValue(Model.OrderStatus)
+            Status  - @Model.IsPaid
         </li>
         @using (Html.BeginForm("Cancel", "Orders", new { code = Model.Code }, FormMethod.Post, true, new { id = "cancelForm" }))
         {

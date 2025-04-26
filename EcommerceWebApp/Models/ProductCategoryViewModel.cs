@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using EcommerceWebApp.Models.Dtos;
 
 namespace EcommerceWebApp.Models
 {
@@ -10,7 +11,7 @@ namespace EcommerceWebApp.Models
 
         public int CategoryId { get; set; }
 
-        public virtual CategoryViewModel Category { get; set; } = null!;
+        public virtual CategoryDTO Category { get; set; } = null!;
 
         public virtual NewProductViewModel Product { get; set; } = null!;
     }

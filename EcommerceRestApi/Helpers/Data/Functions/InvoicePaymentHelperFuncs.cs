@@ -58,7 +58,7 @@ namespace EcommerceRestApi.Helpers.Data.Functions
             // Mark as paid if needed (after invoice has an Id)
             if (invoice.PaymentId != null)
             {
-                await MarkInvoiceAsPaid(invoice.Id, context);
+                await MarkInvoiceAsPaid(invoice.Id, item, context);
             }
 
             return invoice;
@@ -68,7 +68,7 @@ namespace EcommerceRestApi.Helpers.Data.Functions
         /// <summary>
         /// Marks an invoice as paid.
         /// </summary>
-        public async static Task<bool> MarkInvoiceAsPaid(int invoiceId, AppDbContext context)
+        public async static Task<bool> MarkInvoiceAsPaid(int invoiceId, Order order, AppDbContext context)
         {
             var invoice = await context.Invoices.FindAsync(invoiceId);
             if (invoice == null)
@@ -76,6 +76,7 @@ namespace EcommerceRestApi.Helpers.Data.Functions
 
             invoice.IsPaid = true;
             invoice.DateUpdated = DateTime.UtcNow;
+            order.IsPaid = true;
 
             await context.SaveChangesAsync();
             return true;

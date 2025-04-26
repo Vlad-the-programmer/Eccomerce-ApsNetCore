@@ -1,4 +1,5 @@
-﻿namespace EcommerceRestApi.Helpers.Enums
+﻿
+namespace EcommerceRestApi.Helpers.Enums
 {
     public enum DeliveryMethods
     {

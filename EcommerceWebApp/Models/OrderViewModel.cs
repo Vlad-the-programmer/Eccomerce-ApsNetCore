@@ -1,4 +1,4 @@
-﻿using EcommerceWebApp.Helpers.Enums;
+﻿using EcommerceWebApp.Models.Dtos;
 
 namespace EcommerceWebApp.Models
 {
@@ -14,15 +14,15 @@ namespace EcommerceWebApp.Models
 
         public decimal? TotalAmount { get; set; }
 
-        public ApplicationUserViewModel Customer { get; set; } = new ApplicationUserViewModel();
+        public CustomerDTO Customer { get; set; } = new CustomerDTO();
 
-        public IList<OrderItemViewModel> OrderItems { get; set; } = new List<OrderItemViewModel>();
+        public IList<OrderItemDTO> OrderItems { get; set; } = new List<OrderItemDTO>();
 
-        public DeliveryMethods DeliveryMethod { get; set; }
+        public int DeliveryMethod { get; set; }
 
-        public PaymentMethods PaymentMethod { get; set; }
+        public int PaymentMethod { get; set; }
 
-        public OrderStatuses OrderStatus { get; set; }
+        public int OrderStatus { get; set; }
     }
 
 }

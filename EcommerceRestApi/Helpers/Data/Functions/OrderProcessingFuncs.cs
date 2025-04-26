@@ -1,5 +1,4 @@
 ﻿using EcommerceRestApi.Helpers.Enums;
-using EcommerceRestApi.Models;
 
 namespace EcommerceRestApi.Helpers.Data.Functions
 {
@@ -45,19 +44,34 @@ namespace EcommerceRestApi.Helpers.Data.Functions
             };
         }
 
-        public static OrderStatuses GetEnumValueForOrderStatus(string? orderStatus)
+        public static int GetEnumValueForOrderStatus(string? orderStatus)
+        {
+            return (int)GetOrderStatusObj(orderStatus);
+        }
+
+        public static int GetEnumValueForDeliveryMethod(string? deliveryMethod)
+        {
+            return (int)GetDeliveryMethodObj(deliveryMethod);
+        }
+
+        public static int GetEnumValueForPaymentMethod(string? paymentMethod)
+        {
+            return (int)GetPaymentMethodObj(paymentMethod);
+        }
+
+        public static OrderStatuses GetOrderStatusObj(string? orderStatus)
         {
             Enum.TryParse(orderStatus, ignoreCase: true, out OrderStatuses statusObj);
             return statusObj;
         }
 
-        public static DeliveryMethods GetEnumValueForDeliveryMethod(string? deliveryMethod)
+        public static DeliveryMethods GetDeliveryMethodObj(string? deliveryMethod)
         {
             Enum.TryParse(deliveryMethod, ignoreCase: true, out DeliveryMethods methodObj);
             return methodObj;
         }
 
-        public static PaymentMethods GetEnumValueForPaymentMethod(string? paymentMethod)
+        public static PaymentMethods GetPaymentMethodObj(string? paymentMethod)
         {
             Enum.TryParse(paymentMethod, ignoreCase: true, out PaymentMethods methodObj);
             return methodObj;

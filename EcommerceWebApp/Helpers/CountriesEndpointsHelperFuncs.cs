@@ -1,19 +1,19 @@
 ﻿using EcommerceWebApp.ApiServices;
-using EcommerceWebApp.Models;
+using EcommerceWebApp.Models.Dtos;
 using System.Text.Json;
 
 namespace EcommerceWebApp.Helpers
 {
     public class CountriesEndpointsHelperFuncs
     {
-        public async static Task<List<CountryViewModel>> GetCountries(string endpoint, IApiService apiService)
+        public async static Task<List<CountryDTO>> GetCountries(string endpoint, IApiService apiService)
         {
-            var countries = new List<CountryViewModel>();
+            var countries = new List<CountryDTO>();
             try
             {
                 var response = await apiService.GetDataAsync(endpoint); // response is a string
 
-                countries = JsonSerializer.Deserialize<List<CountryViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+                countries = JsonSerializer.Deserialize<List<CountryDTO>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
             }
             catch (HttpRequestException ex) { }

@@ -1,8 +1,7 @@
-﻿namespace EcommerceWebApp.Models
+﻿namespace EcommerceWebApp.Models.Dtos
 {
-    public class CountryViewModel: BaseViewModel
+    public class CountryDTO
     {
-        public CountryViewModel() : base("Countries") { }
         public int Id { get; set; }
         public string CountryCode { get; set; } = default!;
         public string CountryName { get; set; } = default!;

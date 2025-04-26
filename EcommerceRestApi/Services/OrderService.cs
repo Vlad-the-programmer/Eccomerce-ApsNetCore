@@ -4,6 +4,7 @@ using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Enums;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Models.Dtos;
 using EcommerceRestApi.Services.Base;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,7 @@ namespace EcommerceRestApi.Services
             _userManager = userManager;
         }
 
-        public async Task<OrderViewModel?> GetOrderByCodeAsync(string code)
+        public async Task<OrderDto?> GetOrderByCodeAsync(string code)
         {
             var order = await _context.Orders
                                     .Include(item => item.Customer)
@@ -48,7 +49,7 @@ namespace EcommerceRestApi.Services
                 return null;
             }
 
-            return OrderViewModel.OrderToVm(order, _context, _userManager);
+            return OrderDto.OrderToDto(order, _context, _userManager);
         }
 
         public async Task UpdateOrderAsync(string code, OrderViewModel data)
@@ -58,14 +59,14 @@ namespace EcommerceRestApi.Services
                 throw new KeyNotFoundException($"Order with code '{code}' not found.");
 
             order.TotalAmount = data.TotalAmount ?? decimal.Zero;
-            order.Status = OrderProcessingFuncs.GetStringValue(data.OrderStatus);
+            order.Status = OrderProcessingFuncs.GetStringValue((OrderStatuses)data.OrderStatus);
             order.OrderDate = data.OrderDate;
             order.CustomerId = data.CustomerId ?? 0;
             order.DateUpdated = DateTime.Now;
 
 
             order.DeliveryMethodOrders.First().DeliveryMethodId = _context.DeliveryMethods.First(
-                            m => m.MethodName == OrderProcessingFuncs.GetStringValue(data.DeliveryMethod)).Id;
+                            m => m.MethodName == OrderProcessingFuncs.GetStringValue((DeliveryMethods)data.DeliveryMethod)).Id;
 
             _context.Orders.Update(order);
             await _context.SaveChangesAsync();
@@ -128,10 +129,15 @@ namespace EcommerceRestApi.Services
 
         public async Task AddNewOrderAsync(OrderViewModel data)
         {
+            var customer = await _context.Customers.FindAsync(data.CustomerId);
+            if (customer != null)
+            {
+                customer.Nip = data.Customer.Nip ?? customer.Nip;
+            }
 
             var order = new Order
             {
-                Code = data.Code ?? Guid.NewGuid().ToString(),
+                Code = Guid.NewGuid().ToString(),
                 CustomerId = data.CustomerId ?? 0,
                 OrderDate = DateTime.Now,
                 IsActive = true,
@@ -141,13 +147,13 @@ namespace EcommerceRestApi.Services
             order = await new ShoppingCart(_context, _httpContextAccessor.HttpContext.Session)
                                                     .ConvertToOrder(order);
 
-            order.Status = OrderProcessingFuncs.GetStringValue(data.OrderStatus);
+            order.Status = OrderProcessingFuncs.GetStringValue((OrderStatuses)data.OrderStatus);
 
             order.DateCreated = DateTime.Now;
 
             var deliveryMethodId = _context.DeliveryMethods.First(
                 m => m.MethodName == OrderProcessingFuncs.GetStringValue(
-                                            data.DeliveryMethod)).Id;
+                                           (DeliveryMethods)data.DeliveryMethod)).Id;
 
             order.DeliveryMethodOrders.Add(new DeliveryMethodOrder
             {
@@ -202,7 +208,7 @@ namespace EcommerceRestApi.Services
 
             var estimatedArrivalDateShippment = order.OrderDate;
 
-            switch (data.DeliveryMethod)
+            switch ((DeliveryMethods)data.DeliveryMethod)
             {
                 case DeliveryMethods.Delivery:
                     estimatedArrivalDateShippment = estimatedArrivalDateShippment.AddDays(2);
@@ -228,6 +234,8 @@ namespace EcommerceRestApi.Services
                 DateCreated = DateTime.Now
             });
 
+            order.TotalAmount += order.Shipments.First().DeliveryMethod.Cost; // Add delivery cost to Total order cost 
+
             order.Payments.Add(new Payment
             {
                 Amount = order.TotalAmount,
@@ -236,7 +244,7 @@ namespace EcommerceRestApi.Services
                 PaymentDate = DateTime.Now,
                 PaymentMethodId = _context.PaymentMethods.First(m =>
                                        m.PaymentType == OrderProcessingFuncs.GetStringValue(
-                                                                     data.PaymentMethod)).Id,
+                                                                     (PaymentMethods)data.PaymentMethod)).Id,
                 DateCreated = DateTime.Now,
             });
 
@@ -246,7 +254,7 @@ namespace EcommerceRestApi.Services
             await InvoicePaymentHelperFuncs.GenerateInvoice(order, _context);
         }
 
-        public async Task<IEnumerable<OrderViewModel>> GetOrdersAsync()
+        public async Task<IEnumerable<OrderDto>> GetOrdersAsync()
         {
             var orders = await _context.Orders
                              .Include(o => o.Customer)
@@ -265,7 +273,7 @@ namespace EcommerceRestApi.Services
                                      .ThenInclude(p => p.ProductCategories)
                              .ToListAsync();
 
-            var orderVMs = orders.Select(o => OrderViewModel.OrderToVm(o, _context, _userManager)).ToList();
+            var orderVMs = orders.Select(o => OrderDto.OrderToDto(o, _context, _userManager)).ToList();
             return orderVMs;
 
         }

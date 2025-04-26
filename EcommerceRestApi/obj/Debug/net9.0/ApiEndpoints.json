@@ -385,6 +385,26 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "DeliveryMethodsController",
+    "Method": "GetDeliveryMethods",
+    "RelativePath": "api/DeliveryMethods",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EcommerceRestApi.Models.Dtos.DeliveryMethodDto, EcommerceRestApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "EcommerceRestApi.Controllers.OrdersController",
     "Method": "GetOrders",
     "RelativePath": "api/Orders",
@@ -472,6 +492,26 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.PaymentMethodsController",
+    "Method": "GetPaymentMethods",
+    "RelativePath": "api/PaymentMethods",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EcommerceRestApi.Models.Dtos.DeliveryMethodDto, EcommerceRestApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.ProductsController",

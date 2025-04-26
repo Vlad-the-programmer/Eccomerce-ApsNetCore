@@ -23,6 +23,7 @@ public partial class Order : EntityBase
     [Unicode(false)]
     public string Status { get; set; } = null!;
 
+    public bool IsPaid { get; set; }
 
     [ForeignKey("CustomerId")]
     [InverseProperty("Orders")]

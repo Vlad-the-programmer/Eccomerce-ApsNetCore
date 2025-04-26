@@ -2,6 +2,7 @@
 using EcommerceRestApi.Helpers.Data.ResponseModels;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Models.Dtos;
 using EcommerceRestApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -56,12 +57,8 @@ namespace EcommerceRestApi.Controllers
         {
 
             var model = new OrderViewModel();
-            model.Customer = new CustomerViewModel();
-            //var customer = _userManager.Users
-            //                                .Include(u => u.Customers)
-            //                                    .ThenInclude(c => c.Addresses)
-            //                                .FirstOrDefault(u => u.Id == _userManager.GetUserId(User))
-            //                                ?.Customers.FirstOrDefault();
+            model.Customer = new CreateOrderCustomerDto();
+
             var customer = await _context.Customers
                                             .Include(c => c.User)
                                             .Include(c => c.Addresses)
@@ -71,11 +68,8 @@ namespace EcommerceRestApi.Controllers
             if (customer != null)
             {
                 model.CustomerId = customer.Id;
-                model.Customer = CustomerViewModel.ToVM(customer, _userManager);
+                model.Customer = CreateOrderCustomerDto.ToDto(customer, _userManager);
             }
-
-            model.Code = Guid.NewGuid().ToString();
-            model.OrderDate = DateTime.Now;
 
             var cartItems = await _cart.GetCartItems();
             var orderItems = new List<OrderItemViewModel>();
@@ -88,7 +82,6 @@ namespace EcommerceRestApi.Controllers
             model.OrderItems = orderItems;
 
             model.TotalAmount = await _cart.GetTotal();
-            model.OrderDate = DateTime.Now;
 
             if (!ModelState.IsValid)
             {
@@ -107,7 +100,7 @@ namespace EcommerceRestApi.Controllers
 
         [HttpPost("create")]
         [Authorize]
-        public async Task<IActionResult> CreateOrder(OrderViewModel model)
+        public async Task<IActionResult> CreateOrder([FromBody] OrderViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -126,7 +119,7 @@ namespace EcommerceRestApi.Controllers
                 var customer = (await _userManager.Users
                                             .Include(u => u.Customers)
                                             .FirstOrDefaultAsync(u =>
-                                            u.Id == _userManager.GetUserId(User)))
+                                                u.Id == _userManager.GetUserId(User)))
                                             ?.Customers.FirstOrDefault();
 
                 model.Customer = CustomerViewModel.ToVM(customer,

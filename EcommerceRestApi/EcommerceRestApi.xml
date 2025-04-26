@@ -14,7 +14,7 @@
             Generates an invoice for a completed payment.
             </summary>
         </member>
-        <member name="M:EcommerceRestApi.Helpers.Data.Functions.InvoicePaymentHelperFuncs.MarkInvoiceAsPaid(System.Int32,EcommerceRestApi.Models.Context.AppDbContext)">
+        <member name="M:EcommerceRestApi.Helpers.Data.Functions.InvoicePaymentHelperFuncs.MarkInvoiceAsPaid(System.Int32,EcommerceRestApi.Models.Order,EcommerceRestApi.Models.Context.AppDbContext)">
             <summary>
             Marks an invoice as paid.
             </summary>
@@ -309,6 +309,30 @@
             <inheritdoc />
         </member>
         <member name="M:EcommerceRestApi.Migrations.ChangeInvoiceNumber16to25length.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.AddCostFieldToDeliveryMethod">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddCostFieldToDeliveryMethod.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddCostFieldToDeliveryMethod.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddCostFieldToDeliveryMethod.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.AddIsPaidFieldtoOrder">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddIsPaidFieldtoOrder.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddIsPaidFieldtoOrder.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddIsPaidFieldtoOrder.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
     </members>

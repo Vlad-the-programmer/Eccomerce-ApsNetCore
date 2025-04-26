@@ -10,6 +10,9 @@ public partial class DeliveryMethod : EntityBase
     [Unicode(false)]
     public string MethodName { get; set; } = null!;
 
+    [Column(TypeName = "money")]
+    public decimal Cost { get; set; } = default!;
+
     [InverseProperty("DeliveryMethod")]
     public virtual ICollection<DeliveryMethodOrder> DeliveryMethodOrders { get; set; } = new List<DeliveryMethodOrder>();
 

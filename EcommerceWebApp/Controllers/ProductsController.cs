@@ -1,6 +1,7 @@
 ﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Models;
+using EcommerceWebApp.Models.Dtos;
 using EcommerceWebApp.Models.UpdateViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -24,7 +25,7 @@ namespace EcommerceWebApp.Controllers
         {
             List<NewProductViewModel> products = await ProductsEndpointsHelperFuncs.GetProducts(
                                                         GlobalConstants.ProductsEndpoint, _apiService);
-            List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
+            List<CategoryDTO> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
                                                         GlobalConstants.CategoriesEndpoint, _apiService);
 
             ViewBag.FeaturedProduct = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(
@@ -39,7 +40,7 @@ namespace EcommerceWebApp.Controllers
         {
             List<NewProductViewModel> fileteredProducts = await ProductsEndpointsHelperFuncs.GetFilteredProducts(
                                                         GlobalConstants.FilterProductsEndpoint, searchString, _apiService);
-            List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
+            List<CategoryDTO> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
                                                         GlobalConstants.CategoriesEndpoint, _apiService);
 
             ViewBag.FeaturedProduct = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(
@@ -72,9 +73,9 @@ namespace EcommerceWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
+            List<CategoryDTO> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
                                                            GlobalConstants.CategoriesEndpoint, _apiService);
-            List<SubcategoryViewModel> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
+            List<SubcategoryDTO> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
                                                            GlobalConstants.SubCategoriesEndpoint, _apiService);
 
             ViewBag.SubCategories = CategoriesEndpointsHelperFuncs
@@ -107,9 +108,9 @@ namespace EcommerceWebApp.Controllers
             {
                 TempData["Error"] = ex.Message;
 
-                List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
+                List<CategoryDTO> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
                                                            GlobalConstants.CategoriesEndpoint, _apiService);
-                List<SubcategoryViewModel> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
+                List<SubcategoryDTO> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
                                                                GlobalConstants.SubCategoriesEndpoint, _apiService);
 
                 ViewBag.SubCategories = CategoriesEndpointsHelperFuncs
@@ -146,9 +147,9 @@ namespace EcommerceWebApp.Controllers
                 return View("NotFound");
             }
 
-            List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
+            List<CategoryDTO> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
                                                            GlobalConstants.CategoriesEndpoint, _apiService);
-            List<SubcategoryViewModel> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
+            List<SubcategoryDTO> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
                                                            GlobalConstants.SubCategoriesEndpoint, _apiService);
             ViewBag.SubCategories = CategoriesEndpointsHelperFuncs
                                                                   .GetSubCategoriesDictionaryWithNameCodeFields(subCategories)
@@ -202,9 +203,9 @@ namespace EcommerceWebApp.Controllers
             {
                 TempData["Error"] = ex.Message;
 
-                List<CategoryViewModel> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
+                List<CategoryDTO> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
                                                            GlobalConstants.CategoriesEndpoint, _apiService);
-                List<SubcategoryViewModel> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
+                List<SubcategoryDTO> subCategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
                                                                GlobalConstants.SubCategoriesEndpoint, _apiService);
 
                 ViewBag.SubCategories = CategoriesEndpointsHelperFuncs
