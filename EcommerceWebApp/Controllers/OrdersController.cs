@@ -1,5 +1,6 @@
 ﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
+using EcommerceWebApp.Helpers.Enums;
 using EcommerceWebApp.Models;
 using EcommerceWebApp.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -45,17 +46,34 @@ namespace EcommerceWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OrderViewModel order)
         {
+            var customerIdClaim = User.FindFirst("CustomerId");
+            var customerId = customerIdClaim?.Value ?? string.Empty;
+
+            try
+            {
+                order.Customer.CustomerId = Int32.Parse(customerIdClaim?.Value);
+            }
+            catch (ArgumentNullException ex)
+            {
+                order.Customer.CustomerId = default!;
+            }
+
+            order.OrderStatus = (int)OrderStatuses.Pending;
+
+            var newOrderDto = new OrderDTO();
             try
             {
                 var response = await OrdersEndpointsHelperFuncs.SubmitOrder(GlobalConstants.OrderCreateEndpoint, order, _apiService);
+                newOrderDto = JsonSerializer.Deserialize<OrderDTO>(response, GlobalConstants.JsonSerializerOptions);
+                return RedirectToAction(nameof(Status), new { code = newOrderDto?.Code });
             }
             catch (HttpRequestException ex)
             {
                 TempData["Error"] = ex.Message;
-                return View(order);
+                newOrderDto = new OrderDTO();
             }
 
-            return RedirectToAction(nameof(Status), new { code = order.Code });
+            return View(order);
         }
 
         [HttpGet("status/{code}")]

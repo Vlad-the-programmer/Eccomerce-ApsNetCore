@@ -44,7 +44,7 @@
         }
 
         <li class="list-group-item list-group-item d-flex">
-            Status  - @Model.IsPaid
+            Status  - @Model.OrderStatus
         </li>
         @using (Html.BeginForm("Cancel", "Orders", new { code = Model.Code }, FormMethod.Post, true, new { id = "cancelForm" }))
         {

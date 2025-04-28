@@ -3,7 +3,6 @@ using EcommerceRestApi.Helpers.Data.ResponseModels;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Models.Context;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace EcommerceRestApi.Controllers
@@ -127,9 +126,8 @@ namespace EcommerceRestApi.Controllers
             {
                 return NotFound(new ResponseModel { Message = "Cart does not exist" });
             }
-            var items = await _context.ShoppingCartItems.Where(n => n.ShoppingCartId == ShoppingCartId).ToListAsync();
-            _context.ShoppingCartItems.RemoveRange(items);
-            await _context.SaveChangesAsync();
+
+            await _cart.ClearCart();
 
             return Ok();
         }

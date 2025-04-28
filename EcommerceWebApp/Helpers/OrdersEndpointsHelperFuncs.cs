@@ -53,7 +53,6 @@ namespace EcommerceWebApp.Helpers
             }
             catch (HttpRequestException ex)
             {
-                Debug.WriteLine("OrderCreate model error: " + ex);
                 orderModel = new OrderViewModel();
             }
             return orderModel;
@@ -61,13 +60,13 @@ namespace EcommerceWebApp.Helpers
 
         public async static Task<string> SubmitOrder(string endpoint, OrderViewModel order, IApiService apiService)
         {
-            var response = await apiService.PostDataAsync(endpoint, JsonSerializer.Serialize(order)); // response is a string
+            var response = await apiService.PostDataAsync(endpoint, JsonSerializer.Serialize(order, GlobalConstants.JsonSerializerOptions)); // response is a string
             return response;
         }
 
         public async static Task<string> UpdateOrder(string endpoint, OrderViewModel order, IApiService apiService)
         {
-            var response = await apiService.UpdateDataAsync(endpoint, JsonSerializer.Serialize(order)); // response is a string
+            var response = await apiService.UpdateDataAsync(endpoint, JsonSerializer.Serialize(order, GlobalConstants.JsonSerializerOptions)); // response is a string
             return response;
 
 
@@ -77,7 +76,7 @@ namespace EcommerceWebApp.Helpers
         {
             try
             {
-                var response = await apiService.DeleteDataAsync(endpoint + code); // response is a string
+                var response = await apiService.DeleteDataAsync($"{endpoint}/{code}"); // response is a string
                 return response;
             }
             catch (HttpRequestException ex) { return ex.Message; }

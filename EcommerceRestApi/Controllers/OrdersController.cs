@@ -67,21 +67,20 @@ namespace EcommerceRestApi.Controllers
                                             .FirstOrDefaultAsync();
             if (customer != null)
             {
-                model.CustomerId = customer.Id;
                 model.Customer = CreateOrderCustomerDto.ToDto(customer, _userManager);
             }
 
-            var cartItems = await _cart.GetCartItems();
-            var orderItems = new List<OrderItemViewModel>();
-            foreach (var item in cartItems)
-            {
-                var vm = await OrderItemViewModel.ToOrderItemVM(item, _context);
-                orderItems.Add(vm);
-            }
+            //var cartItems = await _cart.GetCartItems();
+            //var orderItems = new List<OrderItemViewModel>();
+            //foreach (var item in cartItems)
+            //{
+            //    var vm = await OrderItemViewModel.ToOrderItemVM(item, _context);
+            //    orderItems.Add(vm);
+            //}
 
-            model.OrderItems = orderItems;
+            //model.OrderItems = orderItems;
 
-            model.TotalAmount = await _cart.GetTotal();
+            //model.TotalAmount = await _cart.GetTotal();
 
             if (!ModelState.IsValid)
             {
@@ -114,27 +113,14 @@ namespace EcommerceRestApi.Controllers
                 });
             }
 
-            if (User.Identity.IsAuthenticated)
-            {
-                var customer = (await _userManager.Users
-                                            .Include(u => u.Customers)
-                                            .FirstOrDefaultAsync(u =>
-                                                u.Id == _userManager.GetUserId(User)))
-                                            ?.Customers.FirstOrDefault();
+            var order = await _orderService.AddNewOrderAsync(model);
 
-                model.Customer = CustomerViewModel.ToVM(customer,
-                                                        _userManager);
-
-                model.CustomerId = customer?.Id;
-            }
-            await _orderService.AddNewOrderAsync(model);
-
-            return CreatedAtAction(nameof(GetOrder), new { code = model.Code }, model);
+            return CreatedAtAction(nameof(GetOrder), new { code = order.Code }, order);
         }
 
         [HttpPut("update/{code}")]
         [Authorize]
-        public async Task<IActionResult> UpdateOrder(string code, OrderViewModel model)
+        public async Task<IActionResult> UpdateOrder(string code, [FromBody] OrderViewModel model)
         {
             var order = await _orderService.GetOrderByCodeAsync(code);
             if (order == null)

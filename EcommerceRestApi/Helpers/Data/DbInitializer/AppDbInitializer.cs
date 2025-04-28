@@ -59,7 +59,7 @@ namespace EcommerceRestApi.Helpers.Data.DbInitializer
                 {
                     context.DeliveryMethods.AddRange(new List<DeliveryMethod>
                     {
-                        new DeliveryMethod { MethodName = OrderProcessingFuncs.GetStringValue(Enums.DeliveryMethods.Delivery), IsActive = true, DateCreated = DateTime.Now },
+                        new DeliveryMethod { MethodName = OrderProcessingFuncs.GetStringValue(Enums.DeliveryMethods.StandardDelivery), IsActive = true, DateCreated = DateTime.Now },
                         new DeliveryMethod { MethodName = OrderProcessingFuncs.GetStringValue(Enums.DeliveryMethods.TakeAway), IsActive = true, DateCreated = DateTime.Now },
                         new DeliveryMethod { MethodName = OrderProcessingFuncs.GetStringValue(Enums.DeliveryMethods.ParcelLocker), IsActive = true, DateCreated = DateTime.Now },
                         new DeliveryMethod { MethodName = OrderProcessingFuncs.GetStringValue(Enums.DeliveryMethods.Courier), IsActive = true, DateCreated = DateTime.Now },
@@ -75,7 +75,7 @@ namespace EcommerceRestApi.Helpers.Data.DbInitializer
                     {
                         new PaymentMethod { PaymentType = OrderProcessingFuncs.GetStringValue(Enums.PaymentMethods.Card), Details = "Visa, MasterCard, Amex", IsActive = true, DateCreated = DateTime.Now },
                         new PaymentMethod { PaymentType =  OrderProcessingFuncs.GetStringValue(Enums.PaymentMethods.PayPal), Details = "Secure online payments", IsActive = true, DateCreated = DateTime.Now },
-                        new PaymentMethod { PaymentType =  OrderProcessingFuncs.GetStringValue(Enums.PaymentMethods.Transaction), Details = "Bank transfers", IsActive = true, DateCreated = DateTime.Now },
+                        new PaymentMethod { PaymentType =  OrderProcessingFuncs.GetStringValue(Enums.PaymentMethods.BankTransaction), Details = "Bank transfers", IsActive = true, DateCreated = DateTime.Now },
                         new PaymentMethod { PaymentType =  OrderProcessingFuncs.GetStringValue(Enums.PaymentMethods.Cash), Details = "Pay upon getting a parcel deliverred to you or at takeaway", IsActive = true, DateCreated = DateTime.Now }
                     });
                     context.SaveChanges();

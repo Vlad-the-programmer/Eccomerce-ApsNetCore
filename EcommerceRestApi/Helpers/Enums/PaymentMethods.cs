@@ -3,7 +3,7 @@
     public enum PaymentMethods
     {
         Card = 1,
-        Transaction,
+        BankTransaction,
         Cash,
         PayPal,
     }

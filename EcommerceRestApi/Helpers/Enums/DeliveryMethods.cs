@@ -3,7 +3,7 @@ namespace EcommerceRestApi.Helpers.Enums
 {
     public enum DeliveryMethods
     {
-        Delivery = 1,
+        StandardDelivery = 1,
         Courier,
         TakeAway,
         ParcelLocker

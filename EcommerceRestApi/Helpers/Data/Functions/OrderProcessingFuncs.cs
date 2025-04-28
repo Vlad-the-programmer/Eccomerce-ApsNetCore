@@ -1,4 +1,6 @@
 ﻿using EcommerceRestApi.Helpers.Enums;
+using EcommerceRestApi.Models;
+using EcommerceRestApi.Models.Context;
 
 namespace EcommerceRestApi.Helpers.Data.Functions
 {
@@ -22,8 +24,8 @@ namespace EcommerceRestApi.Helpers.Data.Functions
         {
             return paymentMethod switch
             {
-                PaymentMethods.Card => "Debit/Creadit card",
-                PaymentMethods.Transaction => "Bank transaction",
+                PaymentMethods.Card => "Card",
+                PaymentMethods.BankTransaction => "BankTransaction",
                 PaymentMethods.PayPal => "PayPal",
                 PaymentMethods.Cash => "Cash",
 
@@ -35,8 +37,8 @@ namespace EcommerceRestApi.Helpers.Data.Functions
         {
             return deliveryMethod switch
             {
-                DeliveryMethods.Delivery => "Statndard delivery",
-                DeliveryMethods.ParcelLocker => "Parcel Locker",
+                DeliveryMethods.StandardDelivery => "StandardDelivery",
+                DeliveryMethods.ParcelLocker => "ParcelLocker",
                 DeliveryMethods.Courier => "Courier",
                 DeliveryMethods.TakeAway => "TakeAway",
 
@@ -61,20 +63,64 @@ namespace EcommerceRestApi.Helpers.Data.Functions
 
         public static OrderStatuses GetOrderStatusObj(string? orderStatus)
         {
-            Enum.TryParse(orderStatus, ignoreCase: true, out OrderStatuses statusObj);
-            return statusObj;
+            if (Enum.TryParse(orderStatus, ignoreCase: true, out OrderStatuses statusObj))
+            {
+                return statusObj;
+            }
+            throw new ArgumentException($"Invalid OrderStatus: {orderStatus}");
+
         }
 
         public static DeliveryMethods GetDeliveryMethodObj(string? deliveryMethod)
         {
-            Enum.TryParse(deliveryMethod, ignoreCase: true, out DeliveryMethods methodObj);
-            return methodObj;
+            if (Enum.TryParse<DeliveryMethods>(deliveryMethod, ignoreCase: true, out var methodObj))
+            {
+                return methodObj;
+            }
+
+            throw new ArgumentException($"Invalid DeliveryMethod: {deliveryMethod}");
         }
 
         public static PaymentMethods GetPaymentMethodObj(string? paymentMethod)
         {
-            Enum.TryParse(paymentMethod, ignoreCase: true, out PaymentMethods methodObj);
-            return methodObj;
+            if (Enum.TryParse<PaymentMethods>(paymentMethod, ignoreCase: true, out var methodObj))
+            {
+                return methodObj;
+            }
+
+            throw new ArgumentException($"Invalid PaymentMethod: {paymentMethod}");
+        }
+
+        public static async Task CreateShippment(int orderId,
+                                                    DateTime estimatedArrivalDateShippment,
+                                                    int deliveryMethodId,
+                                                    AppDbContext context)
+        {
+            var order = await context.Orders.FindAsync(orderId);
+            if (order == null) return;
+
+            var shippment = new Shipment
+            {
+                DeliveryMethodId = deliveryMethodId,
+                ShipmentDate = order.OrderDate.AddDays(2),
+                EstimatedArrivalDate = estimatedArrivalDateShippment,
+                OrderId = order.Id,
+                IsActive = true,
+                DateCreated = DateTime.Now
+            };
+
+            var deliveryMethod = context.DeliveryMethods.FirstOrDefault(dm =>
+                                                            dm.Id == deliveryMethodId);
+            if (deliveryMethod != null)
+            {
+                order.TotalAmount += deliveryMethod.Cost; // Add delivery cost to Total order cost 
+            }
+
+            order.Shipments.Add(shippment);
+            order.DateUpdated = DateTime.Now;
+
+            context.Orders.Update(order);
+            await context.SaveChangesAsync();
         }
     }
 }

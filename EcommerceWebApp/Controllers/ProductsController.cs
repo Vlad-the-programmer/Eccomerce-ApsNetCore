@@ -33,7 +33,7 @@ namespace EcommerceWebApp.Controllers
             ViewBag.Categories = CategoriesEndpointsHelperFuncs.GetCategoriesDictionaryWithNameCodeFields(categories);
             ViewBag.ProductsExists = products.Count > 0 ? true : false;
             ViewBag.CategoriesExist = categories.Count > 0 ? true : false;
-            return View(products); // Return the view with the products data
+            return View(products);
         }
 
         public async Task<IActionResult> Filter([FromQuery] string searchString)
@@ -64,9 +64,9 @@ namespace EcommerceWebApp.Controllers
             var customerIdClaim = User.FindFirst("CustomerId");
             int? customerId = customerIdClaim != null && int.TryParse(customerIdClaim.Value, out var tempId) ? tempId : null;
 
-            ViewBag.CustomerId = customerId;
+            ViewBag.CustomerId = customerId ?? 0;
 
-            return View(product); // Return the view with the product's data
+            return View(product);
         }
 
         //get: products/Create

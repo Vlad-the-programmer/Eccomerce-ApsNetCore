@@ -9,7 +9,7 @@ namespace EcommerceRestApi.Services
     {
         Task<OrderDto> GetOrderByCodeAsync(string code);
 
-        Task AddNewOrderAsync(OrderViewModel data);
+        Task<OrderDto> AddNewOrderAsync(OrderViewModel data);
 
         Task UpdateOrderAsync(string code, OrderViewModel data);
         Task DeleteOrderAsync(string code);

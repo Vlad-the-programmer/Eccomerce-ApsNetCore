@@ -37,7 +37,9 @@ namespace EcommerceRestApi.Helpers.Cart
             var cartItem =
                 (
                 from cartitem in _context.ShoppingCartItems
-                where cartitem.ShoppingCartId == this.IdCartSession && cartitem.ProductId == productId
+                where cartitem.ShoppingCartId == this.IdCartSession
+                        && cartitem.ProductId == productId
+                        && cartitem.IsActive == true
                 select cartitem
                 ).FirstOrDefault();
 
@@ -64,13 +66,14 @@ namespace EcommerceRestApi.Helpers.Cart
 
         public async Task DeleteFromCartHandler(int productId)
         {
-            var cartItem = await _context.ShoppingCartItems.FirstOrDefaultAsync(item => item.ShoppingCartId == IdCartSession
-                                                                                        && item.ProductId == productId);
+            var cartItem = await _context.ShoppingCartItems.FirstOrDefaultAsync(item =>
+                                                    item.ShoppingCartId == IdCartSession
+                                                    && item.ProductId == productId);
             if (cartItem != null)
             {
                 if (cartItem.Amount <= 1)
                 {
-                    _context.Remove(cartItem);
+                    await DeleteCratItem(cartItem.Id);
                 }
                 else
                 {
@@ -82,7 +85,8 @@ namespace EcommerceRestApi.Helpers.Cart
         }
         public async Task<List<ShoppingCartItemVM>> GetCartItems()
             => await _context.ShoppingCartItems
-                .Where(item => item.ShoppingCartId == IdCartSession)
+                .Where(item => item.ShoppingCartId == IdCartSession
+                               && item.IsActive)
                 .Include(item => item.Product)
                 .Select(item => new ShoppingCartItemVM
                 {
@@ -109,10 +113,27 @@ namespace EcommerceRestApi.Helpers.Cart
             return await items.SumAsync() ?? decimal.Zero;
         }
 
+        public async Task DeleteCratItem(int id)
+        {
+            var cartItem = await _context.ShoppingCartItems
+                                    .FirstOrDefaultAsync(item =>
+                                        item.ShoppingCartId == IdCartSession
+                                        && item.Id == id);
+
+            if (cartItem == null) return;
+
+            cartItem.IsActive = false;
+            cartItem.DateDeleted = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<Order> ConvertToOrder(Order order)
         {
             var orderItems = await _context.ShoppingCartItems
-                                    .Where(item => item.ShoppingCartId == IdCartSession)
+                                    .Where(item =>
+                                            item.ShoppingCartId == IdCartSession
+                                            && item.IsActive)
                                     .Include(item => item.Product)
                                     .ToListAsync();
             order.TotalAmount = await GetTotal();
@@ -127,11 +148,24 @@ namespace EcommerceRestApi.Helpers.Cart
                 }
                 var orderItem = OrderItem.CartItemToOrderItem(item, order.Id);
                 await _context.OrderItems.AddAsync(orderItem);
+
+                // Delete items from cart after submitting an order
+                await DeleteCratItem(item.Id);
             }
+
             await _context.SaveChangesAsync();
             return order;
         }
 
+        public async Task ClearCart()
+        {
+            var cartItems = await GetCartItems();
+
+            foreach (var cartItem in cartItems)
+            {
+                await DeleteCratItem(cartItem.Id);
+            }
+        }
 
     }
 }

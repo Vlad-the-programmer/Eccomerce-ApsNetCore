@@ -14,15 +14,16 @@ namespace EcommerceRestApi.Services
     public class OrderService : EntityBaseRepository<Order>, IOrderService
     {
         private readonly AppDbContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ShoppingCart _cart;
+
         public OrderService(AppDbContext context,
-                            IHttpContextAccessor httpContextAccessor,
-                            UserManager<ApplicationUser> userManager) : base(context)
+                            UserManager<ApplicationUser> userManager,
+                            ShoppingCart cart) : base(context)
         {
             _context = context;
-            _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
+            _cart = cart;
         }
 
         public async Task<OrderDto?> GetOrderByCodeAsync(string code)
@@ -58,10 +59,9 @@ namespace EcommerceRestApi.Services
             if (order == null)
                 throw new KeyNotFoundException($"Order with code '{code}' not found.");
 
-            order.TotalAmount = data.TotalAmount ?? decimal.Zero;
+            //order.TotalAmount = data.TotalAmount ?? decimal.Zero;
             order.Status = OrderProcessingFuncs.GetStringValue((OrderStatuses)data.OrderStatus);
-            order.OrderDate = data.OrderDate;
-            order.CustomerId = data.CustomerId ?? 0;
+            //order.CustomerId = data.CustomerId ?? 0;
             order.DateUpdated = DateTime.Now;
 
 
@@ -127,25 +127,29 @@ namespace EcommerceRestApi.Services
         }
 
 
-        public async Task AddNewOrderAsync(OrderViewModel data)
+        public async Task<OrderDto> AddNewOrderAsync(OrderViewModel data)
         {
-            var customer = await _context.Customers.FindAsync(data.CustomerId);
+            var customer = await _context.Customers
+                                    .Include(c => c.Addresses)
+                                        .ThenInclude(a => a.Country)
+                                    .Include(c => c.User)
+                                    .FirstOrDefaultAsync(customer =>
+                                            customer.Id == data.Customer.CustomerId);
             if (customer != null)
             {
-                customer.Nip = data.Customer.Nip ?? customer.Nip;
+                customer.Nip = data.Customer?.Nip ?? customer.Nip;
             }
 
             var order = new Order
             {
                 Code = Guid.NewGuid().ToString(),
-                CustomerId = data.CustomerId ?? 0,
+                CustomerId = data.Customer?.CustomerId ?? 0,
                 OrderDate = DateTime.Now,
                 IsActive = true,
                 OrderItems = new List<OrderItem>()
             };
 
-            order = await new ShoppingCart(_context, _httpContextAccessor.HttpContext.Session)
-                                                    .ConvertToOrder(order);
+            order = await _cart.ConvertToOrder(order);
 
             order.Status = OrderProcessingFuncs.GetStringValue((OrderStatuses)data.OrderStatus);
 
@@ -173,7 +177,7 @@ namespace EcommerceRestApi.Services
                 City = data.Customer?.City,
                 CountryId = _context.Countries.FirstOrDefault(
                                         c => c.CountryName == data.Customer.CountryName)?.Id,
-                CustomerId = data.CustomerId ?? 0,
+                CustomerId = data.Customer?.CustomerId ?? 0,
                 DateCreated = DateTime.Now,
                 IsActive = true,
             };
@@ -182,7 +186,7 @@ namespace EcommerceRestApi.Services
                                         .Include(c => c.Addresses)
                                             .ThenInclude(a => a.Country)
                                         .FirstOrDefault(
-                                                c => c.Id == data.CustomerId)
+                                                c => c.Id == data.Customer.CustomerId)
                                         ?.Addresses
                                         .FirstOrDefault();
 
@@ -210,7 +214,7 @@ namespace EcommerceRestApi.Services
 
             switch ((DeliveryMethods)data.DeliveryMethod)
             {
-                case DeliveryMethods.Delivery:
+                case DeliveryMethods.StandardDelivery:
                     estimatedArrivalDateShippment = estimatedArrivalDateShippment.AddDays(2);
                     break;
                 case DeliveryMethods.Courier:
@@ -224,34 +228,30 @@ namespace EcommerceRestApi.Services
                     break;
             }
 
-            order.Shipments.Add(new Shipment
-            {
-                DeliveryMethodId = deliveryMethodId,
-                ShipmentDate = order.OrderDate.AddDays(2),
-                EstimatedArrivalDate = estimatedArrivalDateShippment,
-                OrderId = order.Id,
-                IsActive = true,
-                DateCreated = DateTime.Now
-            });
-
-            order.TotalAmount += order.Shipments.First().DeliveryMethod.Cost; // Add delivery cost to Total order cost 
-
-            order.Payments.Add(new Payment
-            {
-                Amount = order.TotalAmount,
-                OrderId = order.Id,
-                IsActive = true,
-                PaymentDate = DateTime.Now,
-                PaymentMethodId = _context.PaymentMethods.First(m =>
-                                       m.PaymentType == OrderProcessingFuncs.GetStringValue(
-                                                                     (PaymentMethods)data.PaymentMethod)).Id,
-                DateCreated = DateTime.Now,
-            });
 
             await _context.Orders.AddAsync(order);
             await _context.SaveChangesAsync();
 
-            await InvoicePaymentHelperFuncs.GenerateInvoice(order, _context);
+            var invoice = await InvoicePaymentHelperFuncs.GenerateInvoice(order, _context);
+            await OrderProcessingFuncs.CreateShippment(order.Id,
+                                                        estimatedArrivalDateShippment,
+                                                        deliveryMethodId,
+                                                        _context);
+
+            var paymentMethod = (await _context.PaymentMethods
+                                                        .FirstOrDefaultAsync(pm =>
+                                               pm.PaymentType == OrderProcessingFuncs.GetStringValue(
+                                                   (PaymentMethods)data.PaymentMethod)));
+            if (paymentMethod != null)
+            {
+                await InvoicePaymentHelperFuncs.CreatePayment(order,
+                                                              paymentMethod.Id,
+                                                              invoice.Id,
+                                                              _context);
+            }
+
+            await _cart.ClearCart(); // Clear cart after order submit
+            return OrderDto.OrderToDto(order, _context, _userManager);
         }
 
         public async Task<IEnumerable<OrderDto>> GetOrdersAsync()

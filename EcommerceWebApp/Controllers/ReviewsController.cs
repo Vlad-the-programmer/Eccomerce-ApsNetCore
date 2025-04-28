@@ -45,17 +45,17 @@ namespace EcommerceWebApp.Controllers
             return RedirectToAction("Details", "Products", new { id = model.ProductId });
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Details(int id)
-        {
-            var review = await ReviewsEndpointsHelperFuncs.GetReviewById(GlobalConstants.ReviewsEndpoint, id, _apiService);
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> Details(int id)
+        //{
+        //    var review = await ReviewsEndpointsHelperFuncs.GetReviewById(GlobalConstants.ReviewsEndpoint, id, _apiService);
 
-            if (review == null)
-            {
-                return View("NotFound");
-            }
-            return View(review);
-        }
+        //    if (review == null)
+        //    {
+        //        return View("NotFound");
+        //    }
+        //    return View(review);
+        //}
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Edit(int id, ReviewUpdateViewModel model)
@@ -75,7 +75,7 @@ namespace EcommerceWebApp.Controllers
                 TempData["Error"] = ex.Message;
                 return View(model);
             }
-            return RedirectToAction(nameof(Details), nameof(ProductsController), new { id = model.ProductId });
+            return RedirectToAction("Details", "Products", new { id = model.ProductId });
         }
 
         [HttpDelete("{id}")]

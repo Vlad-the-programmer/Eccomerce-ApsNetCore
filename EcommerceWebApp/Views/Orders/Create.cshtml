@@ -162,7 +162,7 @@ else
                     <option value="">-- Select Delivery Method --</option>
                     @if (ViewBag.DeliveryMethods != null && ViewBag.DeliveryMethods.Count != 0)
                     {
-                       @foreach (var item in ViewBag.DeliveryMethods as List<DeliveryMethodViewModel>)
+                       @foreach (var item in ViewBag.DeliveryMethods as List<DeliveryMethodDTO>)
                         {
                             var selected = Model.DeliveryMethod.ToString() == item.MethodName ? "selected" : "";
                             <option value="@item.EnumValue" selected="@selected">
@@ -178,7 +178,7 @@ else
                 <select class="custom-select" asp-for="PaymentMethod" required>
                     @if (ViewBag.PaymentMethods != null && ViewBag.PaymentMethods.Count != 0)
                     {
-                        @foreach (var item in ViewBag.PaymentMethods as List<PaymentMethodViewModel>)
+                        @foreach (var item in ViewBag.PaymentMethods as List<PaymentMethodDTO>)
                         {
                             var selected = Model.PaymentMethod.ToString() == item.PaymentType ? "selected" : "";
                             <option value="@item.EnumValue" selected="@selected">
