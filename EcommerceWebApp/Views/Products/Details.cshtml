@@ -19,13 +19,14 @@
             <div class="col-md-7">
                 <div class="card-body">
                     <h2 class="card-title text-primary">@Model.Name</h2>
-                    <h5 class="text-muted">Brand: <span class="fw-bold">@Model.Brand</span></h5>
+                    <h5 class="text-muted"><strong>Brand:</strong> <span class="fw-bold">@Model.Brand</span></h5>
                     <h4 class="text-success">@Model.Price.ToString("C")</h4>
                     <p class="card-text">@Model.LongAbout</p>
                     <p class="card-text text-muted"><strong>About:</strong> @Model.About</p>
+                    <p class="card-text"><strong>Stock:</strong> @Model.Stock.ToString()</p>
 
                     <div class="d-flex align-items-center">
-                        <span class="me-2">Status:</span>
+                        <span class="me-2"><strong>Status:</strong></span>
                         @if (Model.IsActive)
                         {
                             <span class="badge bg-success">AVAILABLE</span>
@@ -47,12 +48,12 @@
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     {
                         <div class="mt-2">
-                            <form asp-controller="Products" asp-action="Edit" asp-route-Id="@Model.Id" method="post" style="display:inline;">
+                            <form asp-controller="Products" asp-action="Edit" asp-route-Id="@Model.Id" method="get" style="display:inline;">
                                 <button class="btn btn-sm btn-outline-primary me-2" type="submit">Edit</button>
                             </form>
-                            <form asp-controller="Products" asp-action="Delete" asp-route-Id="@Model.Id" method="post" style="display:inline;">
-                                <button class="btn btn-sm btn-outline-danger me-2" type="submit">Delete</button>
-                            </form>
+                            <a class="btn btn-sm btn-outline-primary me-2 @(!Model.IsActive ? "disabled" : "")" style="display:inline;" asp-controller="Products" asp-action="Delete" asp-route-Id="@Model.Id">
+                                Delete
+                             </a>
                         </div>
                     }
                 </div>

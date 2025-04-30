@@ -31,6 +31,8 @@ namespace EcommerceRestApi.Services
                 Photo = data.Photo,
                 OtherPhotos = data.OtherPhotos,
                 Stock = data.Stock,
+                IsActive = data.IsActive,
+                DateCreated = DateTime.Now,
             };
 
             var subCategory = _context.Subcategories.FirstOrDefault(C => C.Code == data.SubcategoryCode);

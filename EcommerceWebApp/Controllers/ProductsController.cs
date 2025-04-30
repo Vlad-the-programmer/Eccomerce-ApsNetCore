@@ -9,6 +9,7 @@ using System.Text.Json;
 
 namespace EcommerceWebApp.Controllers
 {
+    [Route("products")]
     public class ProductsController : Controller
     {
         private readonly ILogger<ProductsController> _logger;
@@ -36,6 +37,7 @@ namespace EcommerceWebApp.Controllers
             return View(products);
         }
 
+        [HttpGet("filter")]
         public async Task<IActionResult> Filter([FromQuery] string searchString)
         {
             List<NewProductViewModel> fileteredProducts = await ProductsEndpointsHelperFuncs.GetFilteredProducts(
@@ -70,7 +72,7 @@ namespace EcommerceWebApp.Controllers
         }
 
         //get: products/Create
-        [HttpGet]
+        [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
             List<CategoryDTO> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
@@ -97,7 +99,7 @@ namespace EcommerceWebApp.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create(NewProductViewModel product)
         {
             try
@@ -135,6 +137,7 @@ namespace EcommerceWebApp.Controllers
         }
 
         //get: products/Edit/1
+        [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
 
@@ -189,7 +192,7 @@ namespace EcommerceWebApp.Controllers
             return View(productUpdateVM);
         }
 
-        [HttpPost]
+        [HttpPost("edit/{id}")]
         public async Task<IActionResult> Edit(int id, ProductUpdateVM product)
         {
             if (id != product.Id) return View("NotFound");
@@ -232,18 +235,19 @@ namespace EcommerceWebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
+        [HttpPost("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
 
-            var product = await ProductsEndpointsHelperFuncs.GetProductById(
-                                                         $"{GlobalConstants.ProductDeleteEndpoint}/{id}", _apiService);
-
-            if (product == null)
+            try
+            {
+                await _apiService.DeleteDataAsync($"{GlobalConstants.ProductDeleteEndpoint}/{id}");
+                return RedirectToAction("Index", "Products");
+            }
+            catch (HttpRequestException ex)
             {
                 return View("NotFound");
             }
-            return RedirectToAction("Index", "Products");
         }
     }
 }

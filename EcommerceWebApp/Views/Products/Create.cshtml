@@ -44,9 +44,18 @@
                                 <span asp-validation-for="Stock" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="Photo" class="control-label"></label>
-                                <input asp-for="Photo" class="form-control" />
+                                <label>Main Photo</label>
+                                <input type="file" id="photoFileInput" class="form-control" />
+                                <input type="hidden" asp-for="Photo" id="Photo" />
                                 <span asp-validation-for="Photo" class="text-danger"></span>
+                            </div>
+
+                            <!-- Other Photos -->
+                            <div class="form-group">
+                                <label>Other Photos</label>
+                                <input type="file" id="otherPhotosInput" class="form-control" multiple />
+                                <input type="hidden" asp-for="OtherPhotos" id="OtherPhotos" />
+                                <span asp-validation-for="OtherPhotos" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -106,5 +115,52 @@
         $("#ImageUrl").on("change", function () {
                     var output = document.getElementById("ImageUrlPreview");
                     output.src = $(this).val();
-                })</script>
+                })
+              
+         function uploadFile(file, onSuccess) {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            fetch(@GlobalConstants.UploadPhotoEndpoint, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Upload failed");
+                return response.text(); // server returns the image URL
+            })
+            .then(url => onSuccess(url))
+            .catch(err => alert("File upload failed: " + err.message));
+        }
+
+        // Main photo
+        document.getElementById("photoFileInput").addEventListener("change", function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            uploadFile(file, function (url) {
+                document.getElementById("Photo").value = url;
+                document.getElementById("ImageUrlPreview").src = url;
+            });
+        });
+
+        // Other photos
+        document.getElementById("otherPhotosInput").addEventListener("change", function () {
+            const files = this.files;
+            const urls = [];
+
+            const uploadNext = (index) => {
+                if (index >= files.length) {
+                    document.getElementById("OtherPhotos").value = JSON.stringify(urls);
+                    return;
+                }
+                uploadFile(files[index], function (url) {
+                    urls.push(url);
+                    // uploadNext(index + 1);
+                });
+            };
+
+            uploadNext(0);
+        });
+    </script>
 }
