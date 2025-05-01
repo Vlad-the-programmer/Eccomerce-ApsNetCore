@@ -18,7 +18,8 @@ namespace EcommerceRestApi.Controllers
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
 
-            var uploadsDir = Path.Combine(_env.WebRootPath, "uploads");
+            var uploadsDir = Path.Combine(_env.WebRootPath,
+                                        AppGlobals.AppConstants.IMAGE_UPLOAD_PATH);
             Directory.CreateDirectory(uploadsDir);
 
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
@@ -29,7 +30,7 @@ namespace EcommerceRestApi.Controllers
                 await file.CopyToAsync(stream);
             }
 
-            var fileUrl = $"/uploads/{fileName}";
+            var fileUrl = $"{AppGlobals.AppConstants.IMAGE_UPLOAD_PATH}/{fileName}";
             return Ok(fileUrl);
         }
 

@@ -1,0 +1,76 @@
+﻿<Project>
+  <ItemGroup>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Uploads\0de7696a-eaf8-451c-9fdf-d0cac53324bc.png'))">
+      <SourceType>Package</SourceType>
+      <SourceId>EcommerceRestApi</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/EcommerceRestApi</BasePath>
+      <RelativePath>Uploads/0de7696a-eaf8-451c-9fdf-d0cac53324bc.png</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>rfqt4obn4a</Fingerprint>
+      <Integrity>6YALCvuel02qRB2baJVBp2nXVweoQ8Sw/EeU/k/A/Ac=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Uploads\0de7696a-eaf8-451c-9fdf-d0cac53324bc.png'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Uploads\81b5dac5-4303-4473-80a7-08d283dcf61b.png'))">
+      <SourceType>Package</SourceType>
+      <SourceId>EcommerceRestApi</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/EcommerceRestApi</BasePath>
+      <RelativePath>Uploads/81b5dac5-4303-4473-80a7-08d283dcf61b.png</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>vgzgmth7jr</Fingerprint>
+      <Integrity>ca5YuaFmqDbFhFyz9HQxOu3Xcy1acCkqRjwtOnN4r6Q=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Uploads\81b5dac5-4303-4473-80a7-08d283dcf61b.png'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Uploads\c6972a34-c534-49af-b0a8-fe902916abef.png'))">
+      <SourceType>Package</SourceType>
+      <SourceId>EcommerceRestApi</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/EcommerceRestApi</BasePath>
+      <RelativePath>Uploads/c6972a34-c534-49af-b0a8-fe902916abef.png</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>vgzgmth7jr</Fingerprint>
+      <Integrity>ca5YuaFmqDbFhFyz9HQxOu3Xcy1acCkqRjwtOnN4r6Q=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Uploads\c6972a34-c534-49af-b0a8-fe902916abef.png'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Uploads\f9e75697-8d92-4c1e-a500-fa53fda3f539.png'))">
+      <SourceType>Package</SourceType>
+      <SourceId>EcommerceRestApi</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/EcommerceRestApi</BasePath>
+      <RelativePath>Uploads/f9e75697-8d92-4c1e-a500-fa53fda3f539.png</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>rfqt4obn4a</Fingerprint>
+      <Integrity>6YALCvuel02qRB2baJVBp2nXVweoQ8Sw/EeU/k/A/Ac=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Uploads\f9e75697-8d92-4c1e-a500-fa53fda3f539.png'))</OriginalItemSpec>
+    </StaticWebAsset>
+  </ItemGroup>
+</Project>

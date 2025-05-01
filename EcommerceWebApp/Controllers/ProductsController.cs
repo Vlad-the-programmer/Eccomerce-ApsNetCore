@@ -22,6 +22,7 @@ namespace EcommerceWebApp.Controllers
         }
 
         [HttpGet]
+        [Route("/")]
         public async Task<IActionResult> Index()
         {
             List<NewProductViewModel> products = await ProductsEndpointsHelperFuncs.GetProducts(

@@ -41,31 +41,6 @@ namespace EcommerceWebApp.ApiServices
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> UploadPhotoAsync(Stream fileStream, string fileName)
-        {
-            using var content = new MultipartFormDataContent();
-            content.Add(new StreamContent(fileStream), "file", fileName);
-
-            var response = await _httpClient.PostAsync(GlobalConstants.UploadPhotoEndpoint, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var errorJson = await response.Content.ReadAsStringAsync();
-                try
-                {
-                    var errorResponse = errorJson != "" ? JsonSerializer.Deserialize<ErrorViewModel>(errorJson, GlobalConstants.JsonSerializerOptions) : new ErrorViewModel();
-                    var errorMessage = string.Join(Environment.NewLine, errorResponse?.Errors ?? new List<string>());
-                    throw new HttpRequestException(errorMessage);
-                }
-                catch (JsonException ex)
-                {
-                    throw new HttpRequestException(errorJson);
-                }
-            }
-
-            return await response.Content.ReadAsStringAsync();
-        }
-
         public async Task<string> DeleteDataAsync(string endpoint)
         {
             var response = await _httpClient.DeleteAsync(endpoint);

@@ -61,7 +61,7 @@ public static class GlobalConstants
     public const string PaymentMethodsEndpoint = "api/PaymentMethods";
 
     // Upload Photo
-    public const string UploadPhotoEndpoint = "api/upload-photo";
+    public const string UploadPhotoEndpoint = "api/ImageUpload/upload-photo";
 
     // Other Constants
     public const int MaxRetryAttempts = 3;

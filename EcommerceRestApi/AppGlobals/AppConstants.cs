@@ -10,5 +10,7 @@
             "https://localhost:5001"   // Server HTTPS (if client calls directly)
             ];
 
+        // Images
+        public const string IMAGE_UPLOAD_PATH = "Uploads";
     }
 }

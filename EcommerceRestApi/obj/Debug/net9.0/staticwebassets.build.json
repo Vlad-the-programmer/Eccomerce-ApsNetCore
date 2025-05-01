@@ -1,12 +1,20 @@
 {
   "Version": 1,
-  "Hash": "64Ufu+Y/2jFAMovjg4XC3oE5+DlgyF7OvPiBue7OlgQ=",
+  "Hash": "t+nmStDf4gkmTTAnDBmhGzjufOd9sC8gps5bZJv7/Fo=",
   "Source": "EcommerceRestApi",
   "BasePath": "_content/EcommerceRestApi",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "EcommerceRestApi\\wwwroot",
+      "Source": "EcommerceRestApi",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "Pattern": "**"
+    }
+  ],
   "Assets": [
     {
       "Identity": "C:\\Users\\klamc\\.nuget\\packages\\microsoft.aspnetcore.identity.ui\\9.0.3\\staticwebassets\\V5\\css\\site.css",
@@ -2632,6 +2640,90 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\klamc\\.nuget\\packages\\microsoft.aspnetcore.identity.ui\\9.0.3\\staticwebassets\\V5\\lib\\bootstrap\\dist\\js\\bootstrap.js"
+    },
+    {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\0de7696a-eaf8-451c-9fdf-d0cac53324bc.png",
+      "SourceId": "EcommerceRestApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "RelativePath": "Uploads/0de7696a-eaf8-451c-9fdf-d0cac53324bc#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "rfqt4obn4a",
+      "Integrity": "6YALCvuel02qRB2baJVBp2nXVweoQ8Sw/EeU/k/A/Ac=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\0de7696a-eaf8-451c-9fdf-d0cac53324bc.png"
+    },
+    {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\81b5dac5-4303-4473-80a7-08d283dcf61b.png",
+      "SourceId": "EcommerceRestApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "RelativePath": "Uploads/81b5dac5-4303-4473-80a7-08d283dcf61b#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "vgzgmth7jr",
+      "Integrity": "ca5YuaFmqDbFhFyz9HQxOu3Xcy1acCkqRjwtOnN4r6Q=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\81b5dac5-4303-4473-80a7-08d283dcf61b.png"
+    },
+    {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\c6972a34-c534-49af-b0a8-fe902916abef.png",
+      "SourceId": "EcommerceRestApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "RelativePath": "Uploads/c6972a34-c534-49af-b0a8-fe902916abef#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "vgzgmth7jr",
+      "Integrity": "ca5YuaFmqDbFhFyz9HQxOu3Xcy1acCkqRjwtOnN4r6Q=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\c6972a34-c534-49af-b0a8-fe902916abef.png"
+    },
+    {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\f9e75697-8d92-4c1e-a500-fa53fda3f539.png",
+      "SourceId": "EcommerceRestApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "RelativePath": "Uploads/f9e75697-8d92-4c1e-a500-fa53fda3f539#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "rfqt4obn4a",
+      "Integrity": "6YALCvuel02qRB2baJVBp2nXVweoQ8Sw/EeU/k/A/Ac=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\f9e75697-8d92-4c1e-a500-fa53fda3f539.png"
     }
   ],
   "Endpoints": [
@@ -13494,6 +13586,334 @@
         {
           "Name": "integrity",
           "Value": "sha256-16aFlqtpsG9RyieKZUUUjkJpqTgcJtWXwT312I4Iz1s="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/0de7696a-eaf8-451c-9fdf-d0cac53324bc.png",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\0de7696a-eaf8-451c-9fdf-d0cac53324bc.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "28826"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"6YALCvuel02qRB2baJVBp2nXVweoQ8Sw/EeU/k/A/Ac=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 14:35:28 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-6YALCvuel02qRB2baJVBp2nXVweoQ8Sw/EeU/k/A/Ac="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/0de7696a-eaf8-451c-9fdf-d0cac53324bc.rfqt4obn4a.png",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\0de7696a-eaf8-451c-9fdf-d0cac53324bc.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "28826"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"6YALCvuel02qRB2baJVBp2nXVweoQ8Sw/EeU/k/A/Ac=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 14:35:28 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "rfqt4obn4a"
+        },
+        {
+          "Name": "label",
+          "Value": "Uploads/0de7696a-eaf8-451c-9fdf-d0cac53324bc.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-6YALCvuel02qRB2baJVBp2nXVweoQ8Sw/EeU/k/A/Ac="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/81b5dac5-4303-4473-80a7-08d283dcf61b.png",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\81b5dac5-4303-4473-80a7-08d283dcf61b.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "77172"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"ca5YuaFmqDbFhFyz9HQxOu3Xcy1acCkqRjwtOnN4r6Q=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 14:34:28 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-ca5YuaFmqDbFhFyz9HQxOu3Xcy1acCkqRjwtOnN4r6Q="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/81b5dac5-4303-4473-80a7-08d283dcf61b.vgzgmth7jr.png",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\81b5dac5-4303-4473-80a7-08d283dcf61b.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "77172"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"ca5YuaFmqDbFhFyz9HQxOu3Xcy1acCkqRjwtOnN4r6Q=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 14:34:28 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "vgzgmth7jr"
+        },
+        {
+          "Name": "label",
+          "Value": "Uploads/81b5dac5-4303-4473-80a7-08d283dcf61b.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-ca5YuaFmqDbFhFyz9HQxOu3Xcy1acCkqRjwtOnN4r6Q="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/c6972a34-c534-49af-b0a8-fe902916abef.png",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\c6972a34-c534-49af-b0a8-fe902916abef.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "77172"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"ca5YuaFmqDbFhFyz9HQxOu3Xcy1acCkqRjwtOnN4r6Q=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 14:35:28 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-ca5YuaFmqDbFhFyz9HQxOu3Xcy1acCkqRjwtOnN4r6Q="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/c6972a34-c534-49af-b0a8-fe902916abef.vgzgmth7jr.png",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\c6972a34-c534-49af-b0a8-fe902916abef.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "77172"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"ca5YuaFmqDbFhFyz9HQxOu3Xcy1acCkqRjwtOnN4r6Q=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 14:35:28 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "vgzgmth7jr"
+        },
+        {
+          "Name": "label",
+          "Value": "Uploads/c6972a34-c534-49af-b0a8-fe902916abef.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-ca5YuaFmqDbFhFyz9HQxOu3Xcy1acCkqRjwtOnN4r6Q="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/f9e75697-8d92-4c1e-a500-fa53fda3f539.png",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\f9e75697-8d92-4c1e-a500-fa53fda3f539.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "28826"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"6YALCvuel02qRB2baJVBp2nXVweoQ8Sw/EeU/k/A/Ac=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 14:35:15 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-6YALCvuel02qRB2baJVBp2nXVweoQ8Sw/EeU/k/A/Ac="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/f9e75697-8d92-4c1e-a500-fa53fda3f539.rfqt4obn4a.png",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\f9e75697-8d92-4c1e-a500-fa53fda3f539.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "28826"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"6YALCvuel02qRB2baJVBp2nXVweoQ8Sw/EeU/k/A/Ac=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 14:35:15 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "rfqt4obn4a"
+        },
+        {
+          "Name": "label",
+          "Value": "Uploads/f9e75697-8d92-4c1e-a500-fa53fda3f539.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-6YALCvuel02qRB2baJVBp2nXVweoQ8Sw/EeU/k/A/Ac="
         }
       ]
     }

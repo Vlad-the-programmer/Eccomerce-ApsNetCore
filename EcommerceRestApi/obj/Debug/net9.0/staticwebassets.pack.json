@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\0de7696a-eaf8-451c-9fdf-d0cac53324bc.png",
+      "PackagePath": "staticwebassets\\Uploads\\0de7696a-eaf8-451c-9fdf-d0cac53324bc.png"
+    },
+    {
+      "Id": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\81b5dac5-4303-4473-80a7-08d283dcf61b.png",
+      "PackagePath": "staticwebassets\\Uploads\\81b5dac5-4303-4473-80a7-08d283dcf61b.png"
+    },
+    {
+      "Id": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\c6972a34-c534-49af-b0a8-fe902916abef.png",
+      "PackagePath": "staticwebassets\\Uploads\\c6972a34-c534-49af-b0a8-fe902916abef.png"
+    },
+    {
+      "Id": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\f9e75697-8d92-4c1e-a500-fa53fda3f539.png",
+      "PackagePath": "staticwebassets\\Uploads\\f9e75697-8d92-4c1e-a500-fa53fda3f539.png"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.EcommerceRestApi.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.EcommerceRestApi.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.build.EcommerceRestApi.props",
+      "PackagePath": "build\\EcommerceRestApi.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.buildMultiTargeting.EcommerceRestApi.props",
+      "PackagePath": "buildMultiTargeting\\EcommerceRestApi.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.buildTransitive.EcommerceRestApi.props",
+      "PackagePath": "buildTransitive\\EcommerceRestApi.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

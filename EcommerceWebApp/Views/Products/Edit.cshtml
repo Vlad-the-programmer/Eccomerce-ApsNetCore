@@ -1,7 +1,10 @@
 ﻿@model EcommerceWebApp.Models.UpdateViewModels.ProductUpdateVM
+@using EcommerceWebApp.AppGlobals;
 
 @{
     ViewData["Title"] = "Update Product";
+    var uploadImageFromServerEndpoint = $"{AppConstants.RESTAPI_BASE_URL}/{GlobalConstants.UploadPhotoEndpoint}";
+
 }
 
 <div class="row">
@@ -64,25 +67,31 @@
 
                     <!-- Right Column -->
                     <div class="col-md-6">
+                        <!-- Main Photo Upload -->
                         <div class="form-group mb-3">
-                            <label asp-for="Photo" class="control-label"></label>
-                            <input asp-for="Photo" class="form-control" />
+                            <label>Main Photo</label>
+                            <input type="file" id="photoFileInput" class="form-control" />
+                            <input type="hidden" asp-for="Photo" id="Photo" />
                             <span asp-validation-for="Photo" class="text-danger"></span>
                         </div>
 
                         <div class="text-center mb-3">
-                            <img id="PhotoPreview" src="@Model.Photo" class="img-thumbnail w-100" alt="Product Image">
+                            <img id="PhotoPreview" src="@AppConstants.RESTAPI_BASE_URL/@Model.Photo" class="img-thumbnail w-100" alt="Product Image" />
                         </div>
 
+                        <!-- Other Photos Upload -->
                         <div class="form-group mb-3">
-                            <label asp-for="OtherPhotos" class="control-label"></label>
-                            <input asp-for="OtherPhotos" class="form-control" />
+                            <label>Other Photos</label>
+                            <input type="file" id="otherPhotosInput" class="form-control" multiple />
+                            <input type="hidden" asp-for="OtherPhotos" id="OtherPhotos" />
                             <span asp-validation-for="OtherPhotos" class="text-danger"></span>
                         </div>
 
                         <div class="text-center mb-3">
-                            <img id="OtherPhotosPreview" src="@Model.OtherPhotos" class="img-thumbnail w-100" alt="Other Photos">
+                            <!-- Preview only first for simplicity -->
+                            <img id="OtherPhotosPreview" src="@AppConstants.RESTAPI_BASE_URL/@Model.OtherPhotos?.Split(';').FirstOrDefault()" class="img-thumbnail w-100" alt="Other Photos" />
                         </div>
+
 
                         <div class="form-group mb-3">
                             <label asp-for="About" class="control-label"></label>
@@ -110,15 +119,11 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/image-upload.js"></script>
     <script>
-        $(document).ready(function () {
-            $("#Photo").on("input", function () {
-                $("#PhotoPreview").attr("src", $(this).val());
-            });
-
-            $("#OtherPhotos").on("input", function () {
-                $("#OtherPhotosPreview").attr("src", $(this).val());
-            });
-        });
+        initProductImageUpload(
+            "@uploadImageFromServerEndpoint",
+            "@AppConstants.RESTAPI_BASE_URL"
+        );
     </script>
 }

@@ -49,7 +49,7 @@ builder.Services.AddSingleton<CookieContainer>();
 builder.Services.AddHttpClient<IApiService, ApiService>()
         .ConfigureHttpClient((provider, client) =>
         {
-            client.BaseAddress = new Uri(AppConstants.BASE_URL);
+            client.BaseAddress = new Uri(AppConstants.RESTAPI_BASE_URL);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         })
         .ConfigurePrimaryHttpMessageHandler(provider =>

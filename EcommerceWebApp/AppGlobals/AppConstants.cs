@@ -2,7 +2,7 @@
 {
     public class AppConstants
     {
-        public const string BASE_URL = "https://localhost:5001";
+        public const string RESTAPI_BASE_URL = "https://localhost:5001";
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿@model List<NewProductViewModel>
+@using EcommerceWebApp.AppGlobals;
 
 @{
     ViewData["Title"] = "List Of Products";
@@ -27,7 +28,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 col-12">
-                            <img src="@item.Photo" class="img-fluid" alt="@item.Name">
+                            <img src="@AppConstants.RESTAPI_BASE_URL/@item.Photo" class="img-fluid" alt="@item.Name">
                         </div>
                         <div class="col-md-6 col-12">
                             <div class="card-body">
