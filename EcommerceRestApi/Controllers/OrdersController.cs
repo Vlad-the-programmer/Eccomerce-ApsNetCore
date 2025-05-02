@@ -56,7 +56,7 @@ namespace EcommerceRestApi.Controllers
         public async Task<IActionResult> CreateOrderCreateTemplate()
         {
 
-            var model = new OrderViewModel();
+            var model = new NewOrderViewModel();
             model.Customer = new CreateOrderCustomerDto();
 
             var customer = await _context.Customers
@@ -70,17 +70,6 @@ namespace EcommerceRestApi.Controllers
                 model.Customer = CreateOrderCustomerDto.ToDto(customer, _userManager);
             }
 
-            //var cartItems = await _cart.GetCartItems();
-            //var orderItems = new List<OrderItemViewModel>();
-            //foreach (var item in cartItems)
-            //{
-            //    var vm = await OrderItemViewModel.ToOrderItemVM(item, _context);
-            //    orderItems.Add(vm);
-            //}
-
-            //model.OrderItems = orderItems;
-
-            //model.TotalAmount = await _cart.GetTotal();
 
             if (!ModelState.IsValid)
             {
@@ -99,7 +88,7 @@ namespace EcommerceRestApi.Controllers
 
         [HttpPost("create")]
         [Authorize]
-        public async Task<IActionResult> CreateOrder([FromBody] OrderViewModel model)
+        public async Task<IActionResult> CreateOrder([FromBody] NewOrderViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -120,7 +109,7 @@ namespace EcommerceRestApi.Controllers
 
         [HttpPut("update/{code}")]
         [Authorize]
-        public async Task<IActionResult> UpdateOrder(string code, [FromBody] OrderViewModel model)
+        public async Task<IActionResult> UpdateOrder(string code, [FromBody] NewOrderViewModel model)
         {
             var order = await _orderService.GetOrderByCodeAsync(code);
             if (order == null)

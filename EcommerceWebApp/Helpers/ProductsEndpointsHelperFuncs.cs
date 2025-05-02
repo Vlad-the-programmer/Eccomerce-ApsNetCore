@@ -1,35 +1,35 @@
 ﻿using EcommerceWebApp.ApiServices;
-using EcommerceWebApp.Models;
+using EcommerceWebApp.Models.Dtos;
 using System.Text.Json;
 
 namespace EcommerceWebApp.Helpers
 {
     public class ProductsEndpointsHelperFuncs
     {
-        public async static Task<List<NewProductViewModel>> GetProducts(string endpoint, IApiService apiService)
+        public async static Task<List<ProductDTO>> GetProducts(string endpoint, IApiService apiService)
         {
-            var products = new List<NewProductViewModel>();
+            var products = new List<ProductDTO>();
             try
             {
                 var response = await apiService.GetDataAsync(endpoint); // response is a string
-                products = JsonSerializer.Deserialize<List<NewProductViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+                products = JsonSerializer.Deserialize<List<ProductDTO>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
             }
             catch (HttpRequestException ex)
             {
-                products = new List<NewProductViewModel>();
+                products = new List<ProductDTO>();
             }
 
             return products;
         }
 
-        public async static Task<NewProductViewModel?> GetFeaturedProduct(string endpoint, IApiService apiService)
+        public async static Task<ProductDTO?> GetFeaturedProduct(string endpoint, IApiService apiService)
         {
-            var activeProducts = new List<NewProductViewModel>();
-            var featuredProduct = new NewProductViewModel();
+            var activeProducts = new List<ProductDTO>();
+            var featuredProduct = new ProductDTO();
             try
             {
                 var response = await apiService.GetDataAsync(endpoint); // response is a string
-                activeProducts = JsonSerializer.Deserialize<List<NewProductViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+                activeProducts = JsonSerializer.Deserialize<List<ProductDTO>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
             }
             catch (HttpRequestException ex) { }
 
@@ -46,26 +46,26 @@ namespace EcommerceWebApp.Helpers
         }
 
 
-        public async static Task<NewProductViewModel?> GetProductById(string endpoint, IApiService apiService)
+        public async static Task<ProductDTO?> GetProductById(string endpoint, IApiService apiService)
         {
-            var product = new NewProductViewModel();
+            var product = new ProductDTO();
             try
             {
                 var response = await apiService.GetDataAsync(endpoint); // response is a string
-                product = JsonSerializer.Deserialize<NewProductViewModel?>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+                product = JsonSerializer.Deserialize<ProductDTO?>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
             }
             catch (HttpRequestException ex) { product = null; }
             return product;
         }
 
-        public async static Task<List<NewProductViewModel>> GetFilteredProducts(string endpoint, string searchString, IApiService apiService)
+        public async static Task<List<ProductDTO>> GetFilteredProducts(string endpoint, string searchString, IApiService apiService)
         {
-            var products = new List<NewProductViewModel>();
+            var products = new List<ProductDTO>();
             try
             {
                 var response = await apiService.GetDataAsync($"{endpoint}?searchString={searchString}"); // response is a string
-                products = JsonSerializer.Deserialize<List<NewProductViewModel>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+                products = JsonSerializer.Deserialize<List<ProductDTO>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
             }
             catch (HttpRequestException ex) { }
 

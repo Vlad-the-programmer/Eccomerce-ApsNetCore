@@ -14,9 +14,9 @@ namespace EcommerceRestApi.Models.Dtos
 
         public decimal TotalAmount { get; set; }
 
-        public CustomerViewModel Customer { get; set; } = new CustomerViewModel();
+        public OrderCustomerDTO Customer { get; set; } = new OrderCustomerDTO();
 
-        public IList<OrderItemViewModel> OrderItems { get; set; } = new List<OrderItemViewModel>();
+        public IList<OrderItemDTO> OrderItems { get; set; } = new List<OrderItemDTO>();
 
         public string DeliveryMethod { get; set; }
 
@@ -38,7 +38,7 @@ namespace EcommerceRestApi.Models.Dtos
                 OrderStatus = order.Status,
                 PaymentMethod = order.Payments.FirstOrDefault()?.PaymentMethod?.PaymentType ?? string.Empty,
                 DeliveryMethod = order.DeliveryMethodOrders.FirstOrDefault()?.DeliveryMethod.MethodName ?? string.Empty,
-                OrderItems = order.OrderItems.Select(oi => new OrderItemViewModel
+                OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
                 {
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
@@ -47,11 +47,11 @@ namespace EcommerceRestApi.Models.Dtos
                     ProductName = oi.Product.Name,
                     ProductBrand = oi.Product.Brand,
                 }).ToList(),
-                Customer = new CustomerViewModel(),
+                Customer = new OrderCustomerDTO(),
                 IsPaid = order.IsPaid
             };
 
-            orderDto.Customer = CustomerViewModel.ToVM(order.Customer, userManager);
+            orderDto.Customer = OrderCustomerDTO.ToVM(order.Customer, userManager);
             return orderDto;
         }
     }

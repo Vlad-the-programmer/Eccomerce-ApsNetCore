@@ -1,7 +1,7 @@
 ﻿using EcommerceRestApi.Helpers.Data.Roles;
-using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Models.Dtos;
 using EcommerceRestApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -45,9 +45,9 @@ namespace EcommerceRestApi.Controllers
         // POST: api/categories
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CategoryViewModel model)
+        public async Task<IActionResult> Create([FromBody] CategoryDTO model)
         {
             if (!ModelState.IsValid)
             {

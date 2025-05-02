@@ -11,7 +11,7 @@ namespace EcommerceRestApi.Services
         Task<ReviewDto> GetReviewByIDAsync(int id);
         Task<List<ReviewDto>> GetReviews();
 
-        Task AddNewReviewAsync(ReviewViewModel data);
+        Task<ReviewDto> AddNewReviewAsync(ReviewCreateEditVM data);
 
         Task<bool> UpdateReviewAsync(int id, ReviewUpdateViewModel data);
         Task<bool> DeleteReviewAsync(int id);

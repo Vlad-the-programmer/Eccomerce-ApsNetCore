@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "qvla5Ox3RfFMQgs55wLvdA7rKq9GDbUeuttqQkUMSYA=",
+  "Hash": "6+TC6+4hCMRFBBmQFwWPpBKVxSQDKtpLgxiMv0XLId4=",
   "Source": "EcommerceWebApp",
   "BasePath": "_content/EcommerceWebApp",
   "Mode": "Default",
@@ -1025,6 +1025,27 @@
       "OriginalItemSpec": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css"
     },
     {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\obj\\Debug\\net9.0\\compressed\\s2wzn5e5e0-hmss1oybvv.gz",
+      "SourceId": "EcommerceWebApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/EcommerceWebApp",
+      "RelativePath": "js/image-upload#[.{fingerprint=hmss1oybvv}]?.js.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\wwwroot\\js\\image-upload.js",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "469ibrx1i5",
+      "Integrity": "FHpEnOlsSBvfs4MRU8VFymfbGZ8UJI1IZ/TgL1B5dTw=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\wwwroot\\js\\image-upload.js"
+    },
+    {
       "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\obj\\Debug\\net9.0\\compressed\\t31qs0r7ph-fvhpjtyr6v.gz",
       "SourceId": "EcommerceWebApp",
       "SourceType": "Discovered",
@@ -1443,6 +1464,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\wwwroot\\js\\image-upload.js",
+      "SourceId": "EcommerceWebApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\wwwroot\\",
+      "BasePath": "_content/EcommerceWebApp",
+      "RelativePath": "js/image-upload#[.{fingerprint}]?.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "hmss1oybvv",
+      "Integrity": "6WC1VTn7X+FazsGzoSgYmEVKWyFRGtp5Q56zSy75anE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\image-upload.js"
     },
     {
       "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\wwwroot\\js\\site.js",
@@ -3916,6 +3958,304 @@
         {
           "Name": "integrity",
           "Value": "sha256-jcY0RXFOlcp4VNTCcYQtWVZZBlr+ZY+AOv6/0S5dnF8="
+        }
+      ]
+    },
+    {
+      "Route": "js/image-upload.hmss1oybvv.js",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\obj\\Debug\\net9.0\\compressed\\s2wzn5e5e0-hmss1oybvv.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.001219512195"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "819"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"FHpEnOlsSBvfs4MRU8VFymfbGZ8UJI1IZ/TgL1B5dTw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 16:06:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"6WC1VTn7X+FazsGzoSgYmEVKWyFRGtp5Q56zSy75anE=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "hmss1oybvv"
+        },
+        {
+          "Name": "label",
+          "Value": "js/image-upload.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-6WC1VTn7X+FazsGzoSgYmEVKWyFRGtp5Q56zSy75anE="
+        }
+      ]
+    },
+    {
+      "Route": "js/image-upload.hmss1oybvv.js",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\wwwroot\\js\\image-upload.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3136"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"6WC1VTn7X+FazsGzoSgYmEVKWyFRGtp5Q56zSy75anE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 16:06:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "hmss1oybvv"
+        },
+        {
+          "Name": "label",
+          "Value": "js/image-upload.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-6WC1VTn7X+FazsGzoSgYmEVKWyFRGtp5Q56zSy75anE="
+        }
+      ]
+    },
+    {
+      "Route": "js/image-upload.hmss1oybvv.js.gz",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\obj\\Debug\\net9.0\\compressed\\s2wzn5e5e0-hmss1oybvv.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "819"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"FHpEnOlsSBvfs4MRU8VFymfbGZ8UJI1IZ/TgL1B5dTw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 16:06:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "hmss1oybvv"
+        },
+        {
+          "Name": "label",
+          "Value": "js/image-upload.js.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-FHpEnOlsSBvfs4MRU8VFymfbGZ8UJI1IZ/TgL1B5dTw="
+        }
+      ]
+    },
+    {
+      "Route": "js/image-upload.js",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\obj\\Debug\\net9.0\\compressed\\s2wzn5e5e0-hmss1oybvv.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.001219512195"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "819"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"FHpEnOlsSBvfs4MRU8VFymfbGZ8UJI1IZ/TgL1B5dTw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 16:06:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"6WC1VTn7X+FazsGzoSgYmEVKWyFRGtp5Q56zSy75anE=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-6WC1VTn7X+FazsGzoSgYmEVKWyFRGtp5Q56zSy75anE="
+        }
+      ]
+    },
+    {
+      "Route": "js/image-upload.js",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\wwwroot\\js\\image-upload.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3136"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"6WC1VTn7X+FazsGzoSgYmEVKWyFRGtp5Q56zSy75anE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 16:06:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-6WC1VTn7X+FazsGzoSgYmEVKWyFRGtp5Q56zSy75anE="
+        }
+      ]
+    },
+    {
+      "Route": "js/image-upload.js.gz",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\obj\\Debug\\net9.0\\compressed\\s2wzn5e5e0-hmss1oybvv.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "819"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"FHpEnOlsSBvfs4MRU8VFymfbGZ8UJI1IZ/TgL1B5dTw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 16:06:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-FHpEnOlsSBvfs4MRU8VFymfbGZ8UJI1IZ/TgL1B5dTw="
         }
       ]
     },

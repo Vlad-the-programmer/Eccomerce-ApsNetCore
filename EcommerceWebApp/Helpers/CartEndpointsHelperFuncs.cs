@@ -1,45 +1,44 @@
-﻿using EcommerceRestApi.Models;
-using EcommerceWebApp.ApiServices;
-using EcommerceWebApp.Models;
+﻿using EcommerceWebApp.ApiServices;
+using EcommerceWebApp.Models.Dtos;
 using System.Text.Json;
 
 namespace EcommerceWebApp.Helpers
 {
     public class CartEndpointsHelperFuncs
     {
-        public static async Task<ShoppingCartViewModel> GetCreateCart(string endpoint, IApiService apiService)
+        public static async Task<ShoppingCartDTO> GetCreateCart(string endpoint, IApiService apiService)
         {
             var response = await apiService.GetDataAsync(endpoint); // response is a string
 
-            var cart = JsonSerializer.Deserialize<ShoppingCartViewModel>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+            var cart = JsonSerializer.Deserialize<ShoppingCartDTO>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
             return cart;
         }
 
-        public static async Task<List<ShoppingCartItemVM>> GetCartItems(string endpoint, IApiService apiService)
+        public static async Task<List<ShoppingCartItemDTO>> GetCartItems(string endpoint, IApiService apiService)
         {
-            var cartItems = new List<ShoppingCartItemVM>();
+            var cartItems = new List<ShoppingCartItemDTO>();
             try
             {
                 var response = await apiService.GetDataAsync(endpoint);
-                cartItems = JsonSerializer.Deserialize<List<ShoppingCartItemVM>>(response, GlobalConstants.JsonSerializerOptions);
+                cartItems = JsonSerializer.Deserialize<List<ShoppingCartItemDTO>>(response, GlobalConstants.JsonSerializerOptions);
             }
             catch (HttpRequestException ex)
             {
-                cartItems = new List<ShoppingCartItemVM>();
+                cartItems = new List<ShoppingCartItemDTO>();
             }
 
             return cartItems;
         }
 
-        public static async Task<ShoppingCartItemVM?> GetProductById(string endpoint, int productId, IApiService apiService)
+        public static async Task<ShoppingCartItemDTO?> GetProductById(string endpoint, int productId, IApiService apiService)
         {
-            var cartItem = new ShoppingCartItemVM();
+            var cartItem = new ShoppingCartItemDTO();
             try
             {
                 var response = await apiService.GetDataAsync($"{endpoint}/{productId}"); // response is a string
 
-                cartItem = JsonSerializer.Deserialize<ShoppingCartItemVM>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+                cartItem = JsonSerializer.Deserialize<ShoppingCartItemDTO>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
             }
             catch (HttpRequestException ex)

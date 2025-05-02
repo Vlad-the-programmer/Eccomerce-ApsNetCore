@@ -10,9 +10,6 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-//builder.Services.AddScoped<ShoppingCart>(sc =>
-//    ShoppingCart.GetShoppingCart(sc,
-//            sc.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -96,7 +93,7 @@ app.Use(async (context, next) =>
         var session = context.Session;
         var userJson = session.GetString("CurrentUser");
 
-        CurrentUserViewModel? user = null;
+        CurrentUserDTO? user = null;
 
         if (string.IsNullOrEmpty(userJson))
         {
@@ -115,12 +112,13 @@ app.Use(async (context, next) =>
         // Deserialize from cached string (whether newly fetched or already in session)
         if (!string.IsNullOrEmpty(userJson))
         {
-            user = JsonSerializer.Deserialize<CurrentUserViewModel>(userJson, GlobalConstants.JsonSerializerOptions);
+            user = JsonSerializer.Deserialize<CurrentUserDTO>(userJson, GlobalConstants.JsonSerializerOptions);
 
             if (user != null)
             {
                 var claims = new List<Claim>
                 {
+                    new Claim(ClaimTypes.NameIdentifier, user.UserId ?? "Guest"),
                     new Claim(ClaimTypes.Name, user.FullName ?? "Guest"),
                     new Claim(ClaimTypes.Email, user.Email ?? ""),
                     new Claim("UserName", user.UserName ?? ""),  // Custom claim for username

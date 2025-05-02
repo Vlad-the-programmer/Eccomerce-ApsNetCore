@@ -4,6 +4,7 @@ namespace EcommerceRestApi.Helpers.Data.AuthVms
 {
     public class CurrentUserViewModel
     {
+        public string UserId { get; set; }
         public string UserName { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
@@ -15,6 +16,7 @@ namespace EcommerceRestApi.Helpers.Data.AuthVms
         {
             return new CurrentUserViewModel
             {
+                UserId = user.Id,
                 UserName = user.UserName,
                 FullName = user.FullName,
                 Email = user.Email,

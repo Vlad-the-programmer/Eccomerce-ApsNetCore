@@ -172,6 +172,58 @@ namespace EcommerceRestApi.Controllers
         }
 
         // PUT: api/account/users/5
+        [Authorize]
+        [HttpGet("get-update-user-model")]
+        public async Task<IActionResult> GetUpdateUserModel()
+        {
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var IsUserExists = userId != null && await _context.Users.FindAsync(userId) != null;
+            if (!IsUserExists)
+            {
+                return NotFound();
+            }
+
+
+            var user = await _service.GetUserByIDAsync(userId);
+            var addresses = await _context.Addresses
+                .Include(a => a.Country)
+                .Where(a => a.CustomerId == user.Customers.First().Id)
+                .FirstOrDefaultAsync();
+
+            var userUpdateModel = new UserUpdateVM
+            {
+                Id = userId,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Username = user.UserName,
+                Nip = user.Customers.FirstOrDefault()?.Nip,
+                State = addresses?.State,
+                City = addresses?.City,
+                Street = addresses?.Street,
+                HouseNumber = addresses?.HouseNumber,
+                FlatNumber = addresses?.FlatNumber,
+                PostalCode = addresses?.PostalCode,
+                CountryName = addresses?.Country?.CountryName,
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ResponseModel
+                {
+                    Message = "Invalid model data",
+                    Errors = ModelState.Values
+                                             .SelectMany(v => v.Errors)
+                                             .Select(e => e.ErrorMessage)
+                                             .ToList()
+                });
+            }
+            return Ok(userUpdateModel);
+        }
+
+        // PUT: api/account/users/5
         [Authorize(Roles = UserRoles.User)]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

@@ -53,7 +53,7 @@ namespace EcommerceRestApi.Services
             return OrderDto.OrderToDto(order, _context, _userManager);
         }
 
-        public async Task UpdateOrderAsync(string code, OrderViewModel data)
+        public async Task UpdateOrderAsync(string code, NewOrderViewModel data)
         {
             var order = await _context.Orders.FirstOrDefaultAsync(o => o.Code == code);
             if (order == null)
@@ -127,7 +127,7 @@ namespace EcommerceRestApi.Services
         }
 
 
-        public async Task<OrderDto> AddNewOrderAsync(OrderViewModel data)
+        public async Task<OrderDto> AddNewOrderAsync(NewOrderViewModel data)
         {
             var customer = await _context.Customers
                                     .Include(c => c.Addresses)
@@ -238,10 +238,10 @@ namespace EcommerceRestApi.Services
                                                         deliveryMethodId,
                                                         _context);
 
-            var paymentMethod = (await _context.PaymentMethods
+            var paymentMethod = await _context.PaymentMethods
                                                         .FirstOrDefaultAsync(pm =>
                                                pm.PaymentType == OrderProcessingFuncs.GetStringValue(
-                                                   (PaymentMethods)data.PaymentMethod)));
+                                                   (PaymentMethods)data.PaymentMethod));
             if (paymentMethod != null)
             {
                 await InvoicePaymentHelperFuncs.CreatePayment(order,

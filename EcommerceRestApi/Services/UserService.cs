@@ -1,5 +1,4 @@
 ﻿using EcommerceRestApi.Helpers.Data.Functions;
-using EcommerceRestApi.Helpers.Data.Roles;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Models;
@@ -41,14 +40,21 @@ namespace EcommerceRestApi.Services
         {
             return await _context.Users
                 .Include(u => u.Customers)
-                .ThenInclude(c => c.Orders)
+                    .ThenInclude(c => c.Addresses)
+                        .ThenInclude(c => c.Country)
+                .Include(u => u.Customers)
+                    .ThenInclude(c => c.Orders)
                 .ThenInclude(o => o.Payments)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task UpdateUserAsync(string id, UserUpdateVM userUpdateVM)
         {
-            ApplicationUser? updatedUser = _context.Users.FirstOrDefault(u => u.Id == id);
+            ApplicationUser? updatedUser = _context.Users
+                                                .Include(u => u.Customers)
+                                                    .ThenInclude(c => c.Addresses)
+                                                        .ThenInclude(a => a.Country)
+                                                .FirstOrDefault(u => u.Id == id);
 
             if (updatedUser != null)
             {
@@ -58,16 +64,13 @@ namespace EcommerceRestApi.Services
                 updatedUser.LastName = userUpdateVM.LastName ?? updatedUser.LastName;
                 updatedUser.FullName = updatedUser.FirstName + " " + updatedUser.LastName;
                 updatedUser.PhoneNumber = userUpdateVM.PhoneNumber ?? updatedUser.PhoneNumber;
-                updatedUser.IsActive = userUpdateVM.IsActive != updatedUser.IsActive ? userUpdateVM.IsActive : updatedUser.IsActive;
-                updatedUser.IsAdmin = userUpdateVM.IsAdmin != updatedUser.IsAdmin ? userUpdateVM.IsAdmin : updatedUser.IsAdmin;
-                updatedUser.Role = updatedUser.IsAdmin ? UserRoles.Admin : UserRoles.User;
                 updatedUser.DateUpdated = DateTime.Now;
 
-                updatedUser.Customers.First().IsActive = updatedUser.IsActive;
-                updatedUser.Customers.First().Points = userUpdateVM.Points ?? updatedUser.Customers.First().Points;
+                updatedUser.Customers.First().Nip = userUpdateVM.Nip ?? updatedUser.Customers.FirstOrDefault()?.Nip;
                 updatedUser.Customers.First().DateUpdated = DateTime.Now;
 
-                Address address = updatedUser.Customers.First().Addresses.FirstOrDefault() ?? new Address();
+                var oldAddress = updatedUser.Customers.First().Addresses.FirstOrDefault();
+                Address address = oldAddress ?? new Address();
 
                 var country = DbFuncs.GetCountriesList(_context).FirstOrDefault(c => c.CountryName == userUpdateVM.CountryName);
                 address.City = userUpdateVM.City ?? address.City;
@@ -75,13 +78,18 @@ namespace EcommerceRestApi.Services
                 address.FlatNumber = userUpdateVM.FlatNumber ?? address.FlatNumber;
                 address.HouseNumber = userUpdateVM.HouseNumber ?? address.HouseNumber;
                 address.PostalCode = userUpdateVM.PostalCode ?? address.PostalCode;
-                address.IsActive = userUpdateVM.IsActive;
                 address.State = userUpdateVM.State ?? address.State;
                 address.Street = userUpdateVM.Street ?? address.Street;
 
-                if (updatedUser.Customers.First().Addresses.FirstOrDefault() == null)
+                if (oldAddress == null)
                 {
+                    address.DateCreated = DateTime.Now;
                     updatedUser.Customers.First().Addresses.Add(address);
+                }
+                else
+                {
+                    address.DateUpdated = DateTime.Now;
+                    _context.Entry(address).State = EntityState.Modified;
                 }
 
                 await _context.SaveChangesAsync();

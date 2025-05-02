@@ -15,7 +15,7 @@ namespace EcommerceWebApp.Helpers.ViewComponents
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var items = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
-            return View(items.Count);
+            return View(items.Any() ? items.Count : 0);
         }
     }
 }

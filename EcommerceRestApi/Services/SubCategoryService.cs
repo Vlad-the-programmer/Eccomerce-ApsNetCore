@@ -1,8 +1,8 @@
 ﻿using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Models.Dtos;
 using EcommerceRestApi.Services.Base;
-using EcommerceWebApp.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Services
@@ -16,15 +16,15 @@ namespace EcommerceRestApi.Services
             _context = context;
         }
 
-        public Task AddNewSubCategoryAsync(SubcategoryViewModel data)
+        public Task AddNewSubCategoryAsync(SubcategoryDTO data)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<SubcategoryViewModel>> GetAllSubcategories()
+        public async Task<List<SubcategoryDTO>> GetAllSubcategories()
         {
             return (await _context.Subcategories.ToListAsync())
-                        .Select(sc => new SubcategoryViewModel
+                        .Select(sc => new SubcategoryDTO
                         {
                             Code = sc.Code,
                             CategoryId = sc.CategoryId,
@@ -34,10 +34,10 @@ namespace EcommerceRestApi.Services
                         }).ToList();
         }
 
-        public async Task<SubcategoryViewModel> GetSubcategoryByCodeAsync(string code)
+        public async Task<SubcategoryDTO> GetSubcategoryByCodeAsync(string code)
         {
             var subCategory = await _context.Subcategories.FirstAsync(sc => sc.Code == code);
-            return new SubcategoryViewModel
+            return new SubcategoryDTO
             {
                 Code = subCategory.Code,
                 CategoryId = subCategory.CategoryId,
@@ -48,7 +48,7 @@ namespace EcommerceRestApi.Services
 
         }
 
-        public Task UpdateSubCategoryAsync(int id, SubcategoryViewModel data)
+        public Task UpdateSubCategoryAsync(int id, SubcategoryDTO data)
         {
             throw new NotImplementedException();
         }

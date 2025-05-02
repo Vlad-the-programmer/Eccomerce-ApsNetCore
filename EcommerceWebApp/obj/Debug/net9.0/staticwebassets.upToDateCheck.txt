@@ -46,6 +46,7 @@ C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\wwwroot\lib\jquery-vali
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\wwwroot\lib\jquery\dist\jquery.slim.min.map
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\wwwroot\js\image-upload.js
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
@@ -62,6 +63,7 @@ C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\wwwroot\lib\bootstrap\d
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceWebApp\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\js\image-upload.js
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap.css
 wwwroot\lib\bootstrap\dist\css\bootstrap.css.map

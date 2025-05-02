@@ -1,115 +1,110 @@
 ﻿@model NewProductViewModel
-@using EcommerceWebApp.Helpers;
+@using EcommerceWebApp.Helpers
 @using EcommerceWebApp.AppGlobals
 
 @{
-    ViewData["Title"] = "Create a new movie";
+    ViewData["Title"] = "Create a new product";
     var uploadImageFromServerEndpoint = $"{AppConstants.RESTAPI_BASE_URL}/{GlobalConstants.UploadPhotoEndpoint}";
-
 }
 
-<div class="row">
-    <div class="col-md-8 offset-2">
-        <p>
-            <h4>Create a new Product</h4>
-        </p>
-
-        <div class="row">
-            <div class="col-md-8 offset-2">
-                <form asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Name" class="control-label"></label>
-                                <input asp-for="Name" class="form-control" />
-                                <span asp-validation-for="Name" class="text-danger"></span>
-                            </div>
-                            <div class="form-group"> 
-                                <label asp-for="Code" class="control-label"></label> 
-                                <input asp-for="Code" class="form-control" /> 
-                                <span asp-validation-for="Code" class="text-danger"></span> 
-                            </div> 
-                            @* <div class="form-group"> *@
-                            @*     <label asp-for="ExpiredDate" class="control-label"></label> *@
-                            @*     <input asp-for="ExpiredDate" type="date" class="form-control" /> *@
-                            @*     <span asp-validation-for="ExpiredDate" class="text-danger"></span> *@
-                            @* </div> *@
-                            <div class="form-group">
-                                <label asp-for="Price" class="control-label"></label>
-                                <input asp-for="Price" type="number" class="form-control" />
-                                <span asp-validation-for="Price" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Stock" class="control-label"></label>
-                                <input asp-for="Stock" type="number" class="form-control" />
-                                <span asp-validation-for="Stock" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label>Main Photo</label>
-                                <input type="file" id="photoFileInput" class="form-control" />
-                                <input type="hidden" asp-for="Photo" id="Photo" />
-                                <span asp-validation-for="Photo" class="text-danger"></span>
-                            </div>
-
-                            <!-- Other Photos -->
-                            <div class="form-group">
-                                <label>Other Photos</label>
-                                <input type="file" id="otherPhotosInput" class="form-control" multiple />
-                                <input type="hidden" asp-for="OtherPhotos" id="OtherPhotos" />
-                                <span asp-validation-for="OtherPhotos" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="CategoryCode" class="control-label"></label>
-                                <select asp-for="CategoryCode" class="form-control" asp-items="ViewBag.Categories"></select>
-                                <span asp-validation-for="CategoryCode" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="SubcategoryCode" class="control-label"></label>
-                                <select asp-for="SubcategoryCode" class="form-control" asp-items="ViewBag.SubCategories"></select>
-                                <span asp-validation-for="SubcategoryCode" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Brand" class="control-label"></label>
-                                <input asp-for="Brand" class="form-control" />
-                                <span asp-validation-for="Brand" class="text-danger"></span>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input asp-for="IsActive" class="form-check-input" type="checkbox" />
-                                <label asp-for="IsActive" class="form-check-label"></label>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label asp-for="LongAbout" class="control-label"></label>
-                                <textarea asp-for="LongAbout" class="form-control"></textarea>
-                                <span asp-validation-for="LongAbout" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="About" class="control-label"></label>
-                                <textarea asp-for="About" class="form-control"></textarea>
-                                <span asp-validation-for="About" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 offset-4 text-center">
-                        <img width="100%" id="ImageUrlPreview" />
-                    </div>
-
-                    <div class="form-group">
-                        <input type="submit" value="Create" class="btn btn-outline-success float-right" />
-                        <a class="btn btn-outline-secondary" asp-action="Index">Show all</a>
-                    </div>
-
-                </form>
-
-            </div>
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Create a New Product</h4>
         </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
+                <div class="row">
+                    <!-- Left Column -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Code" class="form-label"></label>
+                            <input asp-for="Code" class="form-control" />
+                            <span asp-validation-for="Code" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Price" class="form-label"></label>
+                            <input asp-for="Price" type="number" class="form-control" />
+                            <span asp-validation-for="Price" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Stock" class="form-label"></label>
+                            <input asp-for="Stock" type="number" class="form-control" />
+                            <span asp-validation-for="Stock" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Main Photo</label>
+                            <input type="file" id="photoFileInput" class="form-control" />
+                            <input type="hidden" asp-for="Photo" id="Photo" />
+                            <span asp-validation-for="Photo" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Other Photos</label>
+                            <input type="file" id="otherPhotosInput" class="form-control" multiple />
+                            <input type="hidden" asp-for="OtherPhotos" id="OtherPhotos" />
+                            <span asp-validation-for="OtherPhotos" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="CategoryCode" class="form-label"></label>
+                            <select asp-for="CategoryCode" class="form-select" asp-items="ViewBag.Categories"></select>
+                            <span asp-validation-for="CategoryCode" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="SubcategoryCode" class="form-label"></label>
+                            <select asp-for="SubcategoryCode" class="form-select" asp-items="ViewBag.SubCategories"></select>
+                            <span asp-validation-for="SubcategoryCode" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Brand" class="form-label"></label>
+                            <input asp-for="Brand" class="form-control" />
+                            <span asp-validation-for="Brand" class="text-danger small"></span>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                            <label asp-for="IsActive" class="form-check-label"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descriptions -->
+                <div class="row mt-3">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="About" class="form-label"></label>
+                        <textarea asp-for="About" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="About" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="LongAbout" class="form-label"></label>
+                        <textarea asp-for="LongAbout" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="LongAbout" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Image Preview -->
+                <div class="text-center my-3">
+                    <img id="ImageUrlPreview" class="img-fluid rounded shadow-sm" style="max-height: 200px;" />
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary me-2">Cancel</a>
+                    <input type="submit" value="Create" class="btn btn-success" />
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -122,101 +117,3 @@
         );
     </script>
 }
-
-@* @section Scripts { *@
-@*     <script> *@
-@*         $("#ImageUrl").on("change", function () { *@
-@*                     var output = document.getElementById("ImageUrlPreview"); *@
-@*                     output.src = $(this).val(); *@
-@*                 }) *@
-              
-@*              function uploadFile(file, successCallback, errorCallback) { *@
-@*             var formData = new FormData(); *@
-@*             formData.append("file", file); *@
-
-@*             $.ajax({ *@
-@*                 url: "@uploadImageFromServerEndpoint", *@
-@*                 type: "POST", *@
-@*                 data: formData, *@
-@*                 processData: false, *@
-@*                 contentType: false, *@
-@*                 success: function (url) { *@
-@*                     successCallback(url); *@
-@*                 }, *@
-@*                 error: function (xhr) { *@
-@*                     if (errorCallback) errorCallback(xhr.responseText); *@
-@*                     else alert("Upload failed: " + xhr.responseText); *@
-@*                 } *@
-@*             }); *@
-@*         } *@
-
-@*         $("form").on("submit", function (e) { *@
-@*             e.preventDefault(); *@
-
-@*             var form = this; *@
-@*             var photoFile = $("#photoFileInput")[0].files[0]; *@
-@*             var otherFiles = $("#otherPhotosInput")[0].files; *@
-
-@*             if (photoFile) { *@
-@*                 uploadFile(photoFile, function (photoUrl) { *@
-@*                     $("#Photo").val(photoUrl); *@
-@*                     $("#ImageUrlPreview").attr("src", photoUrl); *@
-
-@*                     uploadOtherPhotos(otherFiles, function (urls) { *@
-@*                         $("#OtherPhotos").val(urls.join(";")); *@
-@*                         $(form).off("submit").submit(); *@
-@*                     }); *@
-@*                 }); *@
-@*             } else { *@
-@*                 uploadOtherPhotos(otherFiles, function (urls) { *@
-@*                     $("#OtherPhotos").val(urls.join(";")); *@
-@*                     form.submit(); *@
-@*                 }); *@
-@*             } *@
-@*         }); *@
-
-@*         function uploadOtherPhotos(files, callback) { *@
-@*             var urls = []; *@
-@*             var index = 0; *@
-
-@*             function next() { *@
-@*                 if (index >= files.length) { *@
-@*                     callback(urls); *@
-@*                     return; *@
-@*                 } *@
-
-@*                 uploadFile(files[index], function (url) { *@
-@*                     urls.push(url); *@
-@*                     index++; *@
-@*                     next(); *@
-@*                 }); *@
-@*             } *@
-
-@*             if (files.length > 0) { *@
-@*                 next(); *@
-@*             } else { *@
-@*                 callback([]); *@
-@*             } *@
-@*         } *@
-
-@*         // Preview on file change *@
-@*         $("#photoFileInput").on("change", function () { *@
-@*             var file = this.files[0]; *@
-@*             if (!file) return; *@
-
-@*             uploadFile(file, function (url) { *@
-@*                 $("#Photo").val(url); *@
-@*                 $("#PhotoPreview").attr("src", "@AppConstants.RESTAPI_BASE_URL/url"); *@
-@*             }); *@
-@*         }); *@
-
-@*         $("#otherPhotosInput").on("change", function () { *@
-@*             var files = this.files; *@
-@*             uploadOtherPhotos(files, function (urls) { *@
-@*                 $("#OtherPhotos").val(urls.join(";")); *@
-@*                 $("#OtherPhotosPreview").attr("src", "@AppConstants.RESTAPI_BASE_URL/url"); *@
-@*             }); *@
-@*         }); *@
-
-@*     </script> *@
-@* } *@

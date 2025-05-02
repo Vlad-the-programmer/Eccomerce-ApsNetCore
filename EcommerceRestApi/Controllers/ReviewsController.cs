@@ -42,7 +42,7 @@ namespace EcommerceRestApi.Controllers
         // POST: api/Reviews
         [HttpPost]
         //[Authorize]
-        public async Task<ActionResult> PostReview([FromBody] ReviewViewModel model)
+        public async Task<ActionResult> PostReview([FromBody] ReviewCreateEditVM model)
         {
             if (!ModelState.IsValid)
             {
@@ -56,9 +56,9 @@ namespace EcommerceRestApi.Controllers
                 });
             }
 
-            await _reviewsService.AddNewReviewAsync(model);
+            var review = await _reviewsService.AddNewReviewAsync(model);
 
-            return CreatedAtAction(nameof(GetReview), new { id = model.Id });
+            return CreatedAtAction(nameof(GetReview), new { id = review.Id });
         }
 
         // PUT: api/Reviews/5

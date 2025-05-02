@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using EcommerceWebApp.Models.Dtos;
+using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceWebApp.Models
 {
@@ -52,9 +52,6 @@ namespace EcommerceWebApp.Models
 
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; }
-        public IList<ReviewViewModel> Reviews { get; set; } = new List<ReviewViewModel>();
-
-        [JsonIgnore]
-        public ReviewViewModel ReviewForm { get; set; } = new ReviewViewModel();
+        public IList<ReviewDTO> Reviews { get; set; } = new List<ReviewDTO>();
     }
 }

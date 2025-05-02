@@ -83,12 +83,10 @@
                         <input asp-for="PostalCode" class="form-control" />
                         <span asp-validation-for="PostalCode" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <label for="SelectedCountry">Select Country:</label>
-                        <select asp-for="CountryName" asp-items="new SelectList(Model.Countries)" class="form-control">
-                            <option value="">-- Select a Country --</option>
-                        </select>
-                    </div>
+
+                    @await Html.PartialAsync("_CountrySelector", Model.CountryName)
+
+
                     <div class="form-group">
                         <input class="btn btn-outline-success float-right" type="submit" value="Sign up" />
                         <a class="btn btn-outline-secondary" asp-controller="Account" asp-action="Login">Cancel</a>

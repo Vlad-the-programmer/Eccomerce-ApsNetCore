@@ -83,6 +83,16 @@
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.AccountController",
+    "Method": "GetUpdateUserModel",
+    "RelativePath": "api/Account/get-update-user-model",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.AccountController",
     "Method": "Login",
     "RelativePath": "api/Account/login",
     "HttpMethod": "POST",
@@ -277,13 +287,13 @@
     "Parameters": [
       {
         "Name": "model",
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.CategoryViewModel",
+        "Type": "EcommerceRestApi.Models.Dtos.CategoryDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.CategoryViewModel",
+        "Type": "EcommerceRestApi.Models.Dtos.CategoryDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -481,7 +491,7 @@
     "Parameters": [
       {
         "Name": "model",
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.OrderViewModel",
+        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.NewOrderViewModel",
         "IsRequired": true
       }
     ],
@@ -528,7 +538,7 @@
       },
       {
         "Name": "model",
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.OrderViewModel",
+        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.NewOrderViewModel",
         "IsRequired": true
       }
     ],
@@ -713,7 +723,7 @@
     "Parameters": [
       {
         "Name": "model",
-        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.ReviewViewModel",
+        "Type": "EcommerceRestApi.Helpers.Data.ViewModels.ReviewCreateEditVM",
         "IsRequired": true
       }
     ],

@@ -1,9 +1,7 @@
-﻿@using EcommerceWebApp.Helpers.Enums
-@using EcommerceWebApp.Models.Dtos
+﻿@using EcommerceWebApp.Models.Dtos
 @using Microsoft.AspNetCore.Http;
 
-@using Microsoft.AspNetCore.Http;
-@model OrderViewModel
+@model NewOrderViewModel
 @{
     Layout = "_OrderLayout";
 }
@@ -87,7 +85,8 @@ else
         {
             <div id="formOverlay"></div>
         }
-        @* <input type="hidden" name="Code" asp-for="Code" /> *@
+
+        <input type="hidden" class="form-control" asp-for="Customer.CustomerId">
 
         <div class="form-row">
             <div class="form-group col-md-6">
@@ -143,18 +142,8 @@ else
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="CountryName">Country</label>
-            <select class="custom-select" asp-for="Customer.CountryName" required>
-                <option value="">-- Select Country --</option>
-                @foreach (var country in ViewBag.Countries)
-                {
-                    <option value="@country" selected="@(country == Model.Customer.CountryName)">
-                        @country
-                    </option>
-                }
-            </select>
-        </div>
+        @await Html.PartialAsync("_CountrySelector", Model.Customer.CountryName)
+
 
         <div class="row form-group">
             <div class="col-6">

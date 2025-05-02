@@ -27,6 +27,7 @@ namespace EcommerceRestApi.Models.Dtos
 
             return new CreateOrderCustomerDto
             {
+                CustomerId = customer.Id,
                 FlatNumber = address?.FlatNumber ?? string.Empty,
                 HouseNumber = address?.HouseNumber ?? string.Empty,
                 City = address?.City ?? string.Empty,

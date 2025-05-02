@@ -25,7 +25,7 @@ namespace EcommerceWebApp.Controllers
         [Route("/")]
         public async Task<IActionResult> Index()
         {
-            List<NewProductViewModel> products = await ProductsEndpointsHelperFuncs.GetProducts(
+            List<ProductDTO> products = await ProductsEndpointsHelperFuncs.GetProducts(
                                                         GlobalConstants.ProductsEndpoint, _apiService);
             List<CategoryDTO> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
                                                         GlobalConstants.CategoriesEndpoint, _apiService);
@@ -41,7 +41,7 @@ namespace EcommerceWebApp.Controllers
         [HttpGet("filter")]
         public async Task<IActionResult> Filter([FromQuery] string searchString)
         {
-            List<NewProductViewModel> fileteredProducts = await ProductsEndpointsHelperFuncs.GetFilteredProducts(
+            List<ProductDTO> fileteredProducts = await ProductsEndpointsHelperFuncs.GetFilteredProducts(
                                                         GlobalConstants.FilterProductsEndpoint, searchString, _apiService);
             List<CategoryDTO> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
                                                         GlobalConstants.CategoriesEndpoint, _apiService);
@@ -51,7 +51,7 @@ namespace EcommerceWebApp.Controllers
             ViewBag.Categories = CategoriesEndpointsHelperFuncs.GetCategoriesDictionaryWithNameCodeFields(categories);
             ViewBag.ProductsExists = fileteredProducts.Count > 0 ? true : false;
             ViewBag.CategoriesExist = categories.Count > 0 ? true : false;
-            return View("Index", fileteredProducts); // Return the view with the products data
+            return View("Index", fileteredProducts);
         }
 
         [HttpGet("{id}")]

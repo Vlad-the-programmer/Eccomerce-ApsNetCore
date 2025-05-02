@@ -1,4 +1,5 @@
 ﻿using EcommerceRestApi.Models;
+using Inventory_Management_Sustem.Models.Dtos;
 using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceRestApi.Helpers.Data.ViewModels
@@ -52,7 +53,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         [Required(ErrorMessage = "Category code is Requred")]
         public string CategoryCode { get; set; }
 
-        public IList<Review> Reviews { get; set; } = new List<Review>();
+        public IList<ReviewDto> Reviews { get; set; } = new List<ReviewDto>();
 
         public static NewProductViewModel FromProductToVm(Product p)
         {

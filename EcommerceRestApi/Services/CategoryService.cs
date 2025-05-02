@@ -1,10 +1,10 @@
 ﻿using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Services.Base;
-using EcommerceRestApi.Helpers.Data.ViewModels;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
+using EcommerceRestApi.Models.Dtos;
 
 namespace EcommerceRestApi.Services
 {
@@ -18,7 +18,7 @@ namespace EcommerceRestApi.Services
         }
 
 
-        public async Task AddNewCategoryAsync(CategoryViewModel data)
+        public async Task AddNewCategoryAsync(CategoryDTO data)
         {
             var newCategory = new Category()
             {
@@ -39,9 +39,9 @@ namespace EcommerceRestApi.Services
             await _context.SaveChangesAsync();
         }
 
-        public Task<List<CategoryViewModel>> GetAllCategories()
+        public Task<List<CategoryDTO>> GetAllCategories()
         {
-            return _context.Categories.Select(c => new CategoryViewModel()
+            return _context.Categories.Select(c => new CategoryDTO()
             {
                 Code = c.Code,
                 Name = c.Name,

@@ -42,29 +42,29 @@ namespace EcommerceWebApp.Helpers
             return order;
         }
 
-        public async static Task<OrderViewModel?> GetOrderCreateTemplate(string endpoint, IApiService apiService)
+        public async static Task<NewOrderViewModel?> GetOrderCreateTemplate(string endpoint, IApiService apiService)
         {
-            var orderModel = new OrderViewModel();
+            var orderModel = new NewOrderViewModel();
             try
             {
                 var response = await apiService.GetDataAsync(endpoint); // response is a string
-                orderModel = JsonSerializer.Deserialize<OrderViewModel>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+                orderModel = JsonSerializer.Deserialize<NewOrderViewModel>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
             }
             catch (HttpRequestException ex)
             {
-                orderModel = new OrderViewModel();
+                orderModel = new NewOrderViewModel();
             }
             return orderModel;
         }
 
-        public async static Task<string> SubmitOrder(string endpoint, OrderViewModel order, IApiService apiService)
+        public async static Task<string> SubmitOrder(string endpoint, NewOrderViewModel order, IApiService apiService)
         {
             var response = await apiService.PostDataAsync(endpoint, JsonSerializer.Serialize(order, GlobalConstants.JsonSerializerOptions)); // response is a string
             return response;
         }
 
-        public async static Task<string> UpdateOrder(string endpoint, OrderViewModel order, IApiService apiService)
+        public async static Task<string> UpdateOrder(string endpoint, NewOrderViewModel order, IApiService apiService)
         {
             var response = await apiService.UpdateDataAsync(endpoint, JsonSerializer.Serialize(order, GlobalConstants.JsonSerializerOptions)); // response is a string
             return response;

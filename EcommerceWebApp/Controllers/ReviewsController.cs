@@ -17,7 +17,7 @@ namespace EcommerceWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrUpdate(ReviewViewModel model)
+        public async Task<IActionResult> CreateOrUpdate(ReviewUpdateViewModel model)
         {
             try
             {
@@ -40,43 +40,10 @@ namespace EcommerceWebApp.Controllers
             catch (HttpRequestException ex)
             {
                 TempData["Error"] = ex.Message;
-                return RedirectToAction("Details", "Products", new { id = model.ProductId });
             }
-            return RedirectToAction("Details", "Products", new { id = model.ProductId });
+            return RedirectToRoute(new { controller = "Products", action = "Details", id = model.ProductId });
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Details(int id)
-        //{
-        //    var review = await ReviewsEndpointsHelperFuncs.GetReviewById(GlobalConstants.ReviewsEndpoint, id, _apiService);
-
-        //    if (review == null)
-        //    {
-        //        return View("NotFound");
-        //    }
-        //    return View(review);
-        //}
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Edit(int id, ReviewUpdateViewModel model)
-        {
-            if (id != model.Id)
-            {
-                return View("NotFound");
-            }
-
-            try
-            {
-                await _apiService.UpdateDataAsync($"{GlobalConstants.ReviewUpdateEndpoint}/{id}",
-                                                        JsonSerializer.Serialize(model));
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["Error"] = ex.Message;
-                return View(model);
-            }
-            return RedirectToAction("Details", "Products", new { id = model.ProductId });
-        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

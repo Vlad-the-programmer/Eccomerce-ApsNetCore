@@ -1,5 +1,6 @@
 ﻿using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -83,12 +84,12 @@ namespace EcommerceRestApi.Helpers.Cart
                 await _context.SaveChangesAsync();
             }
         }
-        public async Task<List<ShoppingCartItemVM>> GetCartItems()
+        public async Task<List<ShoppingCartItemDTO>> GetCartItems()
             => await _context.ShoppingCartItems
                 .Where(item => item.ShoppingCartId == IdCartSession
                                && item.IsActive)
                 .Include(item => item.Product)
-                .Select(item => new ShoppingCartItemVM
+                .Select(item => new ShoppingCartItemDTO
                 {
                     Id = item.Id,
                     Amount = item.Amount,

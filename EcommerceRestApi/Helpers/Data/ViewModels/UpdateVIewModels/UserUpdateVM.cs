@@ -1,21 +1,16 @@
-﻿using EcommerceRestApi.Helpers.Data.Functions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels
 {
-    public class UserUpdateVM : BaseUpdateViewModel
+    public class UserUpdateVM
     {
-        public UserUpdateVM()
-        {
-        }
-
-        /////// <summary>
-        /////// The ID of the selected country.
-        /////// </summary>
-        //[Display(Name = "Id")]
-        //[Required(ErrorMessage = "Id is Required")]
-        //public string Id { get; set; }
+        ///// <summary>
+        ///// The ID of the selected country.
+        ///// </summary>
+        [Display(Name = "Id")]
+        [Required(ErrorMessage = "Id is Required")]
+        public string Id { get; set; }
 
         /// <summary>
         /// The first name of the user.
@@ -72,25 +67,6 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels
         [StringLength(10, ErrorMessage = "Nip should be 10 digit long")]
         public string? Nip { get; set; } = string.Empty;
 
-        /// <summary>
-        /// The role of the user (e.g., Admin, User).
-        /// </summary>
-        [Display(Name = "Role")]
-        public string? Role { get; set; } = null!;
-
-        [Display(Name = "IsAdmin")]
-        public bool IsAdmin { get; set; }
-
-
-        ///// <summary>
-        ///// The ID of the selected country.
-        ///// </summary>
-        //public int? CountryId { get; set; }
-
-        /// <summary>
-        /// The Points User get for making an each  order.
-        /// </summary>
-        public int? Points { get; set; }
 
         /// <summary>
         /// The name of the selected country.

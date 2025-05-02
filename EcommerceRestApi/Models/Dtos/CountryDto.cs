@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceRestApi.Models.Dtos
 {
-    public class CountryDto
+    public class CountryDTO
     {
         public int Id { get; set; }
-        public string Code { get; set; } = default!;
-        public string Title { get; set; } = default!;
+
+        [StringLength(50)]
+        [Unicode(false)]
+        public string CountryName { get; set; } = default!;
+
+        [StringLength(5)]
+        [Unicode(false)]
+        public string CountryCode { get; set; } = default!;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
-using EcommerceWebApp.Models;
+using EcommerceWebApp.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceWebApp.Controllers
@@ -18,7 +18,7 @@ namespace EcommerceWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var cart = new ShoppingCartViewModel();
+            var cart = new ShoppingCartDTO();
             try
             {
                 cart = await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
@@ -26,7 +26,7 @@ namespace EcommerceWebApp.Controllers
             catch (HttpRequestException ex)
             {
                 TempData["Error"] = ex.Message;
-                cart = new ShoppingCartViewModel();
+                cart = new ShoppingCartDTO();
             }
 
             return View(cart);

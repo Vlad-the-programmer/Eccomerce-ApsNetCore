@@ -1,6 +1,5 @@
 ﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
-using EcommerceWebApp.Helpers.Enums;
 using EcommerceWebApp.Models;
 using EcommerceWebApp.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -44,21 +43,10 @@ namespace EcommerceWebApp.Controllers
 
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(OrderViewModel order)
+        public async Task<IActionResult> Create(NewOrderViewModel order)
         {
-            var customerIdClaim = User.FindFirst("CustomerId");
-            var customerId = customerIdClaim?.Value ?? string.Empty;
 
-            try
-            {
-                order.Customer.CustomerId = Int32.Parse(customerIdClaim?.Value);
-            }
-            catch (ArgumentNullException ex)
-            {
-                order.Customer.CustomerId = default!;
-            }
-
-            order.OrderStatus = (int)OrderStatuses.Pending;
+            order.OrderStatus = 1; // Pending
 
             var newOrderDto = new OrderDTO();
             try
@@ -117,7 +105,7 @@ namespace EcommerceWebApp.Controllers
         }
 
         [HttpPut("update/{code}")]
-        public async Task<IActionResult> Edit(string code, OrderViewModel order)
+        public async Task<IActionResult> Edit(string code, NewOrderViewModel order)
         {
             try
             {

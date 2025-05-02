@@ -34,6 +34,15 @@
                             <li>    
                                 <a class="dropdown-item" asp-controller="Orders" asp-action="Index"><i class="bi bi-tags"></i> Orders</a>
                             </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-controller="Account"
+                                   asp-action="Edit"
+                                   asp-route-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value">
+                                    <i class="bi bg-info"></i> Edit Account
+                                </a>
+                            </li>
+
                         }
 
                         @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))

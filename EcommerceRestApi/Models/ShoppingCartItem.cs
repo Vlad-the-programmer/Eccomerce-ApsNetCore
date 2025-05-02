@@ -1,4 +1,5 @@
 ﻿using EcommerceRestApi.Helpers.ModelsUtils;
+using EcommerceRestApi.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,7 +20,7 @@ public partial class ShoppingCartItem : EntityBase
     [InverseProperty("ShoppingCartItems")]
     public virtual Product Product { get; set; } = null!;
 
-    public static explicit operator ShoppingCartItem(ShoppingCartItemVM cartItemVM)
+    public static explicit operator ShoppingCartItem(ShoppingCartItemDTO cartItemVM)
     {
         var cartItem = new ShoppingCartItem().CopyProperties(cartItemVM);
         return cartItem;

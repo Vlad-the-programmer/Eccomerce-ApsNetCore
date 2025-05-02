@@ -134,16 +134,6 @@
             The NIP (Tax Identification Number) of the user (optional).
             </summary>
         </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.Role">
-            <summary>
-            The role of the user (e.g., Admin, User).
-            </summary>
-        </member>
-        <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.Points">
-            <summary>
-            The Points User get for making an each  order.
-            </summary>
-        </member>
         <member name="P:EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels.UserUpdateVM.CountryName">
             <summary>
             The name of the selected country.

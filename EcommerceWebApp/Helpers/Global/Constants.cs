@@ -18,7 +18,7 @@ public static class GlobalConstants
     public const string ProductCreateEndpoint = "api/products/create";
     public const string FilterProductsEndpoint = $"{ProductsEndpoint}/filter";
 
-    // Products
+    // Orders
     public const string OrdersEndpoint = "api/orders";
     public const string OrderDeleteEndpoint = "api/orders/delete";
     public const string OrderUpdateEndpoint = "api/orders/update";
@@ -39,6 +39,7 @@ public static class GlobalConstants
     public const string UserUpdateEndpoint = "api/account";
     public const string UserCreateEndpoint = "api/account/";
     public const string GetCurrentUserEndpoint = "api/account/get-current-user/";
+    public const string GetUserUpdateModel = "api/account/get-update-user-model/";
 
     // ShopppingCart
     public const string GetCartEndpoint = "api/cart/";

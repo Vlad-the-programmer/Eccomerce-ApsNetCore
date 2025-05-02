@@ -3,7 +3,6 @@ using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Models;
 using EcommerceWebApp.Models.UpdateViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using System.Text.Json;
 
 namespace EcommerceWebApp.Controllers
@@ -57,19 +56,14 @@ namespace EcommerceWebApp.Controllers
         }
         public async Task<IActionResult> Register()
         {
-            return View(new RegisterViewModel(
-                await CountriesEndpointsHelperFuncs.GetCountriesNames(
-                    GlobalConstants.CountriesEndpoint, _apiService))
-            );
+            ViewBag.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
+
+            return View(new RegisterViewModel());
         }
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerVM)
         {
-            registerVM.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService) ?? new List<string>();
-
-            //if (!ModelState.IsValid) return View(registerVM);
-
             try
             {
                 var response = await _apiService.PostDataAsync(
@@ -115,20 +109,30 @@ namespace EcommerceWebApp.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Edit(int id)
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
         {
-            var userId = Int32.Parse(_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier));
-            if (userId != id) return RedirectToAction("AccessDenied");
+            var updateModel = await AccountEndpointsHelperFuncs.GetUserUpdateModelObj(
+                GlobalConstants.GetUserUpdateModel, _apiService);
 
-            return View(User);
+            if (updateModel == null)
+            {
+                TempData["Error"] = "User not found!";
+                return View("NotFound");
+            }
+
+            if (updateModel.Id != id) return RedirectToAction("AccessDenied");
+
+            ViewBag.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
+
+            return View(updateModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, UserUpdateVM updatedUser)
+        public async Task<IActionResult> Edit(string id, UserUpdateVM updatedUser)
         {
-            var userId = Int32.Parse(_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            if (userId != id) return RedirectToAction("AccessDenied");
+            if (updatedUser.Id != id) return RedirectToAction("AccessDenied");
 
             try
             {
@@ -138,6 +142,7 @@ namespace EcommerceWebApp.Controllers
             catch (HttpRequestException ex)
             {
                 ViewBag.Error = ex.Message;
+                ViewBag.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
 
                 return View(updatedUser);
             }
@@ -155,7 +160,6 @@ namespace EcommerceWebApp.Controllers
             catch (HttpRequestException e)
             {
                 TempData["Error"] = e.Message;
-                //return View();
             }
 
             return RedirectToAction("Index", "Products");

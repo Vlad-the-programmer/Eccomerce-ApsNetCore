@@ -1,0 +1,127 @@
+﻿@model EcommerceWebApp.Models.UpdateViewModels.UserUpdateVM
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<h2 class="mb-4">Edit User</h2>
+
+<form asp-action="Edit" method="post" class="needs-validation" novalidate>
+    <div class="row g-3">
+
+        <!-- Personal Info -->
+        <div class="col-12">
+            <h4>Personal Information</h4>
+            <hr />
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="FirstName" class="form-label"></label>
+            <input asp-for="FirstName" class="form-control" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="LastName" class="form-label"></label>
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Username" class="form-label"></label>
+            <input asp-for="Username" class="form-control" />
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="col-12">
+            <h4 class="mt-4">Contact Information</h4>
+            <hr />
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="PhoneNumber" class="form-label"></label>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <!-- Address -->
+        <div class="col-12">
+            <h4 class="mt-4">Address</h4>
+            <hr />
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Street" class="form-label"></label>
+            <input asp-for="Street" class="form-control" />
+            <span asp-validation-for="Street" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-3">
+            <label asp-for="HouseNumber" class="form-label"></label>
+            <input asp-for="HouseNumber" class="form-control" />
+            <span asp-validation-for="HouseNumber" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-3">
+            <label asp-for="FlatNumber" class="form-label"></label>
+            <input asp-for="FlatNumber" class="form-control" />
+            <span asp-validation-for="FlatNumber" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="City" class="form-label"></label>
+            <input asp-for="City" class="form-control" />
+            <span asp-validation-for="City" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="State" class="form-label"></label>
+            <input asp-for="State" class="form-control" />
+            <span asp-validation-for="State" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="PostalCode" class="form-label"></label>
+            <input asp-for="PostalCode" class="form-control" />
+            <span asp-validation-for="PostalCode" class="text-danger"></span>
+        </div>
+
+        @await Html.PartialAsync("_CountrySelector", Model.CountryName)
+
+
+
+        <!-- Account Info -->
+        <div class="col-12">
+            <h4 class="mt-4">Account Info</h4>
+            <hr />
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Nip" class="form-label"></label>
+            <input asp-for="Nip" class="form-control" />
+            <span asp-validation-for="Nip" class="text-danger"></span>
+        </div>
+
+
+        <!-- Submit -->
+        <div class="col-12 mt-4">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

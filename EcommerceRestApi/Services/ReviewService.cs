@@ -18,7 +18,7 @@ namespace EcommerceRestApi.Services
             _context = context;
         }
 
-        public async Task AddNewReviewAsync(ReviewViewModel data)
+        public async Task<ReviewDto> AddNewReviewAsync(ReviewCreateEditVM data)
         {
             var review = new Review
             {
@@ -30,19 +30,20 @@ namespace EcommerceRestApi.Services
                 DateCreated = DateTime.Now,
             };
 
-            data.Id = review.Id; // Set id of model for PostReview method to redirect user to GetReview
 
             await _context.Reviews.AddAsync(review);
             await _context.SaveChangesAsync();
 
             var newReview = await _context.Reviews
                                               .Include(r => r.Product)
+                                              .Include(r => r.Customer)
+                                                .ThenInclude(c => c.User)
                                               .FirstOrDefaultAsync(r => r.Id == review.Id);
-            DbFuncs.UpdateRatingSum(review.Product);
-            DbFuncs.UpdateRatingVotesCount(review.Product);
+            DbFuncs.UpdateRatingSum(newReview.Product);
+            DbFuncs.UpdateRatingVotesCount(newReview.Product);
 
             await _context.SaveChangesAsync();
-
+            return ReviewDto.FromEntity(newReview, false);
         }
 
         public async Task<bool> DeleteReviewAsync(int id)

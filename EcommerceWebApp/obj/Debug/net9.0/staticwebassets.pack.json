@@ -13,6 +13,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\wwwroot\\js\\image-upload.js",
+      "PackagePath": "staticwebassets\\js\\image-upload.js"
+    },
+    {
       "Id": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceWebApp\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },
