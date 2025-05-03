@@ -29,7 +29,9 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels
         /// </summary>
         [Display(Name = "Email")]
         [EmailAddress(ErrorMessage = "Invalid email address.")]
+        [MaxLength(254, ErrorMessage = "Email must not exceed 254 characters.")]
         public string? Email { get; set; }
+
 
         /// <summary>
         /// The username of the user (optional).
@@ -42,6 +44,8 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels
         /// </summary>
         [Display(Name = "Phonenumber")]
         [DataType(DataType.PhoneNumber)]
+        [MaxLength(15, ErrorMessage = "Phone number must not exceed 15 characters.")]
+        [RegularExpression(@"^\+?[0-9]{1,15}$", ErrorMessage = "Phone number can contain only digits and an optional leading '+'.")]
         public string? PhoneNumber { get; set; }
 
         ///// <summary>

@@ -16,7 +16,10 @@ namespace EcommerceWebApp.Helpers
                 countries = JsonSerializer.Deserialize<List<CountryDTO>>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
 
             }
-            catch (HttpRequestException ex) { }
+            catch (HttpRequestException ex)
+            {
+                countries = new List<CountryDTO>();
+            }
             return countries;
         }
 

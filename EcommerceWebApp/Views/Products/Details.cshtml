@@ -49,6 +49,8 @@
                     {
                         <div class="mt-2">
                             <form asp-controller="Products" asp-action="Edit" asp-route-Id="@Model.Id" method="get" style="display:inline;">
+                                @Html.AntiForgeryToken()
+
                                 <button class="btn btn-sm btn-outline-primary me-2" type="submit">Edit</button>
                             </form>
                             <a class="btn btn-sm btn-outline-primary me-2 @(!Model.IsActive ? "disabled" : "")" style="display:inline;" asp-controller="Products" asp-action="Delete" asp-route-Id="@Model.Id">
@@ -79,11 +81,11 @@
                                         }
                                     </span>
                                 </h6>
-                                <p class="card-text">@review.ReviewText</p>
+                                <p class="card-text">@review.ReviewText</p> 
 
                                 @if (User.Identity.IsAuthenticated)
                                 {
-                                    @if (@ViewBag.CurrentUserId == @review.CustomerId)
+                                    @if (@ViewBag.CustomerId == @review.CustomerId) 
                                     {
                                         <div class="mt-2">
                                             <button class="btn btn-sm btn-outline-primary me-2 edit-review-btn" data-id="@review.Id" data-endpoint="@($"{reviewEditDeleteEndpontBase}/{review.Id}")">Edit</button>
@@ -123,6 +125,8 @@
                     <div class="collapse" id="reviewFormCollapse">
                         <div class="card card-body border-0 shadow-sm">
                             <form asp-controller="Reviews" asp-action="CreateOrUpdate" method="post" id="reviewForm">
+                                @Html.AntiForgeryToken()
+
                                 <input type="hidden" name="ProductId" id="ProductId" value="@Model.Id" />
                                 <input type="hidden" name="CustomerId" id="CustomerId" value="@ViewBag.CustomerId" />
                                 <input type="hidden" name="Id" id="Id" />
@@ -229,8 +233,9 @@
                 method: 'POST',
                 data: $(this).serialize(),
                 success: function () {
+                    const productBaseUrl = '@Url.Action("Details", "Products")';
                     const productId = $('#ProductId').val();
-                    window.location.href = `/Products/Details/${productId}`;
+                    window.location.href = `${productBaseUrl}/${productId}`;
                 },
                 error: function (xhr) {
                     alert("Error: " + xhr.responseText);

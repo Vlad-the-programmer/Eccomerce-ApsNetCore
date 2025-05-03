@@ -101,6 +101,7 @@ namespace EcommerceWebApp.Controllers
         }
 
         [HttpPost("create")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(NewProductViewModel product)
         {
             try
@@ -194,6 +195,7 @@ namespace EcommerceWebApp.Controllers
         }
 
         [HttpPost("edit/{id}")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ProductUpdateVM product)
         {
             if (id != product.Id) return View("NotFound");

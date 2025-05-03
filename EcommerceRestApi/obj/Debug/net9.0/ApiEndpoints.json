@@ -18,22 +18,7 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      },
-      {
-        "Type": "EcommerceRestApi.Helpers.Data.ResponseModels.ResponseModel",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.AccountController",
@@ -84,11 +69,17 @@
   {
     "ContainingType": "EcommerceRestApi.Controllers.AccountController",
     "Method": "GetUpdateUserModel",
-    "RelativePath": "api/Account/get-update-user-model",
+    "RelativePath": "api/Account/get-update-user-model/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {

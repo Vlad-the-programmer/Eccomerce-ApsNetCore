@@ -7,10 +7,12 @@ namespace EcommerceWebApp.ApiServices
     public class ApiService : IApiService
     {
         private readonly HttpClient _httpClient;
+        private readonly ILogger<ApiService> _logger;
 
-        public ApiService(HttpClient httpClient)
+        public ApiService(HttpClient httpClient, ILogger<ApiService> logger)
         {
             _httpClient = httpClient;
+            _logger = logger;
         }
 
         public async Task<string> GetDataAsync(string endpoint)
@@ -27,17 +29,23 @@ namespace EcommerceWebApp.ApiServices
             if (!response.IsSuccessStatusCode)
             {
                 var errorJson = await response.Content.ReadAsStringAsync();
+
                 try
                 {
-                    var errorResponse = errorJson != "" ? JsonSerializer.Deserialize<ErrorViewModel>(errorJson, GlobalConstants.JsonSerializerOptions) : new ErrorViewModel();
+                    ErrorViewModel? errorResponse = !string.IsNullOrWhiteSpace(errorJson)
+                        ? JsonSerializer.Deserialize<ErrorViewModel>(errorJson, GlobalConstants.JsonSerializerOptions)
+                        : new ErrorViewModel();
+
                     var errorMessage = string.Join(Environment.NewLine, errorResponse?.Errors ?? new List<string>());
                     throw new HttpRequestException(errorMessage);
                 }
                 catch (JsonException ex)
                 {
-                    throw new HttpRequestException(errorJson);
+                    _logger.LogError(ex, "Failed to deserialize error response: {Response}", response.ReasonPhrase);
+                    throw new HttpRequestException($"Unexpected error response: {errorJson}");
                 }
             }
+
             return await response.Content.ReadAsStringAsync();
         }
 
@@ -50,15 +58,20 @@ namespace EcommerceWebApp.ApiServices
 
                 try
                 {
-                    var errorResponse = errorJson != "" ? JsonSerializer.Deserialize<ErrorViewModel>(errorJson, GlobalConstants.JsonSerializerOptions) : new ErrorViewModel();
+                    ErrorViewModel? errorResponse = !string.IsNullOrWhiteSpace(errorJson)
+                        ? JsonSerializer.Deserialize<ErrorViewModel>(errorJson, GlobalConstants.JsonSerializerOptions)
+                        : new ErrorViewModel();
+
                     var errorMessage = string.Join(Environment.NewLine, errorResponse?.Errors ?? new List<string>());
                     throw new HttpRequestException(errorMessage);
                 }
                 catch (JsonException ex)
                 {
-                    throw new HttpRequestException(errorJson);
+                    _logger.LogError(ex, "Failed to deserialize error response: {Response}", response.ReasonPhrase);
+                    throw new HttpRequestException($"Unexpected error response: {errorJson}");
                 }
             }
+
             return await response.Content.ReadAsStringAsync();
         }
 
@@ -71,9 +84,23 @@ namespace EcommerceWebApp.ApiServices
             {
                 var errorJson = await response.Content.ReadAsStringAsync();
 
-                var errorResponse = errorJson != "" ? JsonSerializer.Deserialize<ErrorViewModel>(errorJson) : new ErrorViewModel();
-                throw new HttpRequestException(errorResponse?.Message ?? "An error occurred.");
+                try
+                {
+                    ErrorViewModel? errorResponse = !string.IsNullOrWhiteSpace(errorJson)
+                        ? JsonSerializer.Deserialize<ErrorViewModel>(errorJson, GlobalConstants.JsonSerializerOptions)
+                        : new ErrorViewModel();
+
+                    var errorMessage = string.Join(Environment.NewLine, errorResponse?.Errors ?? new List<string>());
+                    throw new HttpRequestException(errorMessage);
+                }
+                catch (JsonException ex)
+                {
+                    _logger.LogError(ex, "Failed to deserialize error response: {Response}", response.ReasonPhrase);
+
+                    throw new HttpRequestException($"Unexpected error response: {errorJson}");
+                }
             }
+
             return await response.Content.ReadAsStringAsync();
         }
     }

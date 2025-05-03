@@ -81,6 +81,8 @@ else
     }
 
     <form method="post" id="orderForm">
+        @Html.AntiForgeryToken()
+
         @if (!User.Identity.IsAuthenticated)
         {
             <div id="formOverlay"></div>

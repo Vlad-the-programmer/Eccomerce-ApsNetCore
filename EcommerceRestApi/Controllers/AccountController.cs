@@ -171,14 +171,13 @@ namespace EcommerceRestApi.Controllers
             return Ok();
         }
 
-        // PUT: api/account/users/5
         [Authorize]
-        [HttpGet("get-update-user-model")]
-        public async Task<IActionResult> GetUpdateUserModel()
+        [HttpGet("get-update-user-model/{id}")]
+        public async Task<IActionResult> GetUpdateUserModel(string id)
         {
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var IsUserExists = userId != null && await _context.Users.FindAsync(userId) != null;
+            var IsUserExists = userId != null && await _context.Users.FindAsync(userId) != null && userId == id;
             if (!IsUserExists)
             {
                 return NotFound();
@@ -223,11 +222,9 @@ namespace EcommerceRestApi.Controllers
             return Ok(userUpdateModel);
         }
 
-        // PUT: api/account/users/5
-        [Authorize(Roles = UserRoles.User)]
+        // PUT: api/account/5
+        [Authorize]
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseModel))]
         public async Task<IActionResult> Update(string id, [FromBody] UserUpdateVM model)
         {
             if (!ModelState.IsValid)

@@ -17,6 +17,7 @@ namespace EcommerceWebApp.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateOrUpdate(ReviewUpdateViewModel model)
         {
             try

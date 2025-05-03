@@ -7,6 +7,7 @@ using System.Text.Json;
 
 namespace EcommerceWebApp.Controllers
 {
+    [Route("account")]
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
@@ -21,14 +22,14 @@ namespace EcommerceWebApp.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        [HttpGet]
+        [HttpGet("login")]
         public IActionResult Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View(new LoginViewModel());
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel loginVM, string returnUrl = null)
         {
@@ -54,6 +55,8 @@ namespace EcommerceWebApp.Controllers
 
             return RedirectToAction("Index", "Products");
         }
+
+        [HttpGet("register")]
         public async Task<IActionResult> Register()
         {
             ViewBag.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
@@ -61,7 +64,8 @@ namespace EcommerceWebApp.Controllers
             return View(new RegisterViewModel());
         }
 
-        [HttpPost]
+        [HttpPost("register")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel registerVM)
         {
             try
@@ -78,7 +82,7 @@ namespace EcommerceWebApp.Controllers
 
             return View("RegisterCompleted");
         }
-        [HttpPost]
+        [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             try
@@ -95,6 +99,7 @@ namespace EcommerceWebApp.Controllers
             return RedirectToAction("Index", "Products");
         }
 
+        [HttpGet("access-denied")]
         public IActionResult AccessDenied(string ReturnUrl)
         {
             try
@@ -109,26 +114,24 @@ namespace EcommerceWebApp.Controllers
             return View();
         }
 
-        [HttpGet]
+        [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(string id)
         {
             var updateModel = await AccountEndpointsHelperFuncs.GetUserUpdateModelObj(
-                GlobalConstants.GetUserUpdateModel, _apiService);
+                $"{GlobalConstants.GetUserUpdateModelEndpoint}/{id}", _apiService);
 
             if (updateModel == null)
             {
-                TempData["Error"] = "User not found!";
                 return View("NotFound");
             }
-
-            if (updateModel.Id != id) return RedirectToAction("AccessDenied");
 
             ViewBag.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
 
             return View(updateModel);
         }
 
-        [HttpPost]
+        [HttpPost("edit/{id}")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, UserUpdateVM updatedUser)
         {
 
@@ -141,16 +144,16 @@ namespace EcommerceWebApp.Controllers
             }
             catch (HttpRequestException ex)
             {
-                ViewBag.Error = ex.Message;
+                TempData["Error"] = ex.Message;
                 ViewBag.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
 
                 return View(updatedUser);
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Products");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        [HttpPost("delete/{id}")]
+        public async Task<IActionResult> Delete(string id)
         {
             try
             {

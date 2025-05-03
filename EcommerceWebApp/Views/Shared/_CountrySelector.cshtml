@@ -1,12 +1,12 @@
-﻿@model string
+﻿@model EcommerceWebApp.Models.UpdateViewModels.UserUpdateVM
 @{
-    var countries = ViewBag.Countries as IEnumerable<string>;
+    var countries = ViewBag.Countries as IEnumerable<string> ?? new List<string>();
 }
 
 <div class="col-md-6">
-    <label for="CountryName" class="form-label">Country</label>
-    <select id="CountryName" name="CountryName" class="form-select" asp-for="@Model" asp-items="@(new SelectList(countries, Model))">
+    <label asp-for="CountryName" class="form-label"></label>
+    <select asp-for="CountryName" class="form-select" asp-items="@(new SelectList(countries, Model.CountryName))">
         <option value="">-- Select Country --</option>
     </select>
-    <span asp-validation-for="@Model" class="text-danger"></span>
+    <span asp-validation-for="CountryName" class="text-danger"></span>
 </div>

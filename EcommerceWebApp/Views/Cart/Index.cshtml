@@ -79,48 +79,48 @@
 
 @section Scripts {
 
-    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+    @* <script src="https://www.paypalobjects.com/api/checkout.js"></script> *@
 
-    <script>
+    @* <script> *@
 
-        let _total = @Html.Raw(Model.CartTotal);
+    @*     let _total = @Html.Raw(Model.CartTotal); *@
 
-        paypal.Button.render({
-            //Configure environment
-            env: 'sandbox',
-            client: {
-                sandbox: 'AbYdwuNP8Q__4T5JbL-iCEHGzrAK9GAl5LiPskc5FkEiZUJSFeR5tt8auSvBTswOjdbivInW0PEKE_Ry'
-            },
+    @*     paypal.Button.render({ *@
+    @*         //Configure environment *@
+    @*         env: 'sandbox', *@
+    @*         client: { *@
+    @*             sandbox: 'AbYdwuNP8Q__4T5JbL-iCEHGzrAK9GAl5LiPskc5FkEiZUJSFeR5tt8auSvBTswOjdbivInW0PEKE_Ry' *@
+    @*         }, *@
 
-            //Customize button
-            locale: 'en_US',
-            style: {
-                size: 'small',
-                color: 'gold',
-                shape: 'pill'
-            },
-            commit: true,
+    @*         //Customize button *@
+    @*         locale: 'en_US', *@
+    @*         style: { *@
+    @*             size: 'small', *@
+    @*             color: 'gold', *@
+    @*             shape: 'pill' *@
+    @*         }, *@
+    @*         commit: true, *@
 
-            //Set up a payment
-            payment: function (data, actions) {
-                return actions.payment.create({
-                    transactions: [{
-                        amount: {
-                            total: _total,
-                            currency: 'USD'
-                        }
-                    }]
-                });
-            },
+    @*         //Set up a payment *@
+    @*         payment: function (data, actions) { *@
+    @*             return actions.payment.create({ *@
+    @*                 transactions: [{ *@
+    @*                     amount: { *@
+    @*                         total: _total, *@
+    @*                         currency: 'USD' *@
+    @*                     } *@
+    @*                 }] *@
+    @*             }); *@
+    @*         }, *@
 
-            //Execute the payment
-            onAuthorize: function (data, actions) {
-                return actions.payment.execute().then(function () {
-                    var url = '@Url.Action("CompleteOrder", "Orders", new { })';
-                    window.location.href = url;
-                });
-            }
+    @*         //Execute the payment *@
+    @*         onAuthorize: function (data, actions) { *@
+    @*             return actions.payment.execute().then(function () { *@
+    @*                 var url = '@Url.Action("CompleteOrder", "Orders", new { })'; *@
+    @*                 window.location.href = url; *@
+    @*             }); *@
+    @*         } *@
 
-        }, '#paypal-btn')
-    </script>
+    @*     }, '#paypal-btn') *@
+    @* </script> *@
 }
