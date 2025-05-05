@@ -20,7 +20,10 @@ namespace EcommerceWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var orders = await OrdersEndpointsHelperFuncs.GetOrders(GlobalConstants.OrdersEndpoint, _apiService);
+            var customerIdClaim = User.FindFirst("CustomerId");
+            int? customerId = customerIdClaim != null && int.TryParse(customerIdClaim.Value, out var tempId) ? tempId : default!;
+
+            var orders = await OrdersEndpointsHelperFuncs.GetOrders($"{GlobalConstants.UserOrdersEndpoint}/{customerId}", _apiService);
             return View(orders);
         }
 

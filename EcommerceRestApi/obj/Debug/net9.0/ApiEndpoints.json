@@ -490,6 +490,22 @@
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.OrdersController",
+    "Method": "GetUserOrders",
+    "RelativePath": "api/Orders/customer/{customerId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "customerId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.OrdersController",
     "Method": "DeleteOrder",
     "RelativePath": "api/Orders/delete/{code}",
     "HttpMethod": "DELETE",

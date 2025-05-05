@@ -11,13 +11,6 @@
             <h4>Sign up for a new account</h4>
         </p>
 
-        @if (TempData["Error"] != null)
-        {
-            <div class="col-md-12 alert alert-danger">
-                <span><b>Sorry!</b> - @TempData["Error"] </span>
-            </div>
-        }
-
         <div class="row">
             <div class="col-md-8 offset-2">
                 <form asp-controller="Account" asp-action="Register">
@@ -58,6 +51,11 @@
                         <label asp-for="Nip" class="control-label"></label>
                         <input asp-for="Nip" class="form-control" />
                         <span asp-validation-for="Nip" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="City" class="control-label"></label>
+                        <input asp-for="City" class="form-control" />
+                        <span asp-validation-for="City" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Street" class="control-label"></label>

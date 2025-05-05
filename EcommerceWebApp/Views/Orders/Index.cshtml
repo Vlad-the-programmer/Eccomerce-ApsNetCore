@@ -12,64 +12,66 @@
                 <hr />
             </div>
 
-            <table class="table table-bordered table-hover shadow-sm">
-                <thead class="table-dark text-center">
-                    <tr>
-                        <th>Order Code</th>
-                        <th>Items</th>
-                        <th>Total</th>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <th>Customer</th>
-                        }
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var order in Model)
-                    {
+            @if (Model != null && Model.Any())
+            {
+                <table class="table table-bordered table-hover shadow-sm">
+                    <thead class="table-dark text-center">
                         <tr>
-                            <td class="align-middle text-center">@order.Code</td>
-
-                            <td class="align-middle">
-                                <ul class="list-unstyled mb-0">
-                                    @foreach (var item in order.OrderItems)
-                                    {
-                                        <li class="mb-1">
-                                            <div class="alert alert-secondary p-2 mb-0">
-                                                <span class="badge bg-success">@item.Quantity</span>
-                                                <strong>@item.ProductBrand @item.ProductName</strong>
-                                                <small class="text-muted">@item.UnitPrice.ToString("C", new System.Globalization.CultureInfo("us-Us"))</small>
-                                            </div>
-                                        </li>
-                                    }
-                                </ul>
-                            </td>
-
-                            <td class="align-middle text-center">
-                                    @order.TotalAmount.ToString()
-                            </td>
-                            
-
+                            <th>Order Code</th>
+                            <th>Items</th>
+                            <th>Total</th>
                             @if (User.Identity.IsAuthenticated)
                             {
-                                <td class="align-middle text-center">
-                                    @order.Customer.FirstName @order.Customer.LastName
-                                </td>
+                                <th>Customer</th>
                             }
-
-                            <td class="align-middle text-center">
-                                <a class="btn btn-outline-primary btn-sm"
-                                   asp-controller="Orders"
-                                   asp-action="Status"
-                                   asp-route-code="@order.Code">
-                                    <i class="bi bi-card-checklist"></i> Check Status
-                                </a>
-                            </td>
+                            <th>Action</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <td class="align-middle text-center">@order.Code</td>
+                                <td class="align-middle">
+                                    <ul class="list-unstyled mb-0">
+                                        @foreach (var item in order.OrderItems)
+                                        {
+                                            <li class="mb-1">
+                                                <div class="alert alert-secondary p-2 mb-0">
+                                                    <span class="badge bg-success">@item.Quantity</span>
+                                                    <strong>@item.ProductBrand @item.ProductName</strong>
+                                                    <small class="text-muted">@item.UnitPrice.ToString("C", new System.Globalization.CultureInfo("en-US"))</small>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </td>
+                                <td class="align-middle text-center">@order.TotalAmount.ToString("C", new System.Globalization.CultureInfo("en-US"))</td>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <td class="align-middle text-center">
+                                        @order.Customer.FirstName @order.Customer.LastName
+                                    </td>
+                                }
+                                <td class="align-middle text-center">
+                                    <a class="btn btn-outline-primary btn-sm"
+                                       asp-controller="Orders"
+                                       asp-action="Status"
+                                       asp-route-code="@order.Code">
+                                        <i class="bi bi-card-checklist"></i> Check Status
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-info text-center">
+                    No orders found.
+                </div>
+            }
         </div>
     </div>
 </div>

@@ -4,19 +4,6 @@ namespace EcommerceWebApp.Models
 {
     public class RegisterViewModel : ApplicationUserViewModel
     {
-        //    [JsonIgnore]
-        //    public List<string> Countries { get; set; }
-
-        //    public RegisterViewModel()
-        //    {
-        //        Countries = new List<string>();
-        //    }
-        //public RegisterViewModel(List<string> countries) : base("Register")
-        //    {
-        //        Countries = countries;
-        //    }
-
-
         [Display(Name = "Confirm Password")]
         [Required(ErrorMessage = "Confirm Password is Required")]
         [DataType(DataType.Password)]

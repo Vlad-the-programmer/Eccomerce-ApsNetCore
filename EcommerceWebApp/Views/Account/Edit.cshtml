@@ -94,7 +94,7 @@
             <span asp-validation-for="PostalCode" class="text-danger"></span>
         </div>
 
-        @await Html.PartialAsync("_CountrySelector", Model)
+        @await Html.PartialAsync("_CountrySelector", Model.CountryName)
 
 
 

@@ -39,6 +39,14 @@ namespace EcommerceRestApi.Controllers
             return Ok(orders);
         }
 
+        [HttpGet("customer/{customerId}")]
+        [Authorize]
+        public async Task<IActionResult> GetUserOrders(int customerId)
+        {
+            var orders = (await _orderService.GetOrdersAsync()).Where(o => o.CustomerId == customerId);
+            return Ok(orders);
+        }
+
         [HttpGet("{code}")]
         [Authorize]
         public async Task<IActionResult> GetOrder(string code)

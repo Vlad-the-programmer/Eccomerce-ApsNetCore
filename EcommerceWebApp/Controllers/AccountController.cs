@@ -59,7 +59,8 @@ namespace EcommerceWebApp.Controllers
         [HttpGet("register")]
         public async Task<IActionResult> Register()
         {
-            ViewBag.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
+            ViewBag.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(
+                                    GlobalConstants.CountriesEndpoint, _apiService);
 
             return View(new RegisterViewModel());
         }
@@ -77,6 +78,8 @@ namespace EcommerceWebApp.Controllers
             catch (HttpRequestException e)
             {
                 TempData["Error"] = e.Message;
+                ViewBag.Countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(
+                                GlobalConstants.CountriesEndpoint, _apiService);
                 return View(registerVM);
             }
 
@@ -158,7 +161,8 @@ namespace EcommerceWebApp.Controllers
             try
             {
                 await _apiService.DeleteDataAsync($"{GlobalConstants.UserDeleteEndpoint}/{id}");
-                //HttpContext.Session.Remove("auth_token");
+                await Logout();
+                TempData["Success"] = "Account deleted successfully";
             }
             catch (HttpRequestException e)
             {

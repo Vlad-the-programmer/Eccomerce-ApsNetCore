@@ -20,6 +20,7 @@ public static class GlobalConstants
 
     // Orders
     public const string OrdersEndpoint = "api/orders";
+    public const string UserOrdersEndpoint = $"{OrdersEndpoint}/customer";
     public const string OrderDeleteEndpoint = "api/orders/delete";
     public const string OrderUpdateEndpoint = "api/orders/update";
     public const string OrderCreateEndpoint = "api/orders/create";

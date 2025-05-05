@@ -8,10 +8,6 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
     /// </summary>
     public class RegisterViewModel : BaseViewModel
     {
-        public RegisterViewModel()
-        {
-        }
-
         /// <summary>
         /// The first name of the user.
         /// </summary>
@@ -30,8 +26,8 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         /// The email address of the user.
         /// </summary>
         [Display(Name = "Email")]
-        [Required(ErrorMessage = "Email is Required")]
         [EmailAddress(ErrorMessage = "Invalid email address.")]
+        [MaxLength(254, ErrorMessage = "Email must not exceed 254 characters.")]
         public string Email { get; set; }
 
         /// <summary>
@@ -45,7 +41,8 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         /// </summary>
         [Display(Name = "Phonenumber")]
         [DataType(DataType.PhoneNumber)]
-        [Required(ErrorMessage = "Phonenumber is Required")]
+        [MaxLength(15, ErrorMessage = "Phone number must not exceed 15 characters.")]
+        [RegularExpression(@"^\+?[0-9]{1,15}$", ErrorMessage = "Phone number can contain only digits and an optional leading '+'.")]
         public string PhoneNumber { get; set; }
 
         /// <summary>
@@ -68,7 +65,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         /// The NIP (Tax Identification Number) of the user (optional).
         /// </summary>
         [Display(Name = "Nip")]
-        [StringLength(10, ErrorMessage = "Nip should be 10 digit long")]
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "Nip should be 10 digit long")]
         public string? Nip { get; set; } = string.Empty;
 
         /// <summary>

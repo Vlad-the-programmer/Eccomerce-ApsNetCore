@@ -60,7 +60,7 @@
         </table>
 
         <div class="btn-group">
-            <a class="btn btn-outline-primary" asp-controller="Orders" asp-action="Create">
+            <a class="btn btn-outline-primary  @(!Model.ShoppingCartItems.Any() ? "disabled" : "") " asp-controller="Orders" asp-action="Create">
                 Complete order
             </a>
 
