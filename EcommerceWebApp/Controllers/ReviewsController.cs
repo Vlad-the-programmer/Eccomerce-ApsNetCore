@@ -42,7 +42,7 @@ namespace EcommerceWebApp.Controllers
             {
                 TempData["Error"] = ex.Message;
             }
-            return RedirectToRoute(new { controller = "Products", action = "Details", id = model.ProductId });
+            return RedirectToAction("Details", "Products", new { id = model.ProductId });
         }
 
 

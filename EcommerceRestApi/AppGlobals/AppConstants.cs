@@ -12,5 +12,9 @@
 
         // Images
         public const string IMAGE_UPLOAD_PATH = "Uploads";
+
+        // Points user get for making an order
+        public const decimal POINTS_PER_DOLLAR = 1.5m;
+        public const decimal TAXES_RATE = 0.23m; // POLAND
     }
 }

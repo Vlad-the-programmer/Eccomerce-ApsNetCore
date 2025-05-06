@@ -30,11 +30,13 @@ namespace EcommerceWebApp.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
+            var cart = await CartEndpointsHelperFuncs.GetCreateCart(GlobalConstants.GetCartEndpoint, _apiService);
+            var cartItems = cart.ShoppingCartItems;
+
             var deliveryMethods = await DeliveryMethodsEndpointsHelperFuncs.GetDeliveryMethods(GlobalConstants.DeliveryMethodsEndpoint, _apiService);
             var paymentMethods = await PaymentMethodsEndpointsHelperFuncs.GetPaymentMethods(GlobalConstants.PaymentMethodsEndpoint, _apiService);
-            var cartItems = await CartEndpointsHelperFuncs.GetCartItems(GlobalConstants.GetCartItemsEndpoint, _apiService);
             var countries = await CountriesEndpointsHelperFuncs.GetCountriesNames(GlobalConstants.CountriesEndpoint, _apiService);
-            var orderModel = await OrdersEndpointsHelperFuncs.GetOrderCreateTemplate(GlobalConstants.GetOrderCreateModelEndpoint, _apiService);
+            var orderModel = await OrdersEndpointsHelperFuncs.GetOrderCreateTemplate($"{GlobalConstants.GetOrderCreateModelEndpoint}/{cart.ShoppingCartId}", _apiService);
 
 
             ViewBag.CartItems = cartItems;

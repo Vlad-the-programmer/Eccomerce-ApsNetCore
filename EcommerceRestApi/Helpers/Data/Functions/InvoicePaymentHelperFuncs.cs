@@ -92,9 +92,7 @@ namespace EcommerceRestApi.Helpers.Data.Functions
                 OrderId = order.Id,
                 IsActive = true,
                 PaymentDate = DateTime.Now,
-                PaymentMethodId = context.PaymentMethods.First(m =>
-                m.PaymentType == OrderProcessingFuncs.GetStringValue(
-                                                       (PaymentMethods)paymentMethodId)).Id,
+                PaymentMethodId = paymentMethodId,
                 DateCreated = DateTime.Now,
             };
 

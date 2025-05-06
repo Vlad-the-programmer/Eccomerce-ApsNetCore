@@ -1,4 +1,5 @@
-﻿using EcommerceRestApi.Helpers.Cart;
+﻿using EcommerceRestApi.AppGlobals;
+using EcommerceRestApi.Helpers.Cart;
 using EcommerceRestApi.Helpers.Data.ResponseModels;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Models.Context;
@@ -59,9 +60,9 @@ namespace EcommerceRestApi.Controllers
             return Ok(order);
         }
 
-        [HttpGet("get-order-create-model")]
+        [HttpGet("get-order-create-model/{shoppingCartId}")]
         //[Authorize]
-        public async Task<IActionResult> CreateOrderCreateTemplate()
+        public async Task<IActionResult> CreateOrderCreateTemplate(string shoppingCartId)
         {
 
             var model = new NewOrderViewModel();
@@ -78,6 +79,10 @@ namespace EcommerceRestApi.Controllers
                 model.Customer = CreateOrderCustomerDto.ToDto(customer, _userManager);
             }
 
+            model.TotalAmount += await _cart.GetTotal();
+            //model.TotalAmount += model.TotalAmount * AppConstants.TAXES_RATE;
+
+            model.TaxRate = AppConstants.TAXES_RATE;
 
             if (!ModelState.IsValid)
             {
@@ -96,7 +101,8 @@ namespace EcommerceRestApi.Controllers
 
         [HttpPost("create")]
         [Authorize]
-        public async Task<IActionResult> CreateOrder([FromBody] NewOrderViewModel model)
+        public async Task<IActionResult> CreateOrder([FromBody][Bind("DeliveryMethod,   " +
+            "                               PaymentMethod,OrderStatus,Customer,TotalAmount")] NewOrderViewModel model)
         {
             if (!ModelState.IsValid)
             {

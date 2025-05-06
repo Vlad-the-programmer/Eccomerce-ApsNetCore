@@ -6,6 +6,9 @@ namespace EcommerceWebApp.Models
     {
         public NewOrderViewModel() : base("Order") { }
 
+        public decimal TotalAmount { get; set; }
+        public decimal TaxRate { get; set; }
+
         public CustomerDTO Customer { get; set; } = new CustomerDTO();
 
         public int DeliveryMethod { get; set; }

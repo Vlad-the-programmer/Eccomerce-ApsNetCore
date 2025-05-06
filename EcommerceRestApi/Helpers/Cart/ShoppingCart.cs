@@ -137,10 +137,13 @@ namespace EcommerceRestApi.Helpers.Cart
                                             && item.IsActive)
                                     .Include(item => item.Product)
                                     .ToListAsync();
-            order.TotalAmount = await GetTotal();
+            //order.TotalAmount = await GetTotal();
+            //order.TotalAmount *= AppConstants.TAXES_RATE;
+
             order.OrderItems = orderItems.Select(cartItem =>
                                     OrderItem.CartItemToOrderItem(cartItem, order.Id))
                                 .ToList();
+
             foreach (var item in orderItems)
             {
                 if (item == null)

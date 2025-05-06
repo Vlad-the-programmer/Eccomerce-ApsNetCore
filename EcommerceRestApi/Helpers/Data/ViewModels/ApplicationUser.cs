@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcommerceRestApi.Helpers.Data.ViewModels
 {
-    public class ApplicationUser: IdentityUser
+    public class ApplicationUser : IdentityUser
     {
 
         [Display(Name = "Full Name")]
@@ -22,6 +22,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         [Display(Name = "Role")]
         [Required]
         public string Role { get; set; }
+
         [Display(Name = "Is Admin")]
         public bool IsAdmin { get; set; }
         public bool IsActive { get; set; }

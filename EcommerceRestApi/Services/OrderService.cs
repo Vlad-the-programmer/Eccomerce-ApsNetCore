@@ -1,4 +1,5 @@
-﻿using EcommerceRestApi.Helpers.Cart;
+﻿using EcommerceRestApi.AppGlobals;
+using EcommerceRestApi.Helpers.Cart;
 using EcommerceRestApi.Helpers.Data.Functions;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Enums;
@@ -88,6 +89,10 @@ namespace EcommerceRestApi.Services
             if (order == null)
                 return;
 
+            var pointsForOrder = (int)(order.TotalAmount * AppConstants.POINTS_PER_DOLLAR);
+            order.Customer.Points -= pointsForOrder;
+            order.Customer.DateUpdated = DateTime.Now;
+
             order.DateDeleted = DateTime.Now;
             order.IsActive = false;
             order.Status = OrderProcessingFuncs.GetStringValue(OrderStatuses.Cancelled);
@@ -135,10 +140,6 @@ namespace EcommerceRestApi.Services
                                     .Include(c => c.User)
                                     .FirstOrDefaultAsync(customer =>
                                             customer.Id == data.Customer.CustomerId);
-            if (customer != null)
-            {
-                customer.Nip = data.Customer?.Nip ?? customer.Nip;
-            }
 
             var order = new Order
             {
@@ -149,7 +150,17 @@ namespace EcommerceRestApi.Services
                 OrderItems = new List<OrderItem>()
             };
 
+            order.TotalAmount = data.TotalAmount;
             order = await _cart.ConvertToOrder(order);
+
+            if (customer != null)
+            {
+                customer.Nip = data.Customer?.Nip ?? customer.Nip;
+
+                var pointsForOrder = (int)(order.TotalAmount * AppConstants.POINTS_PER_DOLLAR);
+                customer.Points += pointsForOrder;
+                customer.DateUpdated = DateTime.Now;
+            }
 
             order.Status = OrderProcessingFuncs.GetStringValue((OrderStatuses)data.OrderStatus);
 

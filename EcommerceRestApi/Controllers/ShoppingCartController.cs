@@ -33,6 +33,7 @@ namespace EcommerceRestApi.Controllers
         {
             var cartVM = new ShoppingCartVM
             {
+                ShoppingCartId = ShoppingCartId,
                 ShoppingCartItems = await _cart.GetCartItems(),
                 CartTotal = await _cart.GetTotal()
             };

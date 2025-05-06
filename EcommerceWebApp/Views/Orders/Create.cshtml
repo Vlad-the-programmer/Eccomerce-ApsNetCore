@@ -34,15 +34,27 @@
 </style>
 
 <script>
-    function OnShippingUpdate() {
-    if (document.getElementById('ShippingType').value == "2") {
-    document.getElementById('info').style.display = "block";
+       function OnShippingUpdate() {
+        const deliverySelect = document.getElementById("ShippingType");
+        const selectedOption = deliverySelect.options[deliverySelect.selectedIndex];
+        const deliveryCost = parseFloat(selectedOption.getAttribute("data-cost")) || 0;
+
+        const baseTotal = parseFloat('@Model.TotalAmount') || 0;
+        const newTotal = baseTotal + deliveryCost;
+
+        document.getElementById("DeliveryCostDisplay").textContent =
+            deliveryCost.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+        document.getElementById("OrderTotal").textContent =
+            newTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+        document.getElementById("TotalAmount").value = newTotal;
     }
-    else {
-    document.getElementById('info').style.display = "none";
-    }
-    }
+
+
+    document.addEventListener("DOMContentLoaded", OnShippingUpdate);
 </script>
+
 @section top {
 <div class="jumbotron">
     <h1 class="display-3 text-center">Order</h1>
@@ -155,15 +167,15 @@ else
                     {
                        @foreach (var item in ViewBag.DeliveryMethods as List<DeliveryMethodDTO>)
                         {
-                            var selected = Model.DeliveryMethod.ToString() == item.MethodName ? "selected" : "";
-                            <option value="@item.EnumValue" selected="@selected">
+                            var selected = Model.DeliveryMethod == item.EnumValue ? "selected" : "";
+                            <option value="@item.EnumValue" selected="@selected" data-cost="@item.Cost">
                                 @item.MethodName (+@item.Cost.ToString("C"))
                             </option>
                         }
                     }
                 </select>
 
-</div>
+            </div>
 
             <div class="col-6">
                 <select class="custom-select" asp-for="PaymentMethod" required>
@@ -180,9 +192,20 @@ else
                    </select>
             </div>
         </div>
-        @* <div class="form-group" id="info" style="display: none"> *@
-        @*     <input type="text" class="form-control" name="Order.ShippingInfo" id="ShippingInfo" asp-for="@Model.Order.ShippingInfo" value="@Model.Order.ShippingInfo" placeholder="Kod paczkomatu" pattern=".{,64}" /> *@
-        @* </div> *@
+
+        <div class="form-group" id="info" style="">
+            <p><strong>Delivery Cost: </strong></p>
+            <p id="DeliveryCostDisplay">@Decimal.Zero.ToString("C")</p>
+
+            <p><strong>VAT Included: </strong></p>
+            <p>@(Model.TaxRate * 100) %</p>
+
+            <input type="hidden" id="TotalAmount" asp-for="TotalAmount" />
+
+            <p><strong>Order Total: </strong></p>
+            <p id="OrderTotal">@Model.TotalAmount.ToString("C")</p>
+        </div>
+
         @* <div class="form-group"> *@
         @*     <input type="text" class="form-control" name="Order.Comments" id="Comments" asp-for="@Model.Order.Comments" value="@Model.Order.Comments" placeholder="Uwagi do zamówienia" pattern=".{,2048}" /> *@
         @* </div> *@

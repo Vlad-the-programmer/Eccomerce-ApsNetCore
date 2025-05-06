@@ -233,9 +233,10 @@
                 method: 'POST',
                 data: $(this).serialize(),
                 success: function () {
-                    const productBaseUrl = '@Url.Action("Details", "Products")';
                     const productId = $('#ProductId').val();
-                    window.location.href = `${productBaseUrl}/${productId}`;
+                    const productUrl = '@Url.Action("Details", "Products", new { id = "__id__" })'.replace('__id__', productId);
+                    window.location.href = productUrl;
+
                 },
                 error: function (xhr) {
                     alert("Error: " + xhr.responseText);

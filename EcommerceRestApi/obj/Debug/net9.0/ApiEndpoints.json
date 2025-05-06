@@ -523,11 +523,17 @@
   {
     "ContainingType": "EcommerceRestApi.Controllers.OrdersController",
     "Method": "CreateOrderCreateTemplate",
-    "RelativePath": "api/Orders/get-order-create-model",
+    "RelativePath": "api/Orders/get-order-create-model/{shoppingCartId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "shoppingCartId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {

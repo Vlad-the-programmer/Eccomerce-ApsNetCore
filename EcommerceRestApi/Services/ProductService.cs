@@ -1,4 +1,5 @@
-﻿using EcommerceRestApi.Helpers.Data.ViewModels;
+﻿using EcommerceRestApi.AppGlobals;
+using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
@@ -24,7 +25,7 @@ namespace EcommerceRestApi.Services
                 Code = data.Code,
                 Name = data.Name,
                 Brand = data.Brand,
-                Price = data.Price,
+                Price = data.Price + (data.Price * AppConstants.TAXES_RATE),
                 OldPrice = data.Price,
                 About = data.About,
                 LongAbout = data.LongAbout,
@@ -104,7 +105,9 @@ namespace EcommerceRestApi.Services
                 dbproduct.Name = data.Name ?? dbproduct.Name;
                 dbproduct.Code = data.Code ?? dbproduct.Code;
                 dbproduct.Brand = data.Brand ?? dbproduct.Brand;
-                dbproduct.Price = data.Price ?? dbproduct.Price;
+                dbproduct.Price = (decimal)(data.Price == null
+                                    ? dbproduct.Price
+                                    : data.Price + (data.Price * AppConstants.TAXES_RATE));
                 dbproduct.About = data.About ?? dbproduct.About;
                 dbproduct.LongAbout = data.LongAbout ?? dbproduct.LongAbout;
                 dbproduct.Photo = data.Photo ?? dbproduct.Photo;

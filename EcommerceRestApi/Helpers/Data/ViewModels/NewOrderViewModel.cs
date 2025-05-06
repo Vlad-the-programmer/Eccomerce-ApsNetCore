@@ -9,6 +9,9 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
     public class NewOrderViewModel : BaseViewModel
     {
         public CreateOrderCustomerDto Customer { get; set; } = new CreateOrderCustomerDto();
+        public decimal TotalAmount { get; set; }
+        public decimal TaxRate { get; set; }
+
         public int DeliveryMethod { get; set; }
 
         public int PaymentMethod { get; set; }
