@@ -238,7 +238,7 @@ namespace EcommerceWebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost("delete/{id}")]
+        [HttpGet("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
 

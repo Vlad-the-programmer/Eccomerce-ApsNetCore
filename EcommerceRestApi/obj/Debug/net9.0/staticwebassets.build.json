@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "o+VYGMRudC3Q81kLE9V4zHY7YkySqlu+KM8AgedAZKM=",
+  "Hash": "ZDS6g7c4UqLe33V9hkKcgr3NjnFle6D8fwfqfl3lHxc=",
   "Source": "EcommerceRestApi",
   "BasePath": "_content/EcommerceRestApi",
   "Mode": "Default",
@@ -2810,6 +2810,27 @@
       "OriginalItemSpec": "wwwroot\\Uploads\\204d625b-8015-454e-bf21-399d826b7bb2.webp"
     },
     {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\20636085-dfc5-45d1-97f9-06f6a397214b.webp",
+      "SourceId": "EcommerceRestApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "RelativePath": "Uploads/20636085-dfc5-45d1-97f9-06f6a397214b#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "zaflrqldds",
+      "Integrity": "RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\20636085-dfc5-45d1-97f9-06f6a397214b.webp"
+    },
+    {
       "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\248499d6-c4ca-40eb-998b-14527a329224.jpg",
       "SourceId": "EcommerceRestApi",
       "SourceType": "Discovered",
@@ -2978,6 +2999,27 @@
       "OriginalItemSpec": "wwwroot\\Uploads\\3eec2eb3-affc-47c1-99ca-556039dbcd8c.avif"
     },
     {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\3f48099c-807f-4565-b784-e2faab8f1879.webp",
+      "SourceId": "EcommerceRestApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "RelativePath": "Uploads/3f48099c-807f-4565-b784-e2faab8f1879#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "uljlbmt2wq",
+      "Integrity": "flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\3f48099c-807f-4565-b784-e2faab8f1879.webp"
+    },
+    {
       "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\4d0f205c-e572-4544-a28f-03144a82cbdf.jpg",
       "SourceId": "EcommerceRestApi",
       "SourceType": "Discovered",
@@ -3081,6 +3123,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\Uploads\\5350aa82-9c0f-4da8-ba8a-4018d318aab0.avif"
+    },
+    {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\559c70af-3835-4d54-9084-0ecaa4817dd1.webp",
+      "SourceId": "EcommerceRestApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "RelativePath": "Uploads/559c70af-3835-4d54-9084-0ecaa4817dd1#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "uljlbmt2wq",
+      "Integrity": "flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\559c70af-3835-4d54-9084-0ecaa4817dd1.webp"
     },
     {
       "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\65a8a890-0433-40da-a2e1-d7dfe1f3325c.jpg",
@@ -3356,6 +3419,27 @@
       "OriginalItemSpec": "wwwroot\\Uploads\\9cc5f843-7bd1-48dc-8090-5141395ef19a.jpg"
     },
     {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\9e21d66f-35d9-4adb-b92c-9d4d33427cfe.webp",
+      "SourceId": "EcommerceRestApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "RelativePath": "Uploads/9e21d66f-35d9-4adb-b92c-9d4d33427cfe#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "zaflrqldds",
+      "Integrity": "RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\9e21d66f-35d9-4adb-b92c-9d4d33427cfe.webp"
+    },
+    {
       "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\9f0f9225-d940-4150-9b8b-2662eb722ea5.avif",
       "SourceId": "EcommerceRestApi",
       "SourceType": "Discovered",
@@ -3375,6 +3459,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\Uploads\\9f0f9225-d940-4150-9b8b-2662eb722ea5.avif"
+    },
+    {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\9f8c363c-1c71-45e7-a0ad-8789353e7d11.webp",
+      "SourceId": "EcommerceRestApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "RelativePath": "Uploads/9f8c363c-1c71-45e7-a0ad-8789353e7d11#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "zaflrqldds",
+      "Integrity": "RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\9f8c363c-1c71-45e7-a0ad-8789353e7d11.webp"
     },
     {
       "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\a04fe9ba-219b-45b3-bb54-8a89c3449278.jpg",
@@ -3776,6 +3881,48 @@
       "OriginalItemSpec": "wwwroot\\Uploads\\e1baad18-c44f-4e77-8ab5-a7782f150cae.jpg"
     },
     {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\e2766b53-1daa-4e7b-b87b-e5af4aeacf4a.webp",
+      "SourceId": "EcommerceRestApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "RelativePath": "Uploads/e2766b53-1daa-4e7b-b87b-e5af4aeacf4a#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "zaflrqldds",
+      "Integrity": "RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\e2766b53-1daa-4e7b-b87b-e5af4aeacf4a.webp"
+    },
+    {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\ee65c892-6fff-4007-a1f6-fd943633a55e.webp",
+      "SourceId": "EcommerceRestApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "RelativePath": "Uploads/ee65c892-6fff-4007-a1f6-fd943633a55e#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "uljlbmt2wq",
+      "Integrity": "flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\ee65c892-6fff-4007-a1f6-fd943633a55e.webp"
+    },
+    {
       "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\efe47079-9cc8-4ccc-8f7d-cc7c14e47b86.jpg",
       "SourceId": "EcommerceRestApi",
       "SourceType": "Discovered",
@@ -3795,6 +3942,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\Uploads\\efe47079-9cc8-4ccc-8f7d-cc7c14e47b86.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\f231d39d-7351-4e06-97cf-9aaa1e428ae5.webp",
+      "SourceId": "EcommerceRestApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\",
+      "BasePath": "_content/EcommerceRestApi",
+      "RelativePath": "Uploads/f231d39d-7351-4e06-97cf-9aaa1e428ae5#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "uljlbmt2wq",
+      "Integrity": "flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\f231d39d-7351-4e06-97cf-9aaa1e428ae5.webp"
     },
     {
       "Identity": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\f56a3ad9-d443-43c5-b3d4-d8699c3bdc35.avif",
@@ -15380,6 +15548,88 @@
       ]
     },
     {
+      "Route": "Uploads/20636085-dfc5-45d1-97f9-06f6a397214b.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\20636085-dfc5-45d1-97f9-06f6a397214b.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3732"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:38:45 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/20636085-dfc5-45d1-97f9-06f6a397214b.zaflrqldds.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\20636085-dfc5-45d1-97f9-06f6a397214b.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3732"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:38:45 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "zaflrqldds"
+        },
+        {
+          "Name": "label",
+          "Value": "Uploads/20636085-dfc5-45d1-97f9-06f6a397214b.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ="
+        }
+      ]
+    },
+    {
       "Route": "Uploads/248499d6-c4ca-40eb-998b-14527a329224.jpg",
       "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\248499d6-c4ca-40eb-998b-14527a329224.jpg",
       "Selectors": [],
@@ -16036,6 +16286,88 @@
       ]
     },
     {
+      "Route": "Uploads/3f48099c-807f-4565-b784-e2faab8f1879.uljlbmt2wq.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\3f48099c-807f-4565-b784-e2faab8f1879.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "41012"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:37:45 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "uljlbmt2wq"
+        },
+        {
+          "Name": "label",
+          "Value": "Uploads/3f48099c-807f-4565-b784-e2faab8f1879.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/3f48099c-807f-4565-b784-e2faab8f1879.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\3f48099c-807f-4565-b784-e2faab8f1879.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "41012"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:37:45 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo="
+        }
+      ]
+    },
+    {
       "Route": "Uploads/4d0f205c-e572-4544-a28f-03144a82cbdf.ht8i0sj6dz.jpg",
       "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\4d0f205c-e572-4544-a28f-03144a82cbdf.jpg",
       "Selectors": [],
@@ -16442,6 +16774,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-3tRP0VCISMVV0nh8lySi9ugC6KibKEsKTI8ngceEQQI="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/559c70af-3835-4d54-9084-0ecaa4817dd1.uljlbmt2wq.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\559c70af-3835-4d54-9084-0ecaa4817dd1.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "41012"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:37:51 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "uljlbmt2wq"
+        },
+        {
+          "Name": "label",
+          "Value": "Uploads/559c70af-3835-4d54-9084-0ecaa4817dd1.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/559c70af-3835-4d54-9084-0ecaa4817dd1.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\559c70af-3835-4d54-9084-0ecaa4817dd1.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "41012"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:37:51 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo="
         }
       ]
     },
@@ -17512,6 +17926,88 @@
       ]
     },
     {
+      "Route": "Uploads/9e21d66f-35d9-4adb-b92c-9d4d33427cfe.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\9e21d66f-35d9-4adb-b92c-9d4d33427cfe.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3732"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:38:39 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/9e21d66f-35d9-4adb-b92c-9d4d33427cfe.zaflrqldds.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\9e21d66f-35d9-4adb-b92c-9d4d33427cfe.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3732"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:38:39 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "zaflrqldds"
+        },
+        {
+          "Name": "label",
+          "Value": "Uploads/9e21d66f-35d9-4adb-b92c-9d4d33427cfe.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ="
+        }
+      ]
+    },
+    {
       "Route": "Uploads/9f0f9225-d940-4150-9b8b-2662eb722ea5.avif",
       "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\9f0f9225-d940-4150-9b8b-2662eb722ea5.avif",
       "Selectors": [],
@@ -17590,6 +18086,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-3tRP0VCISMVV0nh8lySi9ugC6KibKEsKTI8ngceEQQI="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/9f8c363c-1c71-45e7-a0ad-8789353e7d11.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\9f8c363c-1c71-45e7-a0ad-8789353e7d11.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3732"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:39:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/9f8c363c-1c71-45e7-a0ad-8789353e7d11.zaflrqldds.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\9f8c363c-1c71-45e7-a0ad-8789353e7d11.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3732"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:39:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "zaflrqldds"
+        },
+        {
+          "Name": "label",
+          "Value": "Uploads/9f8c363c-1c71-45e7-a0ad-8789353e7d11.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ="
         }
       ]
     },
@@ -19152,6 +19730,170 @@
       ]
     },
     {
+      "Route": "Uploads/e2766b53-1daa-4e7b-b87b-e5af4aeacf4a.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\e2766b53-1daa-4e7b-b87b-e5af4aeacf4a.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3732"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:39:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/e2766b53-1daa-4e7b-b87b-e5af4aeacf4a.zaflrqldds.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\e2766b53-1daa-4e7b-b87b-e5af4aeacf4a.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3732"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:39:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "zaflrqldds"
+        },
+        {
+          "Name": "label",
+          "Value": "Uploads/e2766b53-1daa-4e7b-b87b-e5af4aeacf4a.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-RYwlqJzyY5W46rZiwcCRNh4hjnvoyR5uC+N8i5sXkXQ="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/ee65c892-6fff-4007-a1f6-fd943633a55e.uljlbmt2wq.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\ee65c892-6fff-4007-a1f6-fd943633a55e.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "41012"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:38:17 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "uljlbmt2wq"
+        },
+        {
+          "Name": "label",
+          "Value": "Uploads/ee65c892-6fff-4007-a1f6-fd943633a55e.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/ee65c892-6fff-4007-a1f6-fd943633a55e.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\ee65c892-6fff-4007-a1f6-fd943633a55e.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "41012"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:38:17 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo="
+        }
+      ]
+    },
+    {
       "Route": "Uploads/efe47079-9cc8-4ccc-8f7d-cc7c14e47b86.ht8i0sj6dz.jpg",
       "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\efe47079-9cc8-4ccc-8f7d-cc7c14e47b86.jpg",
       "Selectors": [],
@@ -19230,6 +19972,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-JZ0Tp6Tn7YE0Cnj3OAsmlifSic/CfWgs0TQck/TQtfM="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/f231d39d-7351-4e06-97cf-9aaa1e428ae5.uljlbmt2wq.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\f231d39d-7351-4e06-97cf-9aaa1e428ae5.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "41012"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:38:17 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "uljlbmt2wq"
+        },
+        {
+          "Name": "label",
+          "Value": "Uploads/f231d39d-7351-4e06-97cf-9aaa1e428ae5.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo="
+        }
+      ]
+    },
+    {
+      "Route": "Uploads/f231d39d-7351-4e06-97cf-9aaa1e428ae5.webp",
+      "AssetFile": "C:\\Users\\klamc\\source\\repos\\EcommerceWeb\\EcommerceRestApi\\wwwroot\\Uploads\\f231d39d-7351-4e06-97cf-9aaa1e428ae5.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "41012"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 06 May 2025 17:38:17 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-flZjh+N4DeXKhN5AI04hduzSkxMLeAz4LfHS8TuDcqo="
         }
       ]
     },
