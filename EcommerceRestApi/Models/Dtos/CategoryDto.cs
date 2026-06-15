@@ -16,11 +16,13 @@ namespace EcommerceRestApi.Models.Dtos
         [StringLength(500, MinimumLength = 10, ErrorMessage = "About must be between 10 and 20 characters.")]
         public string? About { get; set; } = default!;
 
-        //public List<Subcategory> Subcategories { get; set; } = new List<Subcategory>();
+        public List<SubcategoryDTO> Subcategories { get; set; } = new List<SubcategoryDTO>();
 
         //public List<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();
         public int SubcategoryId { get; set; }
         //public int CategoryId { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime? DateDeleted { get; set; }
 
     }
 }

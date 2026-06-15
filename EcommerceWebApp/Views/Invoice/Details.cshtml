@@ -1,0 +1,163 @@
+﻿@model EcommerceWebApp.Models.Dtos.InvoiceDto
+@{
+    ViewData["Title"] = $"Invoice #{Model?.Number}";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="bi bi-receipt"></i> Invoice
+                </h4>
+                <div class="btn-group">
+                    <a asp-controller="Invoice" asp-action="GeneratePdf" asp-route-orderCode="@Model?.OrderCode"
+                       class="btn btn-light btn-sm">
+                        <i class="bi bi-file-pdf text-danger"></i> PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            @if (Model == null)
+            {
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> No invoice data available.
+                </div>
+            }
+            else
+            {
+                <!-- Invoice Header -->
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <h5>YOUR COMPANY NAME</h5>
+                        <p class="mb-0">123 Business Street</p>
+                        <p class="mb-0">City, State 12345</p>
+                        <p class="mb-0">Phone: (555) 123-4567</p>
+                        <p class="mb-0">Email: info@company.com</p>
+                    </div>
+                    <div class="col-6 text-end">
+                        <h2 class="text-primary">INVOICE</h2>
+                        <p class="mb-0"><strong>Number:</strong> @Model.Number</p>
+                        <p class="mb-0"><strong>Date of Issue:</strong> @Model.DateOfIssue.ToString("MMMM dd, yyyy")</p>
+                        <p class="mb-0"><strong>Payment Due:</strong> @Model.PaymentDate.ToString("MMMM dd, yyyy")</p>
+                        <p class="mb-0"><strong>Order Code:</strong> @Model.OrderCode</p>
+                    </div>
+                </div>
+
+                <hr />
+
+                <!-- Bill To -->
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <h6><strong>Bill To:</strong></h6>
+                        <p class="mb-0">@Model.Customer.FullName</p>
+                        <p class="mb-0">@Model.Customer.Email</p>
+                        <p class="mb-0">@Model.Customer.PhoneNumber</p>
+                        <p class="mb-0">@Model.Customer.Address</p>
+                        @if (!string.IsNullOrEmpty(Model.Customer.Nip))
+                        {
+                            <p class="mb-0">NIP: @Model.Customer.Nip</p>
+                        }
+                    </div>
+                    <div class="col-6 text-end">
+                        <span class="badge @(Model.IsPaid ? "bg-success" : "bg-warning")">
+                            @(Model.IsPaid ? "PAID" : "PENDING")
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Invoice Items Table -->
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Product</th>
+                                <th>Brand</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-end">Unit Price</th>
+                                <th class="text-center">Tax</th>
+                                <th class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.InvoiceItems)
+                            {
+                                <tr>
+                                    <td>@item.ProductName</td>
+                                    <td>@item.ProductBrand</td>
+                                    <td class="text-center">@item.Quantity.ToString("F0")</td>
+                                    <td class="text-end">$@item.BasePricePerUnit.ToString("F2")</td>
+                                    <td class="text-center">@item.TaxRate%</td>
+                                    <td class="text-end">$@item.TotalPrice.ToString("F2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-end"><strong>Subtotal:</strong></td>
+                                <td class="text-end">$@Model.Subtotal.ToString("F2")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="text-end"><strong>Tax:</strong></td>
+                                <td class="text-end">$@Model.TaxAmount.ToString("F2")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="text-end"><strong>Discount:</strong></td>
+                                <td class="text-end">$@Model.DiscountTotal.ToString("F2")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="text-end"><strong>Total:</strong></td>
+                                <td class="text-end"><strong>$@Model.TotalAmount.ToString("F2")</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Payment Information -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h6><strong>Payment Information:</strong></h6>
+                        <p class="mb-0">Payment Method: @Model.PaymentMethod</p>
+                        <p class="mb-0">Bank: Example Bank</p>
+                        <p class="mb-0">Account Name: Your Company Name</p>
+                        <p class="mb-0">Account Number: 1234 5678 9012 3456</p>
+                    </div>
+                </div>
+
+                <!-- Footer Note -->
+                <div class="row mt-4">
+                    <div class="col-12 text-center">
+                        <small class="text-muted">
+                            Thank you for your business! Please include the invoice number with your payment.
+                        </small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Print functionality
+            $('.btn-print').on('click', function() {
+                window.print();
+            });
+        });
+    </script>
+}
+
+<style>
+    @@media print {
+        .btn-group, .btn, .btn-print {
+            display: none !important;
+        }
+
+        .card {
+            box-shadow: none !important;
+            border: none !important;
+        }
+    }
+</style>

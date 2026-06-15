@@ -36,10 +36,10 @@ namespace EcommerceRestApi.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateDeleted")
+                    b.Property<DateTime?>("DateDeleted")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateUpdated")
+                    b.Property<DateTime?>("DateUpdated")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
@@ -127,20 +127,16 @@ namespace EcommerceRestApi.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("FlatNumber")
                         .HasMaxLength(20)
@@ -199,20 +195,16 @@ namespace EcommerceRestApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -250,20 +242,16 @@ namespace EcommerceRestApi.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -282,7 +270,7 @@ namespace EcommerceRestApi.Migrations
                     b.ToTable("Countries");
                 });
 
-            modelBuilder.Entity("EcommerceRestApi.Models.Customer", b =>
+            modelBuilder.Entity("EcommerceRestApi.Models.Coupon", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -290,7 +278,12 @@ namespace EcommerceRestApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
@@ -304,6 +297,76 @@ namespace EcommerceRestApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("DiscountPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<decimal?>("MaxDiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("MinOrderAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("PerUserLimit")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UsageLimit")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<int>("UsedCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.HasKey("Id")
+                        .HasName("PK__Coupons__3214EC07");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Coupons_Code");
+
+                    b.ToTable("Coupons");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.Customer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -343,20 +406,16 @@ namespace EcommerceRestApi.Migrations
                     b.Property<decimal>("Cost")
                         .HasColumnType("money");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -389,14 +448,10 @@ namespace EcommerceRestApi.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -422,23 +477,19 @@ namespace EcommerceRestApi.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("DateOfIssue")
                         .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -454,11 +505,19 @@ namespace EcommerceRestApi.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(25)");
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PaymentId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id")
-                        .HasName("PK__Invoice__3214EC07E196B1F5");
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("PaymentId");
 
                     b.HasIndex(new[] { "CustomerId" }, "IX_Invoice_CustomerId");
 
@@ -478,20 +537,16 @@ namespace EcommerceRestApi.Migrations
                     b.Property<decimal>("BasePricePerUnit")
                         .HasColumnType("decimal(18, 0)");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<double>("Discount")
                         .HasColumnType("float");
@@ -539,20 +594,16 @@ namespace EcommerceRestApi.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -586,7 +637,7 @@ namespace EcommerceRestApi.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("EcommerceRestApi.Models.OrderItem", b =>
+            modelBuilder.Entity("EcommerceRestApi.Models.OrderCoupon", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -594,7 +645,15 @@ namespace EcommerceRestApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("AppliedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<int>("CouponId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
@@ -608,6 +667,48 @@ namespace EcommerceRestApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
+
+                    b.Property<decimal>("DiscountApplied")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("PK__OrderCoupons__3214EC07");
+
+                    b.HasIndex("CouponId");
+
+                    b.HasIndex("OrderId", "CouponId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_OrderCoupons_OrderCoupon");
+
+                    b.ToTable("OrderCoupons");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -647,20 +748,16 @@ namespace EcommerceRestApi.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("money");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -696,20 +793,16 @@ namespace EcommerceRestApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Details")
                         .HasMaxLength(100)
@@ -755,20 +848,16 @@ namespace EcommerceRestApi.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -799,8 +888,8 @@ namespace EcommerceRestApi.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("RatingSum")
-                        .HasColumnType("int");
+                    b.Property<double?>("RatingSum")
+                        .HasColumnType("float");
 
                     b.Property<int?>("RatingVotes")
                         .HasColumnType("int");
@@ -833,14 +922,10 @@ namespace EcommerceRestApi.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -864,20 +949,16 @@ namespace EcommerceRestApi.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -912,20 +993,16 @@ namespace EcommerceRestApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("DeliveryMethodId")
                         .HasColumnType("int");
@@ -967,7 +1044,7 @@ namespace EcommerceRestApi.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateDeleted")
@@ -1015,7 +1092,95 @@ namespace EcommerceRestApi.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "CategoryId" }, "IX_Subcategories_CategoryId");
+
+                    b.ToTable("Subcategories");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.Wishlist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDefault")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasDefaultValue("Default Wishlist");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Wishlists__3214EC07");
+
+                    b.HasIndex("CustomerId")
+                        .HasDatabaseName("IX_Wishlists_CustomerId");
+
+                    b.ToTable("Wishlists");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.WishlistItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
@@ -1035,16 +1200,26 @@ namespace EcommerceRestApi.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                    b.HasKey("Id");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
-                    b.HasIndex(new[] { "CategoryId" }, "IX_Subcategories_CategoryId");
+                    b.Property<int>("WishlistId")
+                        .HasColumnType("int");
 
-                    b.ToTable("Subcategories");
+                    b.HasKey("Id")
+                        .HasName("PK__WishlistItems__3214EC07");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("WishlistId", "ProductId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_WishlistItems_WishlistProduct");
+
+                    b.ToTable("WishlistItems");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1205,7 +1380,7 @@ namespace EcommerceRestApi.Migrations
                     b.HasOne("EcommerceRestApi.Models.Order", "Order")
                         .WithMany("DeliveryMethodOrders")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__DeliveryM__Order__2645B050");
 
@@ -1219,16 +1394,23 @@ namespace EcommerceRestApi.Migrations
                     b.HasOne("EcommerceRestApi.Models.Customer", "Customer")
                         .WithMany("Invoices")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__Invoice__Custome__32AB8735");
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("EcommerceRestApi.Models.Order", "Order")
+                        .WithMany("Invoices")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("EcommerceRestApi.Models.Payment", "Payment")
                         .WithMany("Invoices")
                         .HasForeignKey("PaymentId")
-                        .HasConstraintName("FK__Invoice__Payment__339FAB6E");
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Customer");
+
+                    b.Navigation("Order");
 
                     b.Navigation("Payment");
                 });
@@ -1239,15 +1421,13 @@ namespace EcommerceRestApi.Migrations
                         .WithMany("InvoiceItems")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__InvoiceIt__Invoi__395884C4");
+                        .IsRequired();
 
                     b.HasOne("EcommerceRestApi.Models.Product", "Product")
                         .WithMany("InvoiceItems")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__InvoiceIt__Produ__3A4CA8FD");
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Invoice");
 
@@ -1259,11 +1439,32 @@ namespace EcommerceRestApi.Migrations
                     b.HasOne("EcommerceRestApi.Models.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__Orders__Customer__6383C8BA");
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.OrderCoupon", b =>
+                {
+                    b.HasOne("EcommerceRestApi.Models.Coupon", "Coupon")
+                        .WithMany("OrderCoupons")
+                        .HasForeignKey("CouponId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_OrderCoupons_Coupons");
+
+                    b.HasOne("EcommerceRestApi.Models.Order", "Order")
+                        .WithMany("OrderCoupons")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_OrderCoupons_Orders");
+
+                    b.Navigation("Coupon");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("EcommerceRestApi.Models.OrderItem", b =>
@@ -1271,7 +1472,7 @@ namespace EcommerceRestApi.Migrations
                     b.HasOne("EcommerceRestApi.Models.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("EcommerceRestApi.Models.Product", "Product")
@@ -1290,7 +1491,7 @@ namespace EcommerceRestApi.Migrations
                     b.HasOne("EcommerceRestApi.Models.Order", "Order")
                         .WithMany("Payments")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .HasConstraintName("FK__Payments__OrderI__75A278F5");
 
                     b.HasOne("EcommerceRestApi.Models.PaymentMethod", "PaymentMethod")
@@ -1365,7 +1566,7 @@ namespace EcommerceRestApi.Migrations
                     b.HasOne("EcommerceRestApi.Models.Order", "Order")
                         .WithMany("Shipments")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__Shipments__Order__1EA48E88");
 
@@ -1396,6 +1597,39 @@ namespace EcommerceRestApi.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("EcommerceRestApi.Models.Wishlist", b =>
+                {
+                    b.HasOne("EcommerceRestApi.Models.Customer", "Customer")
+                        .WithMany("Wishlists")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Wishlists_Customers");
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.WishlistItem", b =>
+                {
+                    b.HasOne("EcommerceRestApi.Models.Product", "Product")
+                        .WithMany("WishlistItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_WishlistItems_Products");
+
+                    b.HasOne("EcommerceRestApi.Models.Wishlist", "Wishlist")
+                        .WithMany("WishlistItems")
+                        .HasForeignKey("WishlistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_WishlistItems_Wishlists");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Wishlist");
+                });
+
             modelBuilder.Entity("EcommerceRestApi.Helpers.Data.ViewModels.ApplicationUser", b =>
                 {
                     b.Navigation("Customers");
@@ -1413,6 +1647,11 @@ namespace EcommerceRestApi.Migrations
                     b.Navigation("Addresses");
                 });
 
+            modelBuilder.Entity("EcommerceRestApi.Models.Coupon", b =>
+                {
+                    b.Navigation("OrderCoupons");
+                });
+
             modelBuilder.Entity("EcommerceRestApi.Models.Customer", b =>
                 {
                     b.Navigation("Addresses");
@@ -1422,6 +1661,8 @@ namespace EcommerceRestApi.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("Wishlists");
                 });
 
             modelBuilder.Entity("EcommerceRestApi.Models.DeliveryMethod", b =>
@@ -1439,6 +1680,10 @@ namespace EcommerceRestApi.Migrations
             modelBuilder.Entity("EcommerceRestApi.Models.Order", b =>
                 {
                     b.Navigation("DeliveryMethodOrders");
+
+                    b.Navigation("Invoices");
+
+                    b.Navigation("OrderCoupons");
 
                     b.Navigation("OrderItems");
 
@@ -1468,11 +1713,18 @@ namespace EcommerceRestApi.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("ShoppingCartItems");
+
+                    b.Navigation("WishlistItems");
                 });
 
             modelBuilder.Entity("EcommerceRestApi.Models.Subcategory", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.Wishlist", b =>
+                {
+                    b.Navigation("WishlistItems");
                 });
 #pragma warning restore 612, 618
         }

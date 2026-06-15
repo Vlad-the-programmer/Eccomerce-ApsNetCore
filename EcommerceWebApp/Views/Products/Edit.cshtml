@@ -6,13 +6,14 @@
     var uploadImageFromServerEndpoint = $"{AppConstants.RESTAPI_BASE_URL}/{GlobalConstants.UploadPhotoEndpoint}";
 }
 
-<div class="container mt-5">
+<div class="container-fluid">
     <div class="card shadow-lg rounded-4 border-0">
         <div class="card-header bg-primary text-white rounded-top-4">
             <h4 class="mb-0">Update Product</h4>
         </div>
         <div class="card-body p-4">
-            <form asp-action="Edit">
+            <!-- Main Form -->
+            <form asp-action="Edit" id="mainForm">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
 
                 <div class="row">
@@ -38,11 +39,33 @@
                             <input asp-for="Price" type="number" class="form-control" />
                             <span asp-validation-for="Price" class="text-danger small"></span>
                         </div>
+
+                        <!-- Stock Section with nested form -->
                         <div class="mb-3">
                             <label asp-for="Stock" class="form-label"></label>
-                            <input asp-for="Stock" type="number" class="form-control" />
+                            <div class="input-group">
+                                <input asp-for="Stock" type="number" class="form-control" readonly style="background-color: #e9ecef;" />
+                                <span class="input-group-text">Current Stock</span>
+                            </div>
                             <span asp-validation-for="Stock" class="text-danger small"></span>
+
+                            <!-- Nested Stock Increase Form -->
+                            <div class="mt-2 p-3 bg-light rounded">
+                                <label class="form-label fw-bold">Increase Stock</label>
+                                <div class="row g-2">
+                                    <div class="col-8">
+                                        <input type="number" id="stockToAdd" class="form-control" placeholder="Enter quantity to add" min="1" step="1" />
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" id="increaseStockBtn" class="btn btn-success w-100">
+                                            <i class="bi bi-plus-circle"></i> Add Stock
+                                        </button>
+                                    </div>
+                                </div>
+                                <small class="text-muted">Add stock without changing other product information</small>
+                            </div>
                         </div>
+
                         <div class="mb-3">
                             <label asp-for="CategoryCode" class="form-label"></label>
                             <select asp-for="CategoryCode" class="form-select" asp-items="ViewBag.Categories"></select>
@@ -50,7 +73,7 @@
                         </div>
                         <div class="mb-3">
                             <label asp-for="SubcategoryCode" class="form-label"></label>
-                            <select asp-for="SubcategoryCode" class="form-select" asp-items="ViewBag.Subcategories"></select>
+                            <select asp-for="SubcategoryCode" class="form-select" asp-items="ViewBag.SubCategories"></select>
                             <span asp-validation-for="SubcategoryCode" class="text-danger small"></span>
                         </div>
                         <div class="form-check form-switch mb-4">
@@ -95,7 +118,7 @@
                 </div>
 
                 <div class="d-flex justify-content-center mt-4">
-                    <button type="submit" class="btn btn-success me-3">Update</button>
+                    <button type="submit" class="btn btn-primary me-3">Update All</button>
                     <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
                 </div>
             </form>
@@ -104,11 +127,134 @@
 </div>
 
 @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script src="~/js/image-upload.js"></script>
     <script>
         initProductImageUpload(
             "@uploadImageFromServerEndpoint",
             "@AppConstants.RESTAPI_BASE_URL"
         );
+
+        // Stock increase functionality
+        document.getElementById('increaseStockBtn')?.addEventListener('click', async function() {
+            const stockToAdd = document.getElementById('stockToAdd').value;
+
+            if (!stockToAdd || parseInt(stockToAdd) <= 0) {
+                alert('Please enter a valid quantity to add');
+                return;
+            }
+
+            const productId = @Model.Id;
+
+            try {
+                const response = await fetch('https://localhost:5001/api/products/increase-stock', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        quantityToAdd: parseInt(stockToAdd)
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    document.getElementById('Stock').value = result.newStock;
+                    document.getElementById('stockToAdd').value = '';
+                } else {
+                    const error = await response.text();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const categorySelect = document.getElementById('CategoryCode');
+            const subcategorySelect = document.getElementById('SubcategoryCode');
+
+            // Store the currently selected subcategory code (the product's subcategory)
+            const currentSubcategoryCode = '@Model.SubcategoryCode';
+
+            // Create a mapping of subcategory to category code from ViewBag data
+            const subcategoryCategoryMap = @Html.Raw(Json.Serialize(
+                                                    ViewBag.SubcategoryCategoryMap ?? new Dictionary<string, string>()
+                                    ));
+
+        // Store all subcategories with their category code
+        const allSubcategories = [];
+        for (let i = 0; i < subcategorySelect.options.length; i++) {
+            const option = subcategorySelect.options[i];
+            const subcategoryCode = option.value;
+            if (subcategoryCode) { // Skip empty default option
+                const categoryCode = subcategoryCategoryMap[subcategoryCode] || '';
+                allSubcategories.push({
+                    value: subcategoryCode,
+                    text: option.text,
+                    categoryCode: categoryCode
+                });
+            }
+        }
+
+            function filterSubcategories() {
+                const selectedCategoryCode = categorySelect.value;
+
+                // Clear current options
+                subcategorySelect.innerHTML = '';
+
+                // Add default option
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = '-- Select Subcategory --';
+                subcategorySelect.appendChild(defaultOption);
+
+                if (selectedCategoryCode) {
+                    // Filter and add matching subcategories
+                    let hasSelected = false;
+
+                    allSubcategories.forEach(sub => {
+                        if (sub.categoryCode === selectedCategoryCode && sub.value) {
+                            const option = document.createElement('option');
+                            option.value = sub.value;
+                            option.textContent = sub.text;
+
+                            // Check if this option should be selected
+                            if (sub.value === currentSubcategoryCode) {
+                                option.selected = true;
+                                hasSelected = true;
+                            }
+
+                            subcategorySelect.appendChild(option);
+                        }
+                    });
+
+                    subcategorySelect.disabled = false;
+
+                    // If the current subcategory is not in the filtered list, show a message
+                    if (!hasSelected && currentSubcategoryCode) {
+                        const warningOption = document.createElement('option');
+                        warningOption.value = '';
+                        warningOption.textContent = '-- Current subcategory not available for selected category --';
+                        warningOption.disabled = true;
+                        warningOption.style.color = 'orange';
+                        subcategorySelect.appendChild(warningOption);
+                    }
+                } else {
+                    subcategorySelect.disabled = true;
+                }
+            }
+
+            // Store the original selected value before filtering
+            categorySelect.addEventListener('change', function() {
+                filterSubcategories();
+            });
+
+            // Initial filter - this will rebuild the dropdown but preserve selection
+            filterSubcategories();
+        });
     </script>
 }

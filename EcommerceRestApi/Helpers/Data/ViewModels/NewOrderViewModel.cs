@@ -18,6 +18,8 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
 
         public int OrderStatus { get; set; }
 
+        public string? CouponCode { get; set; }
+
         public static NewOrderViewModel OrderToVm(Order order, AppDbContext context, UserManager<ApplicationUser> userManager)
         {
             var address = order.Customer.Addresses.FirstOrDefault();
@@ -31,6 +33,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
             };
 
             orderVm.Customer = CreateOrderCustomerDto.ToDto(order.Customer, userManager);
+            orderVm.CouponCode = order.OrderCoupons.FirstOrDefault()?.Coupon.Code;
             return orderVm;
         }
     }

@@ -1,6 +1,8 @@
 ﻿using EcommerceRestApi.AppGlobals;
 using EcommerceRestApi.Helpers.Cart;
+using EcommerceRestApi.Helpers.Data.Permissions;
 using EcommerceRestApi.Helpers.Data.ResponseModels;
+using EcommerceRestApi.Helpers.Data.Roles;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Models.Dtos;
@@ -32,8 +34,33 @@ namespace EcommerceRestApi.Controllers
             _cart = cart;
         }
 
+        [HttpGet("filter")]
+        public async Task<IActionResult> Filter(
+                [FromQuery] string searchString = "",
+                [FromQuery] string? searchProperty = null,
+                [FromQuery] string? sortProperty = null,
+                [FromQuery] bool sortAscending = false,
+                [FromQuery] DateTime? fromDate = null,
+                [FromQuery] DateTime? toDate = null)
+        {
+            try
+            {
+                var filteredProducts = await _orderService.FilterOrdersAsync(
+                    searchString, searchProperty, sortProperty, fromDate, toDate, sortAscending);
+                return Ok(filteredProducts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseModel
+                {
+                    Message = "An error occurred while filtering products.",
+                    Errors = new List<string>().Append(ex.Message).ToList()
+                });
+            }
+        }
+
         [HttpGet]
-        [Authorize]
+        [Authorize(Policy = Permissions.ManageOrders)]
         public async Task<IActionResult> GetOrders()
         {
             var orders = await _orderService.GetOrdersAsync();
@@ -61,7 +88,6 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpGet("get-order-create-model/{shoppingCartId}")]
-        //[Authorize]
         public async Task<IActionResult> CreateOrderCreateTemplate(string shoppingCartId)
         {
 
@@ -100,7 +126,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize]
+        [Authorize(Policy = Permissions.ManageOrders)]
         public async Task<IActionResult> CreateOrder([FromBody][Bind("DeliveryMethod,   " +
             "                               PaymentMethod,OrderStatus,Customer,TotalAmount")] NewOrderViewModel model)
         {
@@ -122,7 +148,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpPut("update/{code}")]
-        [Authorize]
+        [Authorize(Roles = UserRoles.User)]
         public async Task<IActionResult> UpdateOrder(string code, [FromBody] NewOrderViewModel model)
         {
             var order = await _orderService.GetOrderByCodeAsync(code);
@@ -135,7 +161,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpDelete("delete/{code}")]
-        [Authorize]
+        [Authorize(Roles = UserRoles.User)]
         public async Task<IActionResult> DeleteOrder(string code)
         {
             var order = await _orderService.GetOrderByCodeAsync(code);
@@ -145,6 +171,20 @@ namespace EcommerceRestApi.Controllers
             await _orderService.DeleteOrderAsync(code);
 
             return NoContent();
+        }
+
+        [HttpGet("search-combo-box-dtos")]
+        public IActionResult GetSearchComboBoxDtos()
+        {
+            var dtos = _orderService.GetSearchComboBoxDtos();
+            return Ok(dtos);
+        }
+
+        [HttpGet("order-by-combo-box-dtos")]
+        public IActionResult GetOrderByComboBoxDtos()
+        {
+            var dtos = _orderService.GetOrderByComboBoxDtos();
+            return Ok(dtos);
         }
     }
 }

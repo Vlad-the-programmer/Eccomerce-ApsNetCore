@@ -92,5 +92,12 @@ namespace EcommerceWebApp.ApiServices
                 throw new HttpRequestException($"Unexpected error response: {errorJson}");
             }
         }
+
+        public async Task<byte[]> GetFileAsync(string endpoint)
+        {
+            var response = await _httpClient.GetAsync(endpoint);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsByteArrayAsync();
+        }
     }
 }

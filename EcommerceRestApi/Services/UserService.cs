@@ -24,8 +24,12 @@ namespace EcommerceRestApi.Services
                 user.IsAdmin = false;
                 user.DateDeleted = DateTime.Now;
 
-                user.Customers.First().IsActive = false;
-                user.Customers.First().DateDeleted = DateTime.Now;
+                var customer = user.Customers.FirstOrDefault();
+                if (customer != null)
+                {
+                    customer.IsActive = false;
+                    customer.DateDeleted = DateTime.Now;
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -66,8 +70,13 @@ namespace EcommerceRestApi.Services
                 updatedUser.PhoneNumber = userUpdateVM.PhoneNumber ?? updatedUser.PhoneNumber;
                 updatedUser.DateUpdated = DateTime.Now;
 
-                updatedUser.Customers.First().Nip = userUpdateVM.Nip ?? updatedUser.Customers.FirstOrDefault()?.Nip;
-                updatedUser.Customers.First().DateUpdated = DateTime.Now;
+                var customer = updatedUser.Customers.FirstOrDefault();
+                if (customer != null)
+                {
+                    customer.Nip = userUpdateVM.Nip ?? updatedUser.Customers.FirstOrDefault()?.Nip;
+                    customer.DateUpdated = DateTime.Now;
+
+                }
 
                 var oldAddress = updatedUser.Customers.First().Addresses.FirstOrDefault();
                 Address address = oldAddress ?? new Address();

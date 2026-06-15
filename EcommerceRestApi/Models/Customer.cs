@@ -16,19 +16,15 @@ public partial class Customer : EntityBase
     [Unicode(false)]
     public string? Nip { get; set; }
 
-    [InverseProperty("Customer")]
     public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
 
-    [InverseProperty("Customer")]
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
-    [InverseProperty("Customer")]
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
-    [InverseProperty("Customer")]
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 
     [ForeignKey("UserId")]
-    [InverseProperty("Customers")]
     public virtual ApplicationUser User { get; set; } = null!;
+    public virtual ICollection<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
 }

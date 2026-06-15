@@ -7,7 +7,7 @@
     var uploadImageFromServerEndpoint = $"{AppConstants.RESTAPI_BASE_URL}/{GlobalConstants.UploadPhotoEndpoint}";
 }
 
-<div class="container mt-5">
+<div class="container-fluid">
     <div class="card shadow-lg">
         <div class="card-header bg-primary text-white">
             <h4 class="mb-0">Create a New Product</h4>
@@ -111,11 +111,71 @@
 </div>
 
 @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script src="~/js/image-upload.js"></script>
     <script>
         initProductImageUpload(
             "@uploadImageFromServerEndpoint",
             "@AppConstants.RESTAPI_BASE_URL"
         );
+
+        $(document).ready(function() {
+            // Store all subcategory options
+            var allSubOptions = $('#SubcategoryCode option').clone();
+
+            // Debug: Log all options
+            console.log('All subcategory options:', allSubOptions.length);
+
+            // Get mapping from ViewBag
+            var categoryMap = @Html.Raw(Json.Serialize(ViewBag.SubcategoryCategoryMap ?? new Dictionary<string, string>()));
+            console.log('Category mapping:', categoryMap);
+
+            // Initially disable subcategory dropdown
+            $('#SubcategoryCode').prop('disabled', true);
+
+            $('#CategoryCode').change(function() {
+                var selectedCategory = $(this).val();
+                var $subSelect = $('#SubcategoryCode');
+
+                console.log('Selected category:', selectedCategory);
+
+                // Clear current options
+                $subSelect.empty();
+                $subSelect.append($('<option></option>').val('').text('-- Select Subcategory --'));
+
+                if (selectedCategory) {
+                    // Filter and add options
+                    var addedCount = 0;
+                    allSubOptions.each(function() {
+                        var $opt = $(this);
+                        var optValue = $opt.val();
+                        var optText = $opt.text();
+
+                        if (optValue && categoryMap[optValue] === selectedCategory) {
+                            $subSelect.append($('<option></option>').val(optValue).text(optText));
+                            addedCount++;
+                        }
+                    });
+
+                    console.log('Added subcategories:', addedCount);
+
+                    if (addedCount > 0) {
+                        $subSelect.prop('disabled', false);
+                    } else {
+                        $subSelect.prop('disabled', true);
+                        $subSelect.append($('<option></option>').val('').text('-- No subcategories available --').prop('disabled', true));
+                    }
+                } else {
+                    $subSelect.prop('disabled', true);
+                }
+            });
+
+            // Trigger change if category is pre-selected
+            if ($('#CategoryCode').val()) {
+                $('#CategoryCode').trigger('change');
+            }
+        });
     </script>
 }

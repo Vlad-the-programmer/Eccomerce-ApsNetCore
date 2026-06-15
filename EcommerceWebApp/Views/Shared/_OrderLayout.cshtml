@@ -19,16 +19,10 @@
 </head>
 <body>
     @RenderSection("top", false)
-    <div class="container-fluid fadein" style="padding-left: 5vw; padding-right: 5vw">
+    <div class="container-fluid fadein">
         @RenderSection("fluid", false)
         <div class="row">
-            <div class="col-md-2 order-md-1">
-                @RenderSection("left", false)
-            </div>
-            <div class="col-md-2 order-md-12">
-                @RenderSection("right", false)
-            </div>
-            <div class="col-md-8 order-md-6">
+            <div class="col-md-12 order-md-12">
                 @RenderBody()
             </div>
         </div>

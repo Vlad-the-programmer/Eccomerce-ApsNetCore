@@ -50,5 +50,10 @@ namespace EcommerceRestApi.Models.Dtos
                 UserName = customer.User.UserName,
             };
         }
+
+        public static explicit operator OrderCustomerDTO(ApplicationUser v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

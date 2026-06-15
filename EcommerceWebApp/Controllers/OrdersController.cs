@@ -3,6 +3,8 @@ using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Models;
 using EcommerceWebApp.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace EcommerceWebApp.Controllers
@@ -21,10 +23,69 @@ namespace EcommerceWebApp.Controllers
         public async Task<IActionResult> Index()
         {
             var customerIdClaim = User.FindFirst("CustomerId");
-            int? customerId = customerIdClaim != null && int.TryParse(customerIdClaim.Value, out var tempId) ? tempId : default!;
+            int? customerId = null;
 
-            var orders = await OrdersEndpointsHelperFuncs.GetOrders($"{GlobalConstants.UserOrdersEndpoint}/{customerId}", _apiService);
+            if (customerIdClaim != null && int.TryParse(customerIdClaim.Value, out var tempId))
+            {
+                customerId = tempId;
+            }
+
+            bool isAdmin = User.IsInRole("Admin") ||
+                           User.FindFirst(ClaimTypes.Role)?.Value == "Admin" ||
+                           User.FindFirst("Role")?.Value == "Admin";
+
+            List<OrderDTO> orders;
+
+            if (isAdmin)
+            {
+                orders = await OrdersEndpointsHelperFuncs.GetOrders(GlobalConstants.OrdersEndpoint, _apiService);
+            }
+            else if (customerId.HasValue)
+            {
+                orders = await OrdersEndpointsHelperFuncs.GetOrders($"{GlobalConstants.UserOrdersEndpoint}/{customerId}", _apiService);
+            }
+            else
+            {
+                orders = new List<OrderDTO>();
+            }
+
+            ViewBag.SearchComboxOptions = await OrdersEndpointsHelperFuncs.GetSearchComboBoxDtos(
+                GlobalConstants.GetSearchComboboxDtosOrdersEndpoint, _apiService);
+            ViewBag.OrderbyComboxOptions = await OrdersEndpointsHelperFuncs.GetOrderByComboBoxDtos(
+                GlobalConstants.GetOrderByComboboxDtosOrdersEndpoint, _apiService);
+
+            if (TempData["CouponDiscount"] != null)
+            {
+                ViewBag.CouponDiscount = decimal.Parse(TempData["CouponDiscount"].ToString(), CultureInfo.InvariantCulture);
+                ViewBag.AppliedCouponCode = TempData["AppliedCouponCode"]?.ToString();
+                ViewBag.CouponSuccess = TempData["Success"]?.ToString();
+            }
+            else if (TempData["CouponError"] != null)
+            {
+                ViewBag.CouponError = TempData["CouponError"]?.ToString();
+            }
+
             return View(orders);
+        }
+
+        [HttpGet("filter")]
+        public async Task<IActionResult> Filter(
+              [FromQuery] string searchString = "",
+              [FromQuery] string? searchProperty = null,
+              [FromQuery] string? sortProperty = null,
+              [FromQuery] bool sortAscending = false,
+              [FromQuery] DateTime? fromDate = null,
+              [FromQuery] DateTime? toDate = null)
+        {
+            List<OrderDTO> filteredOrders = await OrdersEndpointsHelperFuncs.GetFilteredOrders(
+                                                        GlobalConstants.FilterOrdersEndpoint, searchString,
+                                                        searchProperty, sortProperty, sortAscending,
+                                                        fromDate, toDate, _apiService);
+
+            ViewBag.SearchComboxOptions = await OrdersEndpointsHelperFuncs.GetSearchComboBoxDtos(GlobalConstants.GetSearchComboboxDtosOrdersEndpoint, _apiService);
+            ViewBag.OrderbyComboxOptions = await OrdersEndpointsHelperFuncs.GetOrderByComboBoxDtos(GlobalConstants.GetOrderByComboboxDtosOrdersEndpoint, _apiService);
+
+            return View("Index", filteredOrders);
         }
 
         [HttpGet("create")]
@@ -43,6 +104,23 @@ namespace EcommerceWebApp.Controllers
             ViewBag.Countries = countries;
             ViewBag.DeliveryMethods = deliveryMethods;
             ViewBag.PaymentMethods = paymentMethods;
+
+            if (TempData["CouponDiscount"] != null)
+            {
+                ViewBag.CouponDiscount = decimal.Parse(TempData["CouponDiscount"].ToString(), CultureInfo.InvariantCulture);
+                ViewBag.AppliedCouponCode = TempData["AppliedCouponCode"]?.ToString();
+                ViewBag.CouponSuccess = TempData["Success"]?.ToString();
+
+                ViewData["CouponDiscount"] = ViewBag.CouponDiscount;
+
+                TempData.Keep("CouponDiscount");
+                TempData.Keep("AppliedCouponCode");
+            }
+            else if (TempData["CouponError"] != null)
+            {
+                ViewBag.CouponError = TempData["CouponError"]?.ToString();
+                TempData.Keep("CouponError");
+            }
             return View(orderModel);
         }
 

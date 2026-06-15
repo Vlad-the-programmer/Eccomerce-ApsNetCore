@@ -4,6 +4,6 @@ namespace EcommerceRestApi.Services
 {
     public interface ITokenService
     {
-        public string GenerateToken(IConfiguration _configuration, ApplicationUser user);
+        public string GenerateJwtToken(IConfiguration _configuration, ApplicationUser user);
     }
 }

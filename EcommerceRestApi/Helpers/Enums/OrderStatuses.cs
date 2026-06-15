@@ -6,6 +6,11 @@
         Pending,
         Paid,
         Rejected,
-        Cancelled
+        Cancelled,
+        Processing,
+        ReadyToShip,
+        Shipped,
+        InDelivery,
+        Delivered
     }
 }

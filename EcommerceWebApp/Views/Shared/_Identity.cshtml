@@ -1,12 +1,11 @@
-﻿
+﻿@using EcommerceWebApp.Helpers.Permissions
+
 @{
-    
+
 }
 
 @if (!User.Identity.IsAuthenticated)
 {
-
-
     <a class="btn btn-outline-success my-2 my-sm-0" asp-controller="Account" asp-action="Login">
         <i class="bi bi-box-arrow-in-right"></i> Log in
     </a>
@@ -18,25 +17,115 @@
 else
 {
 
-    @*User profile section*@
-    <div class="dropdown">
-        <button class="btn btn-outline-success dropdown-toggle" type="button" id="profile-btn" data-toggle="dropdown"
-                aria-expanded="false">
-            <i class="bi bi-person-badge"></i> Hello @User.Identity.Name
+    <div class="dropdown main-dropdown">
+        <button class="btn btn-outline-success dropdown-toggle" type="button" id="mainNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-grid-3x3-gap-fill"></i> Menu
         </button>
-        <ul class="dropdown-menu" aria-labelledby="profile-btn">
-            <li>
-                <a class="dropdown-item" asp-controller="Orders" asp-action="Index">
-                    <i class="bi bi-list"></i> Orders
-                </a>
-            </li>
-        </ul>
 
+        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="mainNavbarDropdown">
+            <div>
+                <h6 class="dropdown-header">Navigation</h6>
+                <a class="dropdown-item" asp-area="" asp-controller="Products" asp-action="Index">
+                    <i class="bi bi-shop"></i> Products
+                </a>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="dropdown-item" asp-controller="Orders" asp-action="Index">
+                        <i class="bi bi-tags"></i> Orders
+                    </a>
+
+                }
+
+                @if (User.Identity.IsAuthenticated) {
+                    <a class="dropdown-item"
+                    asp-controller="Account"
+                    asp-action="Edit"
+                    asp-route-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value">
+                        <i class="bi bi-person-gear"></i> Edit Account
+                    </a>
+                    <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+                        <i class="bi bi-trash"></i> Delete Account
+                    </a>
+                }
+
+                @if (User.Identity.IsAuthenticated &&
+                (User.IsInRole("Admin") || User.HasPermission(Permissions.ManageProduct)))
+                {
+                    <a class="dropdown-item" asp-controller="Products" asp-action="Create">
+                        <i class="bi bi-plus-circle"></i> Create Product
+                    </a>
+                }
+
+                @if (User.Identity.IsAuthenticated &&
+                    (User.IsInRole("Admin") || User.HasPermission(Permissions.ManageCategories)))
+                {
+                    <a class="dropdown-item" asp-controller="Category" asp-action="Index">
+                        <i class="bi bi-grid"></i> Categories
+                    </a>
+                }
+
+                @if (User.Identity.IsAuthenticated &&
+                  (User.IsInRole("Admin") || User.HasPermission(Permissions.ManageCoupons)))
+                {
+                    <a class="dropdown-item" asp-controller="Coupon" asp-action="All" asp-route-area="">
+                        <i class="bi bi-ticket-perforated"></i> Coupons
+                    </a>
+
+                }
+
+                @if (User.Identity.IsAuthenticated &&
+                  (User.IsInRole("Admin") || User.HasPermission(Permissions.ManageUsers)))
+                {
+                    <a class="dropdown-item" asp-controller="UsersManagement" asp-action="Index" asp-route-area="">
+                        <i class="bi bi-ticket-perforated"></i> Users Management
+                    </a>
+                }
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-danger my-2 my-sm-0 mt-3 mx-3">
+                            <i class="bi bi-box-arrow-right"></i> Log out
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
     </div>
-    <span style="padding: 5px;"></span>
-    <form asp-controller="Account" asp-action="Logout">
-        <button class="btn btn-outline-danger my-2 my-sm-0">
-            <i class="bi bi-box-arrow-in-right"></i> Log out
-        </button>
-    </form>
 }
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        dropdownElementList.map(function(dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        });
+
+        var dropdownMenu = document.querySelector('.main-dropdown .dropdown-menu');
+        var dropdownToggle = document.querySelector('.main-dropdown .dropdown-toggle');
+
+        if (dropdownMenu) {
+            dropdownMenu.addEventListener('click', function(e) {
+                if (e.target.closest('form') ||
+                    e.target.closest('.shopping-cart-summary') ||
+                    e.target.closest('input') ||
+                    e.target.closest('button') ||
+                    e.target.closest('.cart-component')) {
+                    return;
+                }
+                if (e.target.closest('.dropdown-item')) {
+                    var dropdown = bootstrap.Dropdown.getInstance(dropdownToggle);
+                    if (dropdown) {
+                        dropdown.hide();
+                    }
+                }
+            });
+        }
+    });
+</script>

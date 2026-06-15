@@ -4,6 +4,7 @@ using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace EcommerceRestApi.Helpers.Data.DbInitializer
 {
@@ -177,7 +178,6 @@ namespace EcommerceRestApi.Helpers.Data.DbInitializer
             }
         }
 
-
         public static async Task SeedUsersAndRolesAsync(IApplicationBuilder applicationBuilder)
         {
             using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
@@ -192,6 +192,9 @@ namespace EcommerceRestApi.Helpers.Data.DbInitializer
                 if (!await roleManager.RoleExistsAsync(UserRoles.User))
                     await roleManager.CreateAsync(new IdentityRole(UserRoles.User));
 
+                if (!await roleManager.RoleExistsAsync(UserRoles.Stuff))
+                    await roleManager.CreateAsync(new IdentityRole(UserRoles.Stuff));
+
                 //user
                 var UserManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 string adminUserEmail = "admin@etickets.com";
@@ -202,6 +205,8 @@ namespace EcommerceRestApi.Helpers.Data.DbInitializer
                     {
                         FullName = "Admin User",
                         UserName = "admin-user",
+                        FirstName = "Admin",
+                        LastName = "Admin",
                         Email = adminUserEmail,
                         Role = UserRoles.Admin,
                         IsAdmin = true,
@@ -212,7 +217,13 @@ namespace EcommerceRestApi.Helpers.Data.DbInitializer
                     await UserManager.CreateAsync(newAdminUser, "Coding@1234?");
                     await UserManager.AddToRoleAsync(newAdminUser, UserRoles.Admin);
 
+                    await AssignPermissionsAsync(UserManager, newAdminUser, Permissions.Permissions.AllPermissions);
                 }
+                else
+                {
+                    await AssignPermissionsAsync(UserManager, adminUser, Permissions.Permissions.AllPermissions);
+                }
+
                 string appUserEmail = "user@etickets.com";
                 var appUser = await UserManager.FindByEmailAsync(appUserEmail);
                 if (appUser == null)
@@ -220,6 +231,8 @@ namespace EcommerceRestApi.Helpers.Data.DbInitializer
                     var newAppUser = new ApplicationUser()
                     {
                         FullName = "Application User",
+                        FirstName = "Application",
+                        LastName = "User",
                         UserName = "user",
                         Email = appUserEmail,
                         Role = UserRoles.User,
@@ -244,8 +257,51 @@ namespace EcommerceRestApi.Helpers.Data.DbInitializer
                     await UserManager.AddToRoleAsync(newAppUser, UserRoles.User);
 
                 }
+
+                string appStuffEmail = "stuff1@etickets.com";
+                var appStuff = await UserManager.FindByEmailAsync(appStuffEmail);
+                if (appStuff == null)
+                {
+                    var newStuffUser = new ApplicationUser()
+                    {
+                        FullName = "Application Stuff 1",
+                        UserName = "stuff1",
+                        FirstName = "App",
+                        LastName = "Stuff",
+                        Email = appStuffEmail,
+                        Role = UserRoles.Stuff,
+                        IsAdmin = false,
+                        IsActive = true,
+                        EmailConfirmed = true,
+                        DateCreated = DateTime.Now
+                    };
+
+                    await UserManager.CreateAsync(newStuffUser, "Coding@1234?");
+                    await UserManager.AddToRoleAsync(newStuffUser, UserRoles.Stuff);
+
+                    await AssignPermissionsAsync(UserManager, newStuffUser, new List<string>
+                    {
+                        Permissions.Permissions.ManageOrders
+                    });
+                }
+
             }
         }
 
+        private static async Task AssignPermissionsAsync(
+            UserManager<ApplicationUser> userManager,
+            ApplicationUser user,
+            List<string> permissions)
+        {
+            var existingClaims = await userManager.GetClaimsAsync(user);
+
+            foreach (var permission in permissions)
+            {
+                if (!existingClaims.Any(c => c.Type == "Permission" && c.Value == permission))
+                {
+                    await userManager.AddClaimAsync(user, new Claim("Permission", permission));
+                }
+            }
+        }
     }
 }

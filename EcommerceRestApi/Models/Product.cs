@@ -26,7 +26,7 @@ public partial class Product : EntityBase
     [StringLength(2000)]
     public string LongAbout { get; set; } = null!;
 
-    public int? RatingSum { get; set; }
+    public double? RatingSum { get; set; }
 
     public int? RatingVotes { get; set; }
 
@@ -59,4 +59,5 @@ public partial class Product : EntityBase
 
     [InverseProperty("Product")]
     public virtual ICollection<ShoppingCartItem> ShoppingCartItems { get; set; } = new List<ShoppingCartItem>();
+    public virtual ICollection<WishlistItem> WishlistItems { get; set; } = new List<WishlistItem>();
 }

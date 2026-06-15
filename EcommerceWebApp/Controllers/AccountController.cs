@@ -1,8 +1,12 @@
 ﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
 using EcommerceWebApp.Models;
+using EcommerceWebApp.Models.ResponseModels;
 using EcommerceWebApp.Models.UpdateViewModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace EcommerceWebApp.Controllers
@@ -39,21 +43,54 @@ namespace EcommerceWebApp.Controllers
                     GlobalConstants.LoginEndpoint,
                     JsonSerializer.Serialize(loginVM)
                 );
+
+                var loginResponse = JsonSerializer.Deserialize<LoginResponse>(response, GlobalConstants.JsonSerializerOptions);
+
+                if (loginResponse.Success)
+                {
+                    HttpContext.Session.SetString("CurrentUser", JsonSerializer.Serialize(loginResponse.User));
+                    var user = loginResponse.User;
+
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.UserId),
+                        new Claim(ClaimTypes.Name, user.FullName ?? "User"),
+                        new Claim(ClaimTypes.Email, user.Email ?? ""),
+                        new Claim("UserName", user.UserName ?? ""),
+                        new Claim("CustomerId", user.CustomerId?.ToString() ?? ""),
+                        new Claim(ClaimTypes.Role, user.Role ?? "User")
+                    };
+
+                    foreach (var permission in loginResponse.Permissions)
+                    {
+                        claims.Add(new Claim("Permission", permission));
+                    }
+
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var principal = new ClaimsPrincipal(identity);
+
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+                    TempData["Success"] = "Login successful!";
+
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+
+                    return RedirectToAction("Index", "Products");
+                }
+                else
+                {
+                    TempData["Error"] = loginResponse.Message ?? "Login failed";
+                    return View(loginVM);
+                }
             }
             catch (HttpRequestException e)
             {
                 TempData["Error"] = e.Message;
                 return View(loginVM);
             }
-
-            TempData["Success"] = "Login successful!";
-
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-
-            return RedirectToAction("Index", "Products");
         }
 
         [HttpGet("register")]
@@ -85,18 +122,20 @@ namespace EcommerceWebApp.Controllers
 
             return View("RegisterCompleted");
         }
+
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             try
             {
                 await _apiService.PostDataAsync(GlobalConstants.LogoutEndpoint);
-                HttpContext.Session.Remove("CurrentUser");
+
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                HttpContext.Session.Clear();
             }
             catch (HttpRequestException e)
             {
                 TempData["Error"] = e.Message;
-                //return View();
             }
 
             return RedirectToAction("Index", "Products");
@@ -120,6 +159,10 @@ namespace EcommerceWebApp.Controllers
         [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(string id)
         {
+            var permissions = User.Claims
+                .Where(c => c.Type == "Permission")
+                .Select(c => c.Value)
+                .ToList();
             var updateModel = await AccountEndpointsHelperFuncs.GetUserUpdateModelObj(
                 $"{GlobalConstants.GetUserUpdateModelEndpoint}/{id}", _apiService);
 

@@ -25,33 +25,111 @@ namespace EcommerceWebApp.Controllers
         [Route("/")]
         public async Task<IActionResult> Index()
         {
-            List<ProductDTO> products = await ProductsEndpointsHelperFuncs.GetProducts(
-                                                        GlobalConstants.ProductsEndpoint, _apiService);
-            List<CategoryDTO> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
-                                                        GlobalConstants.CategoriesEndpoint, _apiService);
 
-            ViewBag.FeaturedProduct = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(
-                                                        GlobalConstants.ProductsEndpoint, _apiService);
-            ViewBag.Categories = CategoriesEndpointsHelperFuncs.GetCategoriesDictionaryWithNameCodeFields(categories);
-            ViewBag.ProductsExists = products.Count > 0 ? true : false;
-            ViewBag.CategoriesExist = categories.Count > 0 ? true : false;
-            return View(products);
+            List<CategoryDTO> allCategories = await CategoriesEndpointsHelperFuncs.GetCategories(
+                GlobalConstants.CategoriesEndpoint, _apiService);
+
+            List<SubcategoryDTO> allSubcategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
+                GlobalConstants.SubCategoriesEndpoint, _apiService);
+
+            List<ProductDTO> allProducts = await ProductsEndpointsHelperFuncs.GetProducts(
+                GlobalConstants.ProductsEndpoint, _apiService);
+
+            var categoryTree = new List<CategoryTreeViewModel>();
+            foreach (var category in allCategories)
+            {
+                var categoryProductCount = allProducts.Count(p => p.CategoryCode == category.Code);
+
+                var subcategoryTree = new List<SubcategoryTreeViewModel>();
+                foreach (var subcategory in allSubcategories.Where(s => s.Category.Code == category.Code))
+                {
+                    var subcategoryProductCount = allProducts.Count(p => p.SubcategoryCode == subcategory.Code);
+                    subcategoryTree.Add(new SubcategoryTreeViewModel
+                    {
+                        Code = subcategory.Code,
+                        Name = subcategory.Name,
+                        ProductCount = subcategoryProductCount
+                    });
+                }
+
+                categoryTree.Add(new CategoryTreeViewModel
+                {
+                    Code = category.Code,
+                    Name = category.Name,
+                    ProductCount = categoryProductCount,
+                    Subcategories = subcategoryTree
+                });
+            }
+
+            ViewBag.CategoryTree = categoryTree;
+            ViewBag.TotalProductCount = allProducts.Count;
+            ViewBag.SearchComboxOptions = await ProductsEndpointsHelperFuncs.GetSearchComboBoxDtos(
+                GlobalConstants.GetSearchComboboxDtosEndpoint, _apiService);
+            ViewBag.OrderbyComboxOptions = await ProductsEndpointsHelperFuncs.GetOrderByComboBoxDtos(
+                GlobalConstants.GetOrderByComboboxDtosEndpoint, _apiService);
+
+            return View(allProducts);
         }
 
         [HttpGet("filter")]
-        public async Task<IActionResult> Filter([FromQuery] string searchString)
+        public async Task<IActionResult> Filter(
+          [FromQuery] string searchString = "",
+          [FromQuery] string? searchProperty = null,
+          [FromQuery] string? sortProperty = null,
+          [FromQuery] decimal? fromPrice = null,
+          [FromQuery] decimal? ToPrice = null,
+          [FromQuery] string? categoryCode = null,
+          [FromQuery] string? subcategoryCode = null,
+          [FromQuery] int? minRating = null,
+          [FromQuery] bool sortAscending = false)
         {
-            List<ProductDTO> fileteredProducts = await ProductsEndpointsHelperFuncs.GetFilteredProducts(
-                                                        GlobalConstants.FilterProductsEndpoint, searchString, _apiService);
-            List<CategoryDTO> categories = await CategoriesEndpointsHelperFuncs.GetCategories(
-                                                        GlobalConstants.CategoriesEndpoint, _apiService);
+            List<ProductDTO> filteredProducts = await ProductsEndpointsHelperFuncs.GetFilteredProducts(
+                GlobalConstants.FilterProductsEndpoint, searchString, searchProperty, sortProperty,
+                fromPrice, ToPrice, categoryCode, subcategoryCode, minRating, sortAscending, _apiService);
 
-            ViewBag.FeaturedProduct = await ProductsEndpointsHelperFuncs.GetFeaturedProduct(
-                                                       GlobalConstants.ProductsEndpoint, _apiService);
-            ViewBag.Categories = CategoriesEndpointsHelperFuncs.GetCategoriesDictionaryWithNameCodeFields(categories);
-            ViewBag.ProductsExists = fileteredProducts.Count > 0 ? true : false;
-            ViewBag.CategoriesExist = categories.Count > 0 ? true : false;
-            return View("Index", fileteredProducts);
+            List<CategoryDTO> allCategories = await CategoriesEndpointsHelperFuncs.GetCategories(
+                GlobalConstants.CategoriesEndpoint, _apiService);
+
+            List<SubcategoryDTO> allSubcategories = await CategoriesEndpointsHelperFuncs.GetSubCategories(
+                GlobalConstants.SubCategoriesEndpoint, _apiService);
+
+            List<ProductDTO> allProducts = await ProductsEndpointsHelperFuncs.GetProducts(
+                GlobalConstants.ProductsEndpoint, _apiService);
+
+            var categoryTree = new List<CategoryTreeViewModel>();
+            foreach (var category in allCategories)
+            {
+                var categoryProductCount = allProducts.Count(p => p.CategoryCode == category.Code);
+
+                var subcategoryTree = new List<SubcategoryTreeViewModel>();
+                foreach (var subcategory in allSubcategories.Where(s => s.Category.Code == category.Code))
+                {
+                    var subcategoryProductCount = allProducts.Count(p => p.SubcategoryCode == subcategory.Code);
+                    subcategoryTree.Add(new SubcategoryTreeViewModel
+                    {
+                        Code = subcategory.Code,
+                        Name = subcategory.Name,
+                        ProductCount = subcategoryProductCount
+                    });
+                }
+
+                categoryTree.Add(new CategoryTreeViewModel
+                {
+                    Code = category.Code,
+                    Name = category.Name,
+                    ProductCount = categoryProductCount,
+                    Subcategories = subcategoryTree
+                });
+            }
+
+            ViewBag.CategoryTree = categoryTree;
+            ViewBag.TotalProductCount = allProducts.Count;
+            ViewBag.SearchComboxOptions = await ProductsEndpointsHelperFuncs.GetSearchComboBoxDtos(
+                GlobalConstants.GetSearchComboboxDtosEndpoint, _apiService);
+            ViewBag.OrderbyComboxOptions = await ProductsEndpointsHelperFuncs.GetOrderByComboBoxDtos(
+                GlobalConstants.GetOrderByComboboxDtosEndpoint, _apiService);
+
+            return View("Index", filteredProducts);
         }
 
         [HttpGet("{id}")]
@@ -96,6 +174,12 @@ namespace EcommerceWebApp.Controllers
                                                                 Value = kvp.Value
                                                             });
 
+            var subcategoryCategoryMap = new Dictionary<string, string>();
+            foreach (var sub in subCategories)
+            {
+                subcategoryCategoryMap[sub.Code] = sub.Category?.Code;
+            }
+            ViewBag.SubcategoryCategoryMap = subcategoryCategoryMap;
 
             return View();
         }
@@ -132,6 +216,13 @@ namespace EcommerceWebApp.Controllers
                                                                 Text = kvp.Key,
                                                                 Value = kvp.Value
                                                             });
+
+                var subcategoryCategoryMap = new Dictionary<string, string>();
+                foreach (var sub in subCategories)
+                {
+                    subcategoryCategoryMap[sub.Code] = sub.Category?.Code;
+                }
+                ViewBag.SubcategoryCategoryMap = subcategoryCategoryMap;
 
                 return View(product);
             }
@@ -174,6 +265,13 @@ namespace EcommerceWebApp.Controllers
                                                             Value = kvp.Value,
                                                             Selected = kvp.Value == product.CategoryCode ? true : false
                                                         });
+
+            var subcategoryCategoryMap = new Dictionary<string, string>();
+            foreach (var sub in subCategories)
+            {
+                subcategoryCategoryMap[sub.Code] = sub.Category?.Code;
+            }
+            ViewBag.SubcategoryCategoryMap = subcategoryCategoryMap;
 
             var productUpdateVM = new ProductUpdateVM
             {
@@ -232,6 +330,12 @@ namespace EcommerceWebApp.Controllers
                                                                 Value = kvp.Value,
                                                                 Selected = kvp.Value == product.CategoryCode ? true : false
                                                             });
+                var subcategoryCategoryMap = new Dictionary<string, string>();
+                foreach (var sub in subCategories)
+                {
+                    subcategoryCategoryMap[sub.Code] = sub.Category?.Code;
+                }
+                ViewBag.SubcategoryCategoryMap = subcategoryCategoryMap;
 
                 return View(product);
             }
@@ -252,5 +356,6 @@ namespace EcommerceWebApp.Controllers
                 return View("NotFound");
             }
         }
+
     }
 }

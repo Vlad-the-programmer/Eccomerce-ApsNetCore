@@ -29,9 +29,8 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         public bool IsAuthenticated { get; set; }
 
         public DateTime DateCreated { get; set; } = DateTime.Now;
-        public DateTime DateUpdated { get; set; } = DateTime.Now;
-        public DateTime DateDeleted { get; set; } = DateTime.Now;
-
+        public DateTime? DateUpdated { get; set; }
+        public DateTime? DateDeleted { get; set; }
 
         [InverseProperty("User")]
         public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();

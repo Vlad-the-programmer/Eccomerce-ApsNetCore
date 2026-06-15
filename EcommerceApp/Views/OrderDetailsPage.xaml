@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EcommerceApp.Views.OrderDetailsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <CollectionView x:Name="OrdersList"
+                    SelectionMode="Single">
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Frame Padding="10" Margin="5">
+                    <VerticalStackLayout Padding="20">
+                        <Label Text="{Binding Code}" FontSize="24" FontAttributes="Bold"/>
+                        <Label Text="{Binding TotalAmount}"/>
+                        <Label Text="{Binding OrderStatus}"/>
+                        <CollectionView ItemsSource="{Binding Items}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <HorizontalStackLayout>
+                                        <Label Text="{Binding ProductName}" />
+                                        <Label Text="{Binding Quantity}" />
+                                        <Label Text="{Binding Price}" />
+                                    </HorizontalStackLayout>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Frame>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+
+</ContentPage>

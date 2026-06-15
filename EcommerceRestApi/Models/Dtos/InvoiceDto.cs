@@ -8,6 +8,13 @@
         public DateTime PaymentDate { get; set; }
         public string? PaymentMethod { get; set; } = string.Empty;
         public bool IsPaid { get; set; }
-        public string CustomerName { get; set; } = string.Empty; // Derived from Customer
+        public string OrderCode { get; set; } = string.Empty;
+        public decimal Subtotal { get; set; }
+        public decimal TaxAmount { get; set; }
+        public decimal TotalAmount { get; set; }
+        public decimal DiscountTotal { get; set; }
+
+        public CustomerInfoDto Customer { get; set; }
+        public List<InvoiceItemDto> InvoiceItems { get; set; } = new List<InvoiceItemDto>();
     }
 }

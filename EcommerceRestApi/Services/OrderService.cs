@@ -6,6 +6,7 @@ using EcommerceRestApi.Helpers.Enums;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Models.Dtos;
+using EcommerceRestApi.Models.Dtos.FilteringDtos;
 using EcommerceRestApi.Services.Base;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,43 +16,78 @@ namespace EcommerceRestApi.Services
     public class OrderService : EntityBaseRepository<Order>, IOrderService
     {
         private readonly AppDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ShoppingCart _cart;
+        private readonly ICouponService _couponService;
 
         public OrderService(AppDbContext context,
+                            IHttpContextAccessor httpContextAccessor,
                             UserManager<ApplicationUser> userManager,
-                            ShoppingCart cart) : base(context)
+                            ShoppingCart cart,
+                            ICouponService couponService) : base(context)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _cart = cart;
+            _couponService = couponService;
         }
+
+        private ISession Session => _httpContextAccessor.HttpContext?.Session;
 
         public async Task<OrderDto?> GetOrderByCodeAsync(string code)
         {
             var order = await _context.Orders
-                                    .Include(item => item.Customer)
-                                            .ThenInclude(item => item.User)
-                                    .Include(c => c.Customer)
-                                            .ThenInclude(c => c.Invoices)
-                                    .Include(c => c.Customer)
-                                            .ThenInclude(c => c.Addresses)
-                                                .ThenInclude(a => a.Country)
-                                    .Include(item => item.Shipments)
-                                            .ThenInclude(item => item.DeliveryMethod)
-                                            .ThenInclude(item => item.DeliveryMethodOrders)
-                                    .Include(item => item.Payments)
-                                    .Include(item => item.OrderItems)
-                                            .ThenInclude(item => item.Product)
-                                            .ThenInclude(item => item.ProductCategories)
-                                    .FirstOrDefaultAsync(o => o.Code == code);
+           .Select(order => new OrderDto
+           {
+               Code = order.Code,
+               CustomerId = order.CustomerId,
+               OrderDate = order.OrderDate,
+               TotalAmount = order.TotalAmount,
+               OrderStatus = order.Status,
+               PaymentMethod = order.Payments.FirstOrDefault().PaymentMethod.PaymentType ?? string.Empty,
+               DeliveryMethod = order.DeliveryMethodOrders.FirstOrDefault().DeliveryMethod.MethodName ?? string.Empty,
+               OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
+               {
+                   ProductId = oi.ProductId,
+                   Quantity = oi.Quantity,
+                   UnitPrice = oi.Product.Price,
+                   OrderId = oi.OrderId,
+                   ProductName = oi.Product.Name,
+                   ProductBrand = oi.Product.Brand,
+               }).ToList(),
+               Customer = new OrderCustomerDTO
+               {
+                   FlatNumber = order.Customer.Addresses.FirstOrDefault().FlatNumber ?? string.Empty,
+                   HouseNumber = order.Customer.Addresses.FirstOrDefault().HouseNumber ?? string.Empty,
+                   City = order.Customer.Addresses.FirstOrDefault().City ?? string.Empty,
+                   PostalCode = order.Customer.Addresses.FirstOrDefault().PostalCode ?? string.Empty,
+                   State = order.Customer.Addresses.FirstOrDefault().State ?? string.Empty,
+                   Street = order.Customer.Addresses.FirstOrDefault().Street ?? string.Empty,
+                   CountryName = order.Customer.Addresses.FirstOrDefault().Country.CountryName ?? string.Empty,
+                   Email = order.Customer.User.Email ?? string.Empty,
+                   FirstName = order.Customer.User.FirstName ?? string.Empty,
+                   LastName = order.Customer.User.LastName ?? string.Empty,
+                   PhoneNumber = order.Customer.User.PhoneNumber ?? string.Empty,
+                   Nip = order.Customer.Nip ?? string.Empty,
+                   IsActive = order.Customer.IsActive,
+                   IsAdmin = order.Customer.User.IsAdmin,
+                   IsAuthenticated = order.Customer.User.IsAuthenticated,
+                   Role = order.Customer.User.Role,
+                   UserName = order.Customer.User.UserName,
+               },
+               IsPaid = order.IsPaid
+           })
+           .FirstOrDefaultAsync(o => o.Code == code);
 
             if (order == null)
             {
                 return null;
             }
 
-            return OrderDto.OrderToDto(order, _context, _userManager);
+            return order;
         }
 
         public async Task UpdateOrderAsync(string code, NewOrderViewModel data)
@@ -131,7 +167,6 @@ namespace EcommerceRestApi.Services
             await _context.SaveChangesAsync();
         }
 
-
         public async Task<OrderDto> AddNewOrderAsync(NewOrderViewModel data)
         {
             var customer = await _context.Customers
@@ -152,6 +187,34 @@ namespace EcommerceRestApi.Services
 
             order.TotalAmount = data.TotalAmount;
             order = await _cart.ConvertToOrder(order);
+
+            var appliedCouponCode = Session.GetString("AppliedCouponCode");
+
+            if (!string.IsNullOrEmpty(appliedCouponCode))
+            {
+                var coupon = await _context.Coupons.FirstOrDefaultAsync(c => c.Code == appliedCouponCode);
+                var tuple = await _couponService.ApplyCouponAsync(appliedCouponCode);
+                var couponDiscountAmount = tuple.Discount;
+
+                if (coupon != null && tuple.Success)
+                {
+                    coupon.UsedCount++;
+
+                    order.OrderCoupons.Add(new OrderCoupon
+                    {
+                        CouponId = coupon.Id,
+                        OrderId = order.Id,
+                        DiscountApplied = couponDiscountAmount,
+                        AppliedAt = DateTime.Now,
+                        IsActive = true,
+                        DateCreated = DateTime.Now
+                    });
+                }
+
+                order.TotalAmount -= couponDiscountAmount;
+
+                Session.Remove("AppliedCouponCode");
+            }
 
             if (customer != null)
             {
@@ -243,7 +306,24 @@ namespace EcommerceRestApi.Services
             await _context.Orders.AddAsync(order);
             await _context.SaveChangesAsync();
 
-            var invoice = await InvoicePaymentHelperFuncs.GenerateInvoice(order, _context);
+            var newOrder = await _context.Orders
+                    .Include(o => o.OrderCoupons)
+                    .Include(o => o.Customer)
+                    .Include(o => o.OrderItems)
+                     .ThenInclude(oi => oi.Product)
+                    .FirstOrDefaultAsync(o => o.Id == order.Id);
+
+            foreach (var item in newOrder.OrderItems)
+            {
+                item.Product.Stock -= item.Quantity;
+            }
+
+            await _context.SaveChangesAsync();
+
+            var invoice = await InvoicePaymentHelperFuncs.GenerateInvoice(
+                newOrder,
+                _context
+            );
             await OrderProcessingFuncs.CreateShippment(order.Id,
                                                         estimatedArrivalDateShippment,
                                                         deliveryMethodId,
@@ -253,7 +333,7 @@ namespace EcommerceRestApi.Services
                                                         .FirstOrDefaultAsync(pm =>
                                                pm.PaymentType == OrderProcessingFuncs.GetStringValue(
                                                    (PaymentMethods)data.PaymentMethod));
-            if (paymentMethod != null)
+            if (paymentMethod != null && invoice != null)
             {
                 await InvoicePaymentHelperFuncs.CreatePayment(order,
                                                               paymentMethod.Id,
@@ -268,25 +348,284 @@ namespace EcommerceRestApi.Services
         public async Task<IEnumerable<OrderDto>> GetOrdersAsync()
         {
             var orders = await _context.Orders
-                             .Include(o => o.Customer)
-                                 .ThenInclude(c => c.Addresses)
-                                    .ThenInclude(a => a.Country)
-                             .Include(o => o.Customer)
-                                 .ThenInclude(c => c.User)
-                             .Include(o => o.Customer)
-                                 .ThenInclude(o => o.Invoices)
-                             .Include(o => o.Shipments)
-                                 .ThenInclude(s => s.DeliveryMethod)
-                                     .ThenInclude(dm => dm.DeliveryMethodOrders)
-                             .Include(o => o.Payments)
-                             .Include(o => o.OrderItems)
-                                 .ThenInclude(oi => oi.Product)
-                                     .ThenInclude(p => p.ProductCategories)
-                             .ToListAsync();
+           .Select(order => new OrderDto
+           {
+               Code = order.Code,
+               CustomerId = order.CustomerId,
+               OrderDate = order.OrderDate,
+               TotalAmount = order.TotalAmount,
+               OrderStatus = order.Status,
+               PaymentMethod = order.Payments.FirstOrDefault().PaymentMethod.PaymentType ?? string.Empty,
+               DeliveryMethod = order.DeliveryMethodOrders.FirstOrDefault().DeliveryMethod.MethodName ?? string.Empty,
+               OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
+               {
+                   ProductId = oi.ProductId,
+                   Quantity = oi.Quantity,
+                   UnitPrice = oi.Product.Price,
+                   OrderId = oi.OrderId,
+                   ProductName = oi.Product.Name,
+                   ProductBrand = oi.Product.Brand,
+               }).ToList(),
+               Customer = new OrderCustomerDTO
+               {
+                   FlatNumber = order.Customer.Addresses.FirstOrDefault().FlatNumber ?? string.Empty,
+                   HouseNumber = order.Customer.Addresses.FirstOrDefault().HouseNumber ?? string.Empty,
+                   City = order.Customer.Addresses.FirstOrDefault().City ?? string.Empty,
+                   PostalCode = order.Customer.Addresses.FirstOrDefault().PostalCode ?? string.Empty,
+                   State = order.Customer.Addresses.FirstOrDefault().State ?? string.Empty,
+                   Street = order.Customer.Addresses.FirstOrDefault().Street ?? string.Empty,
+                   CountryName = order.Customer.Addresses.FirstOrDefault().Country.CountryName ?? string.Empty,
+                   Email = order.Customer.User.Email ?? string.Empty,
+                   FirstName = order.Customer.User.FirstName ?? string.Empty,
+                   LastName = order.Customer.User.LastName ?? string.Empty,
+                   PhoneNumber = order.Customer.User.PhoneNumber ?? string.Empty,
+                   Nip = order.Customer.Nip ?? string.Empty,
+                   IsActive = order.Customer.IsActive,
+                   IsAdmin = order.Customer.User.IsAdmin,
+                   IsAuthenticated = order.Customer.User.IsAuthenticated,
+                   Role = order.Customer.User.Role,
+                   UserName = order.Customer.User.UserName,
+               },
+               IsPaid = order.IsPaid
+           })
+           .OrderByDescending(o => o.OrderDate)
+           .ToListAsync();
 
-            var orderVMs = orders.Select(o => OrderDto.OrderToDto(o, _context, _userManager)).ToList();
-            return orderVMs;
+            return orders;
+        }
 
+        public async Task<List<OrderDto>> FilterOrdersAsync(
+           string searchString, string? searchProperty, string? sortProperty, DateTime? fromDate, DateTime? toDate, bool sortAscending = false)
+        {
+            var allOrders = _context.Orders.Select(order => new OrderDto
+            {
+                Code = order.Code,
+                CustomerId = order.CustomerId,
+                OrderDate = order.OrderDate,
+                TotalAmount = order.TotalAmount,
+                OrderStatus = order.Status,
+                PaymentMethod = order.Payments.FirstOrDefault().PaymentMethod.PaymentType,
+                DeliveryMethod = order.DeliveryMethodOrders.FirstOrDefault().DeliveryMethod.MethodName ?? string.Empty,
+                OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
+                {
+                    ProductId = oi.ProductId,
+                    Quantity = oi.Quantity,
+                    UnitPrice = oi.Product.Price,
+                    OrderId = oi.OrderId,
+                    ProductName = oi.Product.Name,
+                    ProductBrand = oi.Product.Brand,
+                }).ToList(),
+                Customer = new OrderCustomerDTO
+                {
+                    FlatNumber = order.Customer.Addresses.FirstOrDefault().FlatNumber ?? string.Empty,
+                    HouseNumber = order.Customer.Addresses.FirstOrDefault().HouseNumber ?? string.Empty,
+                    City = order.Customer.Addresses.FirstOrDefault().City ?? string.Empty,
+                    PostalCode = order.Customer.Addresses.FirstOrDefault().PostalCode ?? string.Empty,
+                    State = order.Customer.Addresses.FirstOrDefault().State ?? string.Empty,
+                    Street = order.Customer.Addresses.FirstOrDefault().Street ?? string.Empty,
+                    CountryName = order.Customer.Addresses.FirstOrDefault().Country.CountryName ?? string.Empty,
+                    Email = order.Customer.User.Email ?? string.Empty,
+                    FirstName = order.Customer.User.FirstName ?? string.Empty,
+                    LastName = order.Customer.User.LastName ?? string.Empty,
+                    PhoneNumber = order.Customer.User.PhoneNumber ?? string.Empty,
+                    Nip = order.Customer.Nip ?? string.Empty,
+                    IsActive = order.Customer.IsActive,
+                    IsAdmin = order.Customer.User.IsAdmin,
+                    IsAuthenticated = order.Customer.User.IsAuthenticated,
+                    Role = order.Customer.User.Role,
+                    UserName = order.Customer.User.UserName,
+                },
+                IsPaid = order.IsPaid
+            }).AsQueryable();
+
+            var filteredResult = allOrders.Where(o => !string.IsNullOrEmpty(o.Customer.FirstName) && !string.IsNullOrEmpty(o.Customer.FirstName));
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+
+                switch (searchProperty)
+                {
+                    case nameof(Order.Status):
+                        filteredResult = filteredResult.Where(item => item.OrderStatus.ToLower().Contains(searchString.ToLower()));
+                        break;
+                    case nameof(Order.Code):
+                        filteredResult = filteredResult.Where(item => item.Code.Contains(searchString));
+                        break;
+                    case "FirstName":
+                        filteredResult = filteredResult.Where(item => item.Customer.FirstName.ToLower().Contains(searchString.ToLower()));
+                        break;
+                    case "LastName":
+                        filteredResult = filteredResult.Where(item => item.Customer.LastName.ToLower().Contains(searchString.ToLower()));
+                        break;
+                    case "FullName":
+                        filteredResult = filteredResult.Where(item =>
+                            item.Customer.FirstName.ToLower().Contains(searchString.ToLower()) ||
+                            item.Customer.LastName.ToLower().Contains(searchString.ToLower()) ||
+                            (item.Customer.FirstName.ToLower() + " " + item.Customer.LastName.ToLower()).Contains(searchString.ToLower())
+                        );
+                        break;
+                }
+
+                if (searchProperty == null)
+                {
+                    filteredResult = filteredResult.Where(n =>
+                                n.Code.ToLower().Contains(searchString.ToLower()) ||
+                                n.Customer.FirstName.ToLower().Contains(searchString.ToLower()) ||
+                                n.Customer.LastName.ToLower().Contains(searchString.ToLower()) ||
+                                (n.Customer.FirstName.ToLower() + " " + n.Customer.LastName.ToLower()).Contains(searchString.ToLower())
+                        )
+                        .AsQueryable();
+                }
+            }
+
+            if (fromDate.HasValue)
+            {
+                filteredResult = filteredResult.Where(o => o.OrderDate.Date >= fromDate.Value.Date);
+            }
+
+            if (toDate.HasValue)
+            {
+                filteredResult = filteredResult.Where(o => o.OrderDate.Date <= toDate.Value.Date);
+            }
+
+            if (!string.IsNullOrEmpty(sortProperty))
+            {
+                switch (sortProperty)
+                {
+                    case nameof(Order.Status):
+                        filteredResult = sortAscending ? filteredResult.OrderBy(item => item.OrderStatus) : filteredResult.OrderByDescending(item => item.OrderStatus);
+                        break;
+                    case "FirstName":
+                        filteredResult = sortAscending ? filteredResult.OrderBy(item => item.Customer.FirstName) : filteredResult.OrderByDescending(item => item.Customer.FirstName);
+                        break;
+                    case nameof(Order.Code):
+                        filteredResult = sortAscending ? filteredResult.OrderBy(item => item.Code) : filteredResult.OrderByDescending(item => item.Code);
+                        break;
+                    case "LastName":
+                        filteredResult = sortAscending ? filteredResult.OrderBy(item => item.Customer.LastName) : filteredResult.OrderByDescending(item => item.Customer.LastName);
+                        break;
+                    case "FullName":
+                        filteredResult = sortAscending ? filteredResult.OrderBy(item => $"{item.Customer.FirstName} {item.Customer.LastName}".ToLower()) : filteredResult.OrderByDescending(item => $"{item.Customer.FirstName} {item.Customer.LastName}".ToLower());
+                        break;
+                    case "OrderDate":
+                        filteredResult = sortAscending ? filteredResult.OrderBy(o => o.OrderDate) : filteredResult.OrderByDescending(o => o.OrderDate);
+                        break;
+                }
+            }
+            else
+            {
+                filteredResult = filteredResult.OrderByDescending(o => o.OrderDate);
+            }
+
+            return filteredResult.Select(order => new OrderDto
+            {
+                Code = order.Code,
+                CustomerId = order.CustomerId,
+                OrderDate = order.OrderDate,
+                TotalAmount = order.TotalAmount,
+                OrderStatus = order.OrderStatus,
+                PaymentMethod = order.PaymentMethod,
+                DeliveryMethod = order.DeliveryMethod ?? string.Empty,
+                OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
+                {
+                    ProductId = oi.ProductId,
+                    Quantity = oi.Quantity,
+                    UnitPrice = oi.UnitPrice,
+                    OrderId = oi.OrderId,
+                    ProductName = oi.ProductName,
+                    ProductBrand = oi.ProductBrand,
+                }).ToList(),
+                Customer = new OrderCustomerDTO
+                {
+                    FlatNumber = order.Customer.FlatNumber ?? string.Empty,
+                    HouseNumber = order.Customer.HouseNumber ?? string.Empty,
+                    City = order.Customer.City ?? string.Empty,
+                    PostalCode = order.Customer.PostalCode ?? string.Empty,
+                    State = order.Customer.State ?? string.Empty,
+                    Street = order.Customer.Street ?? string.Empty,
+                    CountryName = order.Customer.CountryName ?? string.Empty,
+                    Email = order.Customer.Email ?? string.Empty,
+                    FirstName = order.Customer.FirstName ?? string.Empty,
+                    LastName = order.Customer.LastName ?? string.Empty,
+                    PhoneNumber = order.Customer.PhoneNumber ?? string.Empty,
+                    Nip = order.Customer.Nip ?? string.Empty,
+                    IsActive = order.Customer.IsActive,
+                    IsAdmin = order.Customer.IsAdmin,
+                    IsAuthenticated = order.Customer.IsAuthenticated,
+                    Role = order.Customer.Role,
+                    UserName = order.Customer.UserName,
+                },
+                IsPaid = order.IsPaid
+            }).ToList();
+        }
+
+        public List<SearchComboBoxDto> GetSearchComboBoxDtos()
+        {
+            return new List<SearchComboBoxDto>()
+            {
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = nameof(Order.Status),
+                    DisplayName = "Status"
+                },
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = nameof(ApplicationUser.LastName),
+                    DisplayName = "Last Name"
+                },
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = nameof(ApplicationUser.FirstName),
+                    DisplayName = "FirstName"
+                },
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = nameof(Order.Code),
+                    DisplayName = "Code"
+                },
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = "FullName",
+                    DisplayName = "Full Name"
+                }
+            };
+        }
+
+        public List<SearchComboBoxDto> GetOrderByComboBoxDtos()
+        {
+            return new List<SearchComboBoxDto>()
+            {
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = nameof(Order.Status),
+                    DisplayName = "Status"
+                },
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = nameof(ApplicationUser.LastName),
+                    DisplayName = "Last Name"
+                },
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = nameof(ApplicationUser.FirstName),
+                    DisplayName = "First Name"
+                },
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = nameof(Order.Code),
+                    DisplayName = "Code"
+                },
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = "FullName",
+                    DisplayName = "Full Name"
+                },
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = nameof(Order.OrderDate),
+                    DisplayName = "Order Date"
+                }
+            };
         }
     }
 }

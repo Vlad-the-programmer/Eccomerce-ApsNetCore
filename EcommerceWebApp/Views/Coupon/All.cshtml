@@ -1,0 +1,133 @@
+﻿@model List<EcommerceWebApp.Models.Dtos.CouponDto>
+@{
+    ViewData["Title"] = "Manage Coupons";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4 d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                <i class="bi bi-ticket-perforated"></i> Manage Coupons
+            </h4>
+            <a asp-action="Create" class="btn btn-light btn-sm">
+                <i class="bi bi-plus-lg"></i> Create New Coupon
+            </a>
+        </div>
+        <div class="card-body p-4">
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-ticket-perforated fs-1 text-muted"></i>
+                    <h5 class="mt-3 text-muted">No coupons found</h5>
+                    <a asp-action="Create" class="btn btn-primary mt-2">Create your first coupon</a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Code</th>
+                                <th>Description</th>
+                                <th>Discount</th>
+                                <th>Min Order</th>
+                                <th>Valid Period</th>
+                                <th>Usage</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var coupon in Model)
+                            {
+                                var isExpired = coupon.EndDate < DateTime.Now;
+                                var isActive = coupon.IsActive && !isExpired;
+
+                                <tr class="@(isExpired ? "table-secondary" : "")">
+                                    <td>
+                                        <strong>@coupon.Code</strong>
+                                    </td>
+                                    <td>@coupon.Description</td>
+                                    <td>
+                                        @if (coupon.DiscountPercentage.HasValue)
+                                        {
+                                            <span class="badge bg-success">@coupon.DiscountPercentage.Value% OFF</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">@coupon.DiscountAmount.ToString("C") OFF</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @(coupon.MinOrderAmount.HasValue? coupon.MinOrderAmount.Value.ToString("C") : "-")
+                                    </td>
+                                    <td>
+                                        <small>
+                                            @coupon.StartDate.ToString("MM/dd/yyyy")<br />
+                                            to @coupon.EndDate.ToString("MM/dd/yyyy")
+                                        </small>
+                                    </td>
+                                    <td>
+                                        @coupon.UsedCount / @coupon.UsageLimit
+                                    </td>
+                                    <td>
+                                        @if (isActive && !isExpired)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else if (isExpired)
+                                        {
+                                            <span class="badge bg-secondary">Expired</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Inactive</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-action="Edit" asp-route-code="@coupon.Code" class="btn btn-outline-primary">
+                                                <i class="bi bi-pencil"></i> Edit
+                                            </a>
+                                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal_@coupon.Code">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modals -->
+@foreach (var coupon in Model)
+{
+    <div class="modal fade" id="deleteModal_@coupon.Code" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete coupon: <strong>@coupon.Code</strong>?</p>
+                    <p class="text-muted">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <form asp-action="Delete" asp-route-code="@coupon.Code" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}

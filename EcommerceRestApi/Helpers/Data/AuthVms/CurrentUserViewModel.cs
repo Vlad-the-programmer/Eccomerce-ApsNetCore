@@ -9,8 +9,11 @@ namespace EcommerceRestApi.Helpers.Data.AuthVms
         public string FullName { get; set; }
         public string Email { get; set; }
         public bool IsAdmin { get; set; }
+        public bool IsActive { get; set; }
+
         public bool IsAuthenticated { get; set; }
         public int? CustomerId { get; set; }
+        public string Role { get; set; }
 
         public static explicit operator CurrentUserViewModel(ApplicationUser user)
         {
@@ -22,7 +25,9 @@ namespace EcommerceRestApi.Helpers.Data.AuthVms
                 Email = user.Email,
                 IsAdmin = user.IsAdmin,
                 IsAuthenticated = user.IsAuthenticated,
-                CustomerId = user.Customers?.FirstOrDefault()?.Id
+                IsActive = user.IsActive,
+                CustomerId = user.Customers?.FirstOrDefault()?.Id,
+                Role = user.Role
             };
         }
     }

@@ -16,6 +16,8 @@ namespace EcommerceWebApp.Models
         public int PaymentMethod { get; set; }
 
         public int OrderStatus { get; set; }
+
+        public string? CouponCode { get; set; }
     }
 
 }

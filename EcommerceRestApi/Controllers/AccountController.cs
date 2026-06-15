@@ -1,10 +1,12 @@
 ﻿using EcommerceRestApi.Helpers.Data.AuthVms;
 using EcommerceRestApi.Helpers.Data.Functions;
+using EcommerceRestApi.Helpers.Data.Permissions;
 using EcommerceRestApi.Helpers.Data.ResponseModels;
 using EcommerceRestApi.Helpers.Data.Roles;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Models.Dtos;
 using EcommerceRestApi.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -43,7 +45,6 @@ namespace EcommerceRestApi.Controllers
             _tokenService = tokenService;
         }
 
-        // POST: api/account/login
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseModel))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseModel)),
@@ -56,29 +57,60 @@ namespace EcommerceRestApi.Controllers
                 {
                     Message = "Invalid input data.",
                     Errors = ModelState.Values
-                                             .SelectMany(v => v.Errors)
-                                             .Select(e => e.ErrorMessage)
-                                             .ToList()
+                                     .SelectMany(v => v.Errors)
+                                     .Select(e => e.ErrorMessage)
+                                     .ToList()
                 });
             }
 
-            var user = await _userManager.FindByEmailAsync(loginVM.Email);
+            var user = await _userManager.Users
+                .Include(u => u.Customers)
+                .FirstOrDefaultAsync(u => u.Email == loginVM.Email);
+
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginVM.Password))
             {
-                return Unauthorized(new ResponseModel { Message = "Invalid email!" });
+                return Unauthorized(new ResponseModel { Message = "Invalid email or password!" });
             }
 
             var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
             if (!result.Succeeded)
             {
-                return Unauthorized(new ResponseModel { Message = "Wrong password!" });
+                return Unauthorized(new ResponseModel { Message = "Login failed!" });
             }
 
+            var clientType = Request.Headers["X-Client-Type"].ToString();
+            var isMobileApp = clientType.Equals("mobile", StringComparison.OrdinalIgnoreCase);
+
+            // Get the CurrentUserViewModel from the already loaded user
+            var userViewModel = (CurrentUserViewModel)user;
+
+            var jwtToken = _tokenService.GenerateJwtToken(_configuration, user);
+            if (isMobileApp)
+            {
+
+                user.IsAuthenticated = true;
+                await _userManager.UpdateAsync(user);
+
+                return Ok(new LoginResponse
+                {
+                    Success = true,
+                    Message = "Login successful.",
+                    Token = jwtToken,
+                    User = userViewModel
+                });
+            }
+
+            var userClaims = await _userManager.GetClaimsAsync(user);
+
+            // Set cookie for web app
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Role, user.Role)
             };
+
+            claims.AddRange(userClaims);
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
@@ -94,9 +126,19 @@ namespace EcommerceRestApi.Controllers
             user.IsAuthenticated = true;
             await _userManager.UpdateAsync(user);
 
-            return Ok(new ResponseModel { Message = "Login successful." });
-        }
+            var permissions = userClaims
+                .Where(c => c.Type == "Permission")
+                .Select(c => c.Value)
+                .ToList();
 
+            return Ok(new LoginResponse
+            {
+                Success = true,
+                Message = "Login successful.",
+                User = userViewModel,
+                Permissions = permissions
+            });
+        }
 
         // POST: api/account/register
         [HttpPost("register")]
@@ -136,34 +178,64 @@ namespace EcommerceRestApi.Controllers
                 });
             }
 
-            await _userManager.AddToRoleAsync(newUser, UserRoles.User);
+            if (newUser.Email.Contains("admin"))
+            {
+                await _userManager.AddToRoleAsync(newUser, UserRoles.Admin);
+
+                newUser.IsAdmin = true;
+            }
+            else
+            {
+                await _userManager.AddToRoleAsync(newUser, UserRoles.User);
+
+                newUser.IsAdmin = false;
+            }
 
             newUser.IsActive = true;
-            newUser.IsAdmin = false;
+
             await _userManager.UpdateAsync(newUser);
 
             return Ok(new ResponseModel { Message = "User registered successfully." });
         }
 
         [HttpGet("get-current-user")]
+        [Authorize]
         public async Task<IActionResult> GetCurrentAuthenticatedUser()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                ApplicationUser? user = await _userManager.Users
-                                     .Include(u => u.Customers)
-                                     .FirstOrDefaultAsync(u => u.Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
+            // Try JWT first (mobile app)
+            var jwtUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                if (user != null)
+            // If JWT not found, try cookie (web app)
+            if (string.IsNullOrEmpty(jwtUserId))
+            {
+                var cookieUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(cookieUserId))
                 {
-                    return Ok((CurrentUserViewModel)user);
+                    return Unauthorized(new ResponseModel { Message = "User not authenticated" });
                 }
+
+                var cookieUser = await _userManager.Users
+                    .Include(u => u.Customers)
+                    .FirstOrDefaultAsync(u => u.Id == cookieUserId);
+
+                if (cookieUser == null)
+                    return NotFound(new ResponseModel { Message = "User not found" });
+
+                return Ok((CurrentUserViewModel)cookieUser);
             }
-            return NotFound();
+
+            // JWT authentication
+            var user = await _userManager.Users
+                .Include(u => u.Customers)
+                .FirstOrDefaultAsync(u => u.Id == jwtUserId);
+
+            if (user == null)
+                return NotFound(new ResponseModel { Message = "User not found" });
+
+            return Ok(OrderCustomerDTO.ToVM(user.Customers.FirstOrDefault(), _userManager));
         }
 
         // POST: api/account/logout
-        [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
@@ -171,62 +243,88 @@ namespace EcommerceRestApi.Controllers
             return Ok();
         }
 
-        [Authorize]
         [HttpGet("get-update-user-model/{id}")]
+        [Authorize(Roles = UserRoles.User)]
         public async Task<IActionResult> GetUpdateUserModel(string id)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var IsUserExists = userId != null && await _context.Users.FindAsync(userId) != null && userId == id;
-            if (!IsUserExists)
+            if (string.IsNullOrEmpty(currentUserId))
             {
-                return NotFound();
+                return NotFound("User not found ");
             }
 
+            var userExists = await _context.Users.FindAsync(currentUserId);
+            if (userExists == null)
+            {
+                return NotFound("User does not exist");
+            }
 
-            var user = await _service.GetUserByIDAsync(userId);
-            var addresses = await _context.Addresses
+            var user = await _service.GetUserByIDAsync(currentUserId);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            var customer = user.Customers?.FirstOrDefault();
+            if (customer == null)
+            {
+                var userUpdateModelWithoutCustomer = new UserUpdateVM
+                {
+                    Id = currentUserId,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    Username = user.UserName,
+                    Nip = null,
+                    State = null,
+                    City = null,
+                    Street = null,
+                    HouseNumber = null,
+                    FlatNumber = null,
+                    PostalCode = null,
+                    CountryName = null,
+                };
+                return Ok(userUpdateModelWithoutCustomer);
+            }
+
+            var address = await _context.Addresses
                 .Include(a => a.Country)
-                .Where(a => a.CustomerId == user.Customers.First().Id)
+                .Where(a => a.CustomerId == customer.Id)
                 .FirstOrDefaultAsync();
 
             var userUpdateModel = new UserUpdateVM
             {
-                Id = userId,
+                Id = currentUserId,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 Username = user.UserName,
-                Nip = user.Customers.FirstOrDefault()?.Nip,
-                State = addresses?.State,
-                City = addresses?.City,
-                Street = addresses?.Street,
-                HouseNumber = addresses?.HouseNumber,
-                FlatNumber = addresses?.FlatNumber,
-                PostalCode = addresses?.PostalCode,
-                CountryName = addresses?.Country?.CountryName,
+                Nip = customer.Nip,
+                State = address?.State,
+                City = address?.City,
+                Street = address?.Street,
+                HouseNumber = address?.HouseNumber,
+                FlatNumber = address?.FlatNumber,
+                PostalCode = address?.PostalCode,
+                CountryName = address?.Country?.CountryName,
             };
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new ResponseModel
-                {
-                    Message = "Invalid model data",
-                    Errors = ModelState.Values
-                                             .SelectMany(v => v.Errors)
-                                             .Select(e => e.ErrorMessage)
-                                             .ToList()
-                });
-            }
             return Ok(userUpdateModel);
         }
 
         // PUT: api/account/5
-        [Authorize]
         [HttpPut("{id}")]
+        [Authorize(Policy = Permissions.ManageUsers)]
         public async Task<IActionResult> Update(string id, [FromBody] UserUpdateVM model)
         {
+            if (User.Identity == null || User.FindFirstValue(ClaimTypes.NameIdentifier) != id)
+            {
+                return Forbid();
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(new ResponseModel
@@ -252,8 +350,14 @@ namespace EcommerceRestApi.Controllers
 
         // DELETE: api/account/5
         [HttpDelete("{id}")]
+        [Authorize(Policy = Permissions.ManageUsers)]
         public async Task<IActionResult> Delete(string id)
         {
+            if (User.Identity == null || User.FindFirstValue(ClaimTypes.NameIdentifier) != id)
+            {
+                return Forbid();
+            }
+
             var user = await _service.GetUserByIDAsync(id);
             if (user == null)
             {

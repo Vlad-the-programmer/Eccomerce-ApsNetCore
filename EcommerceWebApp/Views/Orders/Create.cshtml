@@ -8,57 +8,168 @@
 
 <style>
     #formOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(3px);
-    background-color: rgba(255, 255, 255, 0.3);
-    z-index: 999;
-    pointer-events: all;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        backdrop-filter: blur(3px);
+        background-color: rgba(255, 255, 255, 0.3);
+        z-index: 999;
+        pointer-events: all;
     }
 
     #orderForm {
-    position: relative;
+        position: relative;
     }
 
-    #orderForm:has(#formOverlay) {
-    pointer-events: none;
+        #orderForm:has(#formOverlay) {
+            pointer-events: none;
+        }
+
+        #orderForm button[type="submit"]:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+    /* Coupon styles */
+    .coupon-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid #dee2e6;
     }
 
-    #orderForm button[type="submit"]:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
+    .coupon-applied {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
     }
+
+    .coupon-error {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+    .remove-coupon {
+        cursor: pointer;
+        color: #dc3545;
+        text-decoration: none;
+    }
+
+        .remove-coupon:hover {
+            text-decoration: underline;
+        }
 </style>
 
 <script>
-       function OnShippingUpdate() {
-        const deliverySelect = document.getElementById("ShippingType");
-        const selectedOption = deliverySelect.options[deliverySelect.selectedIndex];
-        const deliveryCost = parseFloat(selectedOption.getAttribute("data-cost")) || 0;
+    function OnShippingUpdate() {
+            const deliverySelect = document.getElementById("ShippingType");
+            const selectedOption = deliverySelect.options[deliverySelect.selectedIndex];
+            const deliveryCost = parseFloat(selectedOption.getAttribute("data-cost")) || 0;
 
-        const baseTotal = parseFloat('@Model.TotalAmount') || 0;
-        const newTotal = baseTotal + deliveryCost;
+            const baseTotal = parseFloat('@Model.TotalAmount'.replace('$', '').replace(',', '')) || 0;
 
-        document.getElementById("DeliveryCostDisplay").textContent =
-            deliveryCost.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            const couponDiscount = @(ViewBag.CouponDiscount != null ? ViewBag.CouponDiscount : 0);
+            const newTotal = baseTotal + deliveryCost - couponDiscount;
 
-        document.getElementById("OrderTotal").textContent =
-            newTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            document.getElementById("DeliveryCostDisplay").textContent =
+                deliveryCost.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
-        document.getElementById("TotalAmount").value = newTotal;
-    }
+            document.getElementById("CouponDiscountDisplay").textContent =
+                couponDiscount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
+            document.getElementById("OrderTotal").textContent =
+                newTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+            document.getElementById("TotalAmount").value = newTotal;
+        }
 
     document.addEventListener("DOMContentLoaded", OnShippingUpdate);
+
+    function applyCoupon() {
+            const couponCode = document.getElementById("CouponCode").value;
+            if (!couponCode) {
+                alert("Please enter a coupon code");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('couponCode', couponCode);
+
+            fetch('@Url.Action("ApplyCoupon", "Coupon")', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                return response.json().then(data => {
+                    if (!response.ok) {
+                        throw data;
+                    }
+                    return data;
+                });
+            })
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to apply coupon');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.message || 'An error occurred while applying the coupon');
+            });
+        }
+
+    function removeCoupon() {
+            const couponCode = document.getElementById("CouponCode").value;
+            if (!couponCode) {
+                alert("No coupon code found to remove");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('code', couponCode);  
+
+            fetch('@Url.Action("RemoveCoupon", "Coupon")', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`Server returned ${response.status}: ${text.substring(0, 200)}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to remove coupon');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while removing the coupon: ' + error.message);
+            });
+        }
 </script>
 
 @section top {
-<div class="jumbotron">
-    <h1 class="display-3 text-center">Order</h1>
-</div>
+    <div class="jumbotron">
+        <h1 class="display-3 text-center">Order</h1>
+    </div>
 }
 
 @if (ViewBag.CartItems == null || ViewBag.CartItems.Count == 0)
@@ -72,7 +183,7 @@ else
     @if (User.Identity.IsAuthenticated)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            Logged in as @User.Identity.Name! 
+            Logged in as @User.Identity.Name!
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -80,12 +191,10 @@ else
     }
     else
     {
-
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             <a href="@Url.Action("Login", "Account", new { ReturnUrl = Context.Request.Path + Context.Request.QueryString })" class="nounderline text-dark">
                 Login to save your order.
             </a>
-
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -158,6 +267,36 @@ else
 
         @await Html.PartialAsync("_CountrySelector", Model.Customer.CountryName)
 
+        <!-- Coupon Section -->
+        <div class="coupon-container @(!string.IsNullOrEmpty(ViewBag.AppliedCouponCode) ? "coupon-applied" : "")">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input type="text" id="CouponCode" class="form-control" placeholder="Enter coupon code"
+                               value="@ViewBag.AppliedCouponCode" @(!string.IsNullOrEmpty(ViewBag.AppliedCouponCode) ? "disabled" : "") />
+                        <div class="input-group-append">
+                            @if (string.IsNullOrEmpty(ViewBag.AppliedCouponCode))
+                            {
+                                <button type="button" class="btn btn-primary" onclick="applyCoupon()">Apply Coupon</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-danger" onclick="removeCoupon()">Remove Coupon</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    @if (!string.IsNullOrEmpty(ViewBag.AppliedCouponCode))
+                    {
+                        <div class="text-success mt-2">
+                            <strong>Coupon applied!</strong>
+                            <div class="small">Discount: -@ViewBag.CouponDiscount.ToString("C")</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
 
         <div class="row form-group">
             <div class="col-6">
@@ -165,7 +304,7 @@ else
                     <option value="">-- Select Delivery Method --</option>
                     @if (ViewBag.DeliveryMethods != null && ViewBag.DeliveryMethods.Count != 0)
                     {
-                       @foreach (var item in ViewBag.DeliveryMethods as List<DeliveryMethodDTO>)
+                        @foreach (var item in ViewBag.DeliveryMethods as List<DeliveryMethodDTO>)
                         {
                             var selected = Model.DeliveryMethod == item.EnumValue ? "selected" : "";
                             <option value="@item.EnumValue" selected="@selected" data-cost="@item.Cost">
@@ -174,7 +313,6 @@ else
                         }
                     }
                 </select>
-
             </div>
 
             <div class="col-6">
@@ -189,7 +327,7 @@ else
                             </option>
                         }
                     }
-                   </select>
+                </select>
             </div>
         </div>
 
@@ -197,18 +335,33 @@ else
             <p><strong>Delivery Cost: </strong></p>
             <p id="DeliveryCostDisplay">@Decimal.Zero.ToString("C")</p>
 
+            <p><strong>Coupon Discount: </strong></p>
+            <p id="CouponDiscountDisplay">
+                @{
+                    var couponDiscount = ViewBag.CouponDiscount != null
+                    ? ((decimal)ViewBag.CouponDiscount).ToString("C")
+                    : "$0.00";
+                }
+                @couponDiscount
+            </p>
+
             <p><strong>VAT Included: </strong></p>
             <p>@(Model.TaxRate * 100) %</p>
 
             <input type="hidden" id="TotalAmount" asp-for="TotalAmount" />
 
             <p><strong>Order Total: </strong></p>
-            <p id="OrderTotal">@Model.TotalAmount.ToString("C")</p>
+            <p id="OrderTotal">
+                @{
+                    var total = Model.TotalAmount;
+                    if (ViewBag.CouponDiscount != null)
+                    {
+                        total = Model.TotalAmount - (decimal)ViewBag.CouponDiscount;
+                    }
+                }
+                @total.ToString("C")
+            </p>
         </div>
-
-        @* <div class="form-group"> *@
-        @*     <input type="text" class="form-control" name="Order.Comments" id="Comments" asp-for="@Model.Order.Comments" value="@Model.Order.Comments" placeholder="Uwagi do zamówienia" pattern=".{,2048}" /> *@
-        @* </div> *@
 
         <div class="row" style="margin-top: 30px">
             <div class="col-sm-4">

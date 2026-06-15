@@ -1,0 +1,320 @@
+﻿@model List<EcommerceWebApp.Models.Dtos.CategoryDTO>
+@using EcommerceWebApp.AppGlobals;
+
+@{
+    ViewData["Title"] = "List of Categories with subcategories";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid px-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Categories & Subcategories</h6>
+                    <a asp-action="Create" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Create New Category
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="accordion" id="categoriesAccordion">
+                            @foreach (var category in Model.OrderBy(c => c.Code))
+                            {
+                                var subcategories = category.Subcategories as List<EcommerceWebApp.Models.Dtos.SubcategoryDTO>;
+                                var categorySubcategories = subcategories?.Where(sc => sc.CategoryId == category?.Id).ToList() ?? new List<EcommerceWebApp.Models.Dtos.SubcategoryDTO>();
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading_@category.Id">
+                                        <button class="accordion-button @(category == Model.First() ? "" : "collapsed")"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#collapse_@category.Id"
+                                                aria-expanded="@(category == Model.First() ? "true" : "false")"
+                                                aria-controls="collapse_@category.Id">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <div>
+                                                    <i class="fas fa-folder-open text-primary me-2"></i>
+                                                    <strong>@category.Name</strong>
+                                                    <span class="badge bg-secondary ms-2">@category.Code</span>
+
+                                                    <!-- Status Badge on the same line -->
+                                                    @if (category.DateDeleted != null)
+                                                    {
+                                                        <span class="badge bg-danger ms-2">
+                                                            <i class="fas fa-trash-alt"></i> Deleted
+                                                        </span>
+                                                    }
+                                                    else if (!category.IsActive)
+                                                    {
+                                                        <span class="badge bg-warning text-dark ms-2">
+                                                            <i class="fas fa-ban"></i> Inactive
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-success ms-2">
+                                                            <i class="fas fa-check-circle"></i> Active
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse_@category.Id"
+                                         class="accordion-collapse collapse @(category == Model.First() ? "show" : "")"
+                                         aria-labelledby="heading_@category.Id"
+                                         data-bs-parent="#categoriesAccordion">
+                                        <div class="accordion-body">
+                                            <!-- Category Actions moved outside the accordion button -->
+                                            <div class="mb-3 d-flex justify-content-end">
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Edit" asp-route-id="@category.Id"
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-edit"></i> Edit Category
+                                                    </a>
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-outline-danger"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deleteModal_@category.Id">
+                                                        <i class="fas fa-trash-alt"></i> Delete Category
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            @if (categorySubcategories.Any())
+                                            {
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th>Code</th>
+                                                                <th>Name</th>
+                                                                <th>Description</th>
+                                                                <th>Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var subcategory in categorySubcategories)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        <span class="badge bg-info">@subcategory.Code</span>
+                                                                        @if (subcategory.DateDeleted != null)
+                                                                        {
+                                                                            <span class="badge bg-danger ms-1">
+                                                                                <i class="fas fa-trash-alt"></i> Deleted
+                                                                            </span>
+                                                                        }
+                                                                        else if (!subcategory.IsActive)
+                                                                        {
+                                                                            <span class="badge bg-warning text-dark ms-1">
+                                                                                <i class="fas fa-ban"></i> Inactive
+                                                                            </span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="badge bg-success ms-1">
+                                                                                <i class="fas fa-check-circle"></i> Active
+                                                                            </span>
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        <i class="fas fa-tag text-success me-1"></i>
+                                                                        @subcategory.Name
+                                                                    </td>
+                                                                    <td>@subcategory.About</td>
+                                                                    <td>
+                                                                        <div class="btn-group btn-group-sm" role="group">
+                                                                            <a asp-controller="Subcategory"
+                                                                               asp-action="Edit"
+                                                                               asp-route-id="@subcategory.Id"
+                                                                               class="btn btn-outline-primary">
+                                                                                <i class="fas fa-edit"></i> Edit
+                                                                            </a>
+                                                                            <button type="button"
+                                                                                    class="btn btn-outline-danger"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#deleteSubModal_@subcategory.Id">
+                                                                                <i class="fas fa-trash-alt"></i> Delete
+                                                                            </button>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="text-center text-muted py-3">
+                                                    <i class="fas fa-info-circle"></i> No subcategories found for this category.
+                                                    <a asp-controller="Subcategory"
+                                                       asp-action="Create"
+                                                       asp-route-categoryId="@category.Id"
+                                                       class="btn btn-link btn-sm">
+                                                        <i class="fas fa-plus"></i> Add Subcategory
+                                                    </a>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No categories found</h5>
+                            <p class="text-muted">Start by creating a new category.</p>
+                            <a asp-action="Create" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Create Category
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Category Modals -->
+@if (Model != null)
+{
+    @foreach (var category in Model)
+    {
+        <div class="modal fade" id="deleteModal_@category.Id" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-triangle"></i> Confirm Delete
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete category: <strong>@category.Name</strong>?</p>
+                        <p class="text-danger mb-0">
+                            <i class="fas fa-info-circle"></i>
+                            This action cannot be undone and will also affect associated subcategories.
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<!-- Delete Subcategory Modals -->
+@{
+    var allSubcategories = ViewBag.SubCategories as List<EcommerceWebApp.Models.Dtos.SubcategoryDTO>;
+}
+@if (allSubcategories != null && allSubcategories.Any())
+{
+    @foreach (var subcategory in allSubcategories)
+    {
+        <div class="modal fade" id="deleteSubModal_@subcategory.Id" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-triangle"></i> Confirm Delete Subcategory
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete subcategory: <strong>@subcategory.Name</strong>?</p>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-info-circle"></i>
+                            This action cannot be undone.
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a asp-controller="Subcategory"
+                           asp-action="Delete"
+                           asp-route-id="@subcategory.Id"
+                           class="btn btn-warning">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+
+@section Styles {
+    <style>
+        .accordion-button:not(.collapsed) {
+            background-color: #f8f9fc;
+        }
+
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: rgba(0,0,0,.125);
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .card-header .btn-primary {
+            border-radius: 20px;
+            padding: 5px 15px;
+        }
+
+        .badge {
+            font-weight: 500;
+        }
+
+        .accordion-item {
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background-color: #fff;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fc;
+        }
+
+        .btn-group-sm .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        /* Prevent button clicks from triggering accordion toggle */
+        .accordion-button .btn-group {
+            pointer-events: none;
+        }
+
+            .accordion-button .btn-group .btn {
+                pointer-events: auto;
+            }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            setTimeout(function() {
+                $('.alert').fadeOut('slow');
+            }, 5000);
+        });
+    </script>
+}

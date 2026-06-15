@@ -18,14 +18,11 @@ public partial class Payment : EntityBase
     [Column(TypeName = "datetime")]
     public DateTime PaymentDate { get; set; }
 
-    [InverseProperty("Payment")]
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
     [ForeignKey("OrderId")]
-    [InverseProperty("Payments")]
     public virtual Order? Order { get; set; }
 
     [ForeignKey("PaymentMethodId")]
-    [InverseProperty("Payments")]
     public virtual PaymentMethod? PaymentMethod { get; set; }
 }

@@ -1,11 +1,8 @@
 using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.AppGlobals;
-using EcommerceWebApp.Models.AppViewModels;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Security.Claims;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +30,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Only over HTTPS
         options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Session expiry time
         options.SlidingExpiration = true; // Extend session if user is active
-        options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SameSite = SameSiteMode.Lax;
     });
 
 builder.Services.AddAuthorization();
@@ -43,21 +40,25 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<CookieContainer>();
+
+
 builder.Services.AddHttpClient<IApiService, ApiService>()
-        .ConfigureHttpClient((provider, client) =>
+    .ConfigureHttpClient((provider, client) =>
+    {
+        client.BaseAddress = new Uri(AppConstants.RESTAPI_BASE_URL);
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        client.DefaultRequestHeaders.Add("X-Client-Type", "web");
+    })
+    .ConfigurePrimaryHttpMessageHandler((provider) =>
+    {
+        return new HttpClientHandler
         {
-            client.BaseAddress = new Uri(AppConstants.RESTAPI_BASE_URL);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        })
-        .ConfigurePrimaryHttpMessageHandler(provider =>
-        {
-            return new HttpClientHandler
-            {
-                UseCookies = true,
-                CookieContainer = provider.GetRequiredService<CookieContainer>(),
-                AllowAutoRedirect = true
-            };
-        });
+            UseCookies = true,
+            CookieContainer = provider.GetRequiredService<CookieContainer>(),
+            AllowAutoRedirect = true,
+            UseDefaultCredentials = false
+        };
+    });
 
 
 
@@ -86,62 +87,60 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.Use(async (context, next) =>
-{
-    try
-    {
-        var session = context.Session;
-        var userJson = session.GetString("CurrentUser");
+//app.Use(async (context, next) =>
+//{
+//    try
+//    {
 
-        CurrentUserDTO? user = null;
+//        // Skip if user is already authenticated
+//        if (context.User.Identity.IsAuthenticated)
+//        {
+//            await next(context);
+//            return;
+//        }
 
-        if (string.IsNullOrEmpty(userJson))
-        {
-            // Resolve IApiService from DI container
-            var apiService = context.RequestServices.GetRequiredService<IApiService>();
+//        var session = context.Session;
+//        var userJson = session.GetString("CurrentUser");
 
-            var responseJson = await apiService.GetDataAsync(GlobalConstants.GetCurrentUserEndpoint);
+//        if (!string.IsNullOrEmpty(userJson))
+//        {
+//            try
+//            {
+//                var user = JsonSerializer.Deserialize<CurrentUserDTO>(userJson, GlobalConstants.JsonSerializerOptions);
 
-            if (!string.IsNullOrEmpty(responseJson))
-            {
-                userJson = responseJson;
-                session.SetString("CurrentUser", userJson);
-            }
-        }
+//                if (user != null && !string.IsNullOrEmpty(user.UserId))
+//                {
+//                    var claims = new List<Claim>
+//                    {
+//                        new Claim(ClaimTypes.NameIdentifier, user.UserId),
+//                        new Claim(ClaimTypes.Name, user.FullName ?? "User"),
+//                        new Claim(ClaimTypes.Email, user.Email ?? ""),
+//                        new Claim("UserName", user.UserName ?? ""),
+//                        new Claim("CustomerId", user.CustomerId?.ToString() ?? ""),
+//                        new Claim(ClaimTypes.Role, user.Role ?? "User")
+//                    };
 
-        // Deserialize from cached string (whether newly fetched or already in session)
-        if (!string.IsNullOrEmpty(userJson))
-        {
-            user = JsonSerializer.Deserialize<CurrentUserDTO>(userJson, GlobalConstants.JsonSerializerOptions);
+//                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+//                    context.User = new ClaimsPrincipal(identity);
 
-            if (user != null)
-            {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.UserId ?? "Guest"),
-                    new Claim(ClaimTypes.Name, user.FullName ?? "Guest"),
-                    new Claim(ClaimTypes.Email, user.Email ?? ""),
-                    new Claim("UserName", user.UserName ?? ""),  // Custom claim for username
-                    new Claim("CustomerId", user.CustomerId?.ToString() ?? "")
-                };
+//                    //await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, context.User);
+//                }
+//            }
+//            catch (Exception ex)
+//            {
+//                Console.WriteLine($"[Middleware] Deserialization error: {ex.Message}");
+//                session.Remove("CurrentUser"); // Clear invalid data
+//            }
+//        }
+//    }
+//    catch (Exception ex)
+//    {
+//        Console.WriteLine($"[Middleware] Exception: {ex.Message}");
+//    }
 
-                if (user.IsAdmin)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-                }
+//    await next(context);
+//});
 
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                context.User = new ClaimsPrincipal(identity);
-            }
-        }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"[Middleware] Exception: {ex.Message}");
-    }
-
-    await next(context);
-});
 
 app.MapControllerRoute(
     name: "default",

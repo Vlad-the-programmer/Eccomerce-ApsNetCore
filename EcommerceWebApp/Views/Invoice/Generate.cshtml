@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Generate Invoice";
+}
+
+<div class="container-fluid">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h4 class="mb-0">
+                <i class="bi bi-receipt"></i> Generate Invoice
+            </h4>
+        </div>
+        <div class="card-body p-4">
+
+            <div class="row">
+                <div class="col-md-6 mx-auto">
+                    <form method="post" asp-action="Details" asp-controller="Invoice">
+                        <div class="d-grid gap-2">
+                            <a asp-controller="Invoice"
+                               asp-action="Details"
+                               asp-route-orderCode="@ViewBag.OrderCode"
+                               class="btn btn-primary btn-lg">
+                                <i class="bi bi-eye"></i> View Invoice
+                            </a>
+
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <a asp-controller="Invoice"
+                                       asp-action="GeneratePdf"
+                                       asp-route-orderCode="@ViewBag.OrderCode"
+                                       class="btn btn-outline-danger w-100">
+                                        <i class="bi bi-file-pdf"></i> Download PDF
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

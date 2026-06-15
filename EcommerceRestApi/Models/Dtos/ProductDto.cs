@@ -15,11 +15,13 @@ namespace Inventory_Management_Sustem.Models.Dtos
         public string? OtherPhotos { get; set; } = default!;
         public string? About { get; set; } = default!;
         public string LongAbout { get; set; }
-        public int? RatingSum { get; set; } = default!;
+        public double? RatingSum { get; set; } = default!;
         public int? RatingVotes { get; set; } = default!;
         public string SubcategoryCode { get; set; }
         public string CategoryCode { get; set; }
         public bool IsActive { get; set; }
+        public bool IsOutOfStock { get; set; }
+
         public IList<ReviewDto> Reviews { get; set; } = new List<ReviewDto>();
 
         public static ProductDto ToDto(Product product, bool includeReviews = true)

@@ -5,7 +5,7 @@
     var countries = ViewBag.Countries as IEnumerable<string> ?? new List<string>();
 }
 
-<div class="col-md-6">
+<div class="col-lg-12 pl-0">
     <label for="@fieldName" class="form-label">Country</label>
     <select name="@fieldName" id="@fieldName" class="form-select"
             asp-items="@(new SelectList(countries, Model))">

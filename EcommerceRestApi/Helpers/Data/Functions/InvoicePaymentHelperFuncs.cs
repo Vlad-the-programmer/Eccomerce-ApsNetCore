@@ -1,4 +1,5 @@
-﻿using EcommerceRestApi.Helpers.Enums;
+﻿using EcommerceRestApi.AppGlobals;
+using EcommerceRestApi.Helpers.Enums;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
 using Microsoft.EntityFrameworkCore;
@@ -20,8 +21,10 @@ namespace EcommerceRestApi.Helpers.Data.Functions
         /// Generates an invoice for a completed payment.
         /// </summary>
 
-        public async static Task<Invoice> GenerateInvoice(Order item, AppDbContext context)
+        public async static Task<Invoice?> GenerateInvoice(Order? item, AppDbContext context)
         {
+            if (item == null) return null;
+
             Invoice invoice = new Invoice()
             {
                 IsActive = true,
@@ -36,6 +39,8 @@ namespace EcommerceRestApi.Helpers.Data.Functions
             await context.Invoices.AddAsync(invoice);
             await context.SaveChangesAsync();
 
+            var discountForItem = (double)await GetOrderCouponsTotalDiscount(item.OrderCoupons) / item.OrderItems.Count;
+
             foreach (var orderItem in item.OrderItems)
             {
                 InvoiceItem invoiceItem = new InvoiceItem()
@@ -43,18 +48,21 @@ namespace EcommerceRestApi.Helpers.Data.Functions
                     InvoiceId = invoice.Id,
                     BasePricePerUnit = orderItem.UnitPrice,
                     DateCreated = DateTime.Now,
-                    Discount = 0,
+                    Discount = discountForItem,
                     IsActive = true,
                     ProductId = orderItem.ProductId,
                     Quantity = orderItem.Quantity,
-                    TaxRate = 1.2,
+                    TaxRate = (double)AppConstants.TAXES_RATE,
                 };
 
                 await context.InvoiceItems.AddAsync(invoiceItem);
             }
 
             await context.SaveChangesAsync();
-            return invoice;
+            return await context.Invoices
+               .Include(i => i.InvoiceItems)
+                   .ThenInclude(it => it.Product)
+               .FirstOrDefaultAsync(i => i.Id == invoice.Id);
         }
 
 
@@ -112,6 +120,16 @@ namespace EcommerceRestApi.Helpers.Data.Functions
             return await context.Payments
                 .Include(p => p.PaymentMethod)
                 .FirstOrDefaultAsync(p => p.OrderId == orderId);
+        }
+
+        public async static Task<decimal> GetOrderCouponsTotalDiscount(ICollection<OrderCoupon> orderCoupons)
+        {
+            decimal discountTotal = decimal.Zero;
+            foreach (var coupon in orderCoupons)
+            {
+                discountTotal += coupon.DiscountApplied;
+            }
+            return discountTotal;
         }
     }
 }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="EcommerceApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:EcommerceApp"
+    xmlns:views="clr-namespace:EcommerceApp.Views"
+    Title="EcommerceApp">
+
+    <FlyoutItem Title="Menu">
+        <ShellContent
+        x:Name="HomeShellContent"
+        Title="Home"
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Route="MainPage" />
+
+        <ShellContent
+        x:Name="OrdersShellContent"
+        Title="Orders"
+        ContentTemplate="{DataTemplate views:OrdersPage}"
+        Route="OrdersPage" />
+
+        <ShellContent
+        x:Name="LoginShellContent"
+        Title="Login"
+        ContentTemplate="{DataTemplate views:LoginPage}"
+        Route="LoginPage" />
+
+        <ShellContent
+        x:Name="OrderDetailsShellContent"
+        Title="Order Details"
+        ContentTemplate="{DataTemplate views:OrderDetailsPage}"
+        Route="OrderDetailsPage" />
+    </FlyoutItem>
+
+    <ShellContent
+        Title="Order Details"
+        ContentTemplate="{DataTemplate views:OrderDetailsPage}"
+        Route="OrderDetailsPage"
+        Shell.FlyoutBehavior="Disabled" />
+
+</Shell>

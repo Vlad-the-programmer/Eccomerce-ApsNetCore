@@ -1,68 +1,566 @@
 ﻿@model List<EcommerceWebApp.Models.Dtos.ProductDTO>
 @using EcommerceWebApp.AppGlobals;
+@using EcommerceWebApp.Models.Dtos;
 
 @{
     ViewData["Title"] = "List Of Products";
 }
-<div class="row">
-    @if (Model == null || !Model.Any())
-    {
-        <p class="text-center col-12">No data available.</p>
+
+<style>
+    /* Your existing styles... */
+    .text-warning {
+        line-height: 1;
+        white-space: nowrap;
     }
-    else
-    {
-        @foreach (var item in Model)
-        {
-            <div class="col-md-4 col-sm-6 col-12 mb-3">
-                <div class="card h-100">
-                    <div class="row g-0">
-                        <div class="col-12">
-                            <div class="card-header text-white bg-info d-flex justify-content-between">
-                                <h5 class="card-title m-0">@item.Name</h5>
-                                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-                                {
-                                    <a class="text-white" asp-action="Edit" asp-route-id="@item.Id">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                }
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-12">
-                            <img src="@AppConstants.RESTAPI_BASE_URL/@item.Photo" class="img-fluid" alt="@item.Name">
-                        </div>
-                        <div class="col-md-6 col-12">
-                            <div class="card-body">
-                                <p class="card-text">@item.About</p>
-                                <p class="card-text"><b>Brand:</b> @item.Brand</p>
-                                <p class="card-text"><b>Category:</b> @item.CategoryCode</p> <!-- Fixed Category -->
-                                <p class="card-text">
-                                    <b>Status:</b>
-                                    @if (item.IsActive)
-                                    {
-                                        <span class="badge bg-success text-white">AVAILABLE</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-danger text-white">Not Available</span>
-                                    }
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-between">
-                            <a class="btn btn-outline-primary" asp-action="Details" asp-route-id="@item.Id">
-                                <i class="bi bi-eye-fill"></i> Show Details
-                            </a>
-                            <form asp-controller="Cart" asp-action="AddItemToCart" asp-route-productId="@item.Id" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-success @(!item.IsActive ? "disabled" : "") text-white">
-                                    <i class="bi bi-cart-plus"></i> Add to Cart ($@item.Price.ToString(".00"))
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+    .text-warning i {
+        font-size: 0.7rem;
+        margin-right: 1px;
+    }
+
+    @@media (max-width: 768px) {
+        .text-warning i {
+            font-size: 0.6rem;
         }
     }
+
+    .card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-header {
+        flex-shrink: 0;
+    }
+    
+    .card-footer {
+        flex-shrink: 0;
+        padding: 0.75rem 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .row > [class*='col-'] {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    @@media (max-width: 576px) {
+        .card-footer .d-flex {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .card-footer .btn,
+        .card-footer form {
+            width: 100%;
+        }
+    }
+    
+    .category-sidebar {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        position: sticky;
+        top: 20px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+    }
+    
+    .category-tree {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .category-tree li {
+        margin-bottom: 0.25rem;
+    }
+    
+    .category-tree .category-item {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .category-tree .category-item > a {
+        text-decoration: none;
+        color: #495057;
+        display: block;
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        transition: all 0.2s;
+        background-color: #e9ecef;
+    }
+    
+    .category-tree .category-item > a:hover {
+        background-color: #dee2e6;
+        color: #0d6efd;
+    }
+    
+    .category-tree .category-item > a.active {
+        background-color: #0d6efd;
+        color: white;
+    }
+    
+    .subcategory-list {
+        list-style: none;
+        padding-left: 1.5rem;
+        margin: 0.25rem 0 0.5rem 0;
+    }
+    
+    .subcategory-list li {
+        margin-bottom: 0.25rem;
+    }
+    
+    .subcategory-list a {
+        text-decoration: none;
+        color: #6c757d;
+        display: block;
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+    }
+    
+    .subcategory-list a:hover {
+        background-color: #e9ecef;
+        color: #0d6efd;
+    }
+    
+    .subcategory-list a.active {
+        background-color: #0d6efd;
+        color: white;
+    }
+    
+    .category-tree .badge, .subcategory-list .badge {
+        float: right;
+        font-size: 0.65rem;
+    }
+    
+    .filter-header {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #dee2e6;
+    }
+    
+    .filter-section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .filter-section-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: #495057;
+    }
+
+    @@media (max-width: 768px) {
+        .category-sidebar {
+            position: static;
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+
+<div class="container-fluid px-0">
+    <div class="row">
+        <!-- Sidebar with Category Tree -->
+        <div class="col-lg-3 mb-4 px-0">
+            <div class="category-sidebar">
+                <div class="filter-header">
+                    <i class="bi bi-funnel"></i> Filters
+                </div>
+                
+                <!-- Category Tree Section -->
+                <div class="filter-section">
+                    <div class="filter-section-title">
+                        <i class="bi bi-diagram-3"></i> Categories
+                    </div>
+                    <ul class="category-tree">
+                        <li class="category-item">
+                            <a href="@Url.Action("Index", "Products")" 
+                               class="@(string.IsNullOrEmpty(Context.Request.Query["categoryCode"]) && string.IsNullOrEmpty(Context.Request.Query["subcategoryCode"]) ? "active" : "")">
+                                All Products
+                                <span class="badge bg-secondary">@ViewBag.TotalProductCount</span>
+                            </a>
+                        </li>
+                        @if (ViewBag.CategoryTree != null)
+                        {
+                            foreach (var category in ViewBag.CategoryTree as List<CategoryTreeViewModel> ?? new List<CategoryTreeViewModel>())
+                            {
+                                var isCategoryActive = Context.Request.Query["categoryCode"] == category.Code;
+                                var hasActiveSubcategory = category.Subcategories.Any(s => s.Code == Context.Request.Query["subcategoryCode"].ToString());
+                                
+                                <li class="category-item">
+                                    <a href="@Url.Action("Filter", "Products", new { 
+                                            categoryCode = category.Code,
+                                            subcategoryCode = (string?)null,
+                                            searchString = Context.Request.Query["searchString"],
+                                            searchProperty = Context.Request.Query["searchProperty"],
+                                            fromPrice = Context.Request.Query["fromPrice"],
+                                            ToPrice = Context.Request.Query["ToPrice"],
+                                            sortProperty = Context.Request.Query["sortProperty"],
+                                            sortAscending = Context.Request.Query["sortAscending"],
+                                            minRating = Context.Request.Query["minRating"]
+                                        })"
+                                        class="@(isCategoryActive ? "active" : "")">
+                                        <i class="bi bi-folder"></i> @category.Name
+                                        <span class="badge bg-secondary">@category.ProductCount</span>
+                                    </a>
+                                    
+                                    @if (category.Subcategories.Any())
+                                    {
+                                        <ul class="subcategory-list">
+                                            @foreach (var subcategory in category.Subcategories)
+                                            {
+                                                var isSubcategoryActive = Context.Request.Query["subcategoryCode"] == subcategory.Code;
+                                                
+                                                <li>
+                                                    <a href="@Url.Action("Filter", "Products", new { 
+                                                            subcategoryCode = subcategory.Code,
+                                                            categoryCode = (string?)null,
+                                                            searchString = Context.Request.Query["searchString"],
+                                                            searchProperty = Context.Request.Query["searchProperty"],
+                                                            fromPrice = Context.Request.Query["fromPrice"],
+                                                            ToPrice = Context.Request.Query["ToPrice"],
+                                                            sortProperty = Context.Request.Query["sortProperty"],
+                                                            sortAscending = Context.Request.Query["sortAscending"],
+                                                            minRating = Context.Request.Query["minRating"]
+                                                        })"
+                                                        class="@(isSubcategoryActive ? "active" : "")">
+                                                        <i class="bi bi-bookmark"></i> @subcategory.Name
+                                                        <span class="badge bg-secondary">@subcategory.ProductCount</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+                
+                <!-- Price Filter Section -->
+                <div class="filter-section">
+                    <div class="filter-section-title">
+                        <i class="bi bi-currency-dollar"></i> Price Range
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">Min Price</label>
+                        <input type="number" id="sidebarFromPrice" class="form-control form-control-sm" 
+                               placeholder="Min" value="@Context.Request.Query["fromPrice"]">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">Max Price</label>
+                        <input type="number" id="sidebarToPrice" class="form-control form-control-sm" 
+                               placeholder="Max" value="@Context.Request.Query["ToPrice"]">
+                    </div>
+                    <button class="btn btn-primary btn-sm w-100" onclick="applyPriceFilter()">
+                        Apply Price
+                    </button>
+                </div>
+                
+                <!-- Rating Filter Section -->
+                <div class="filter-section">
+                    <div class="filter-section-title">
+                        <i class="bi bi-star"></i> Rating
+                    </div>
+                    <form asp-controller="Products" asp-action="Filter" method="get" id="ratingForm">
+                        <input type="hidden" name="searchString" value="@Context.Request.Query["searchString"]" />
+                        <input type="hidden" name="searchProperty" value="@Context.Request.Query["searchProperty"]" />
+                        <input type="hidden" name="fromPrice" value="@Context.Request.Query["fromPrice"]" />
+                        <input type="hidden" name="ToPrice" value="@Context.Request.Query["ToPrice"]" />
+                        <input type="hidden" name="sortProperty" value="@Context.Request.Query["sortProperty"]" />
+                        <input type="hidden" name="sortAscending" value="@Context.Request.Query["sortAscending"]" />
+                        <input type="hidden" name="categoryCode" value="@Context.Request.Query["categoryCode"]" />
+                        <input type="hidden" name="subcategoryCode" value="@Context.Request.Query["subcategoryCode"]" />
+                        
+                        <div class="rating-filter">
+                            @for (int i = 5; i >= 1; i--)
+                            {
+                                <div class="form-check mb-1">
+                                    <input class="form-check-input" type="radio" name="minRating" 
+                                           id="rating_@i" value="@i"
+                                           onchange="this.form.submit()"
+                                           @(Context.Request.Query["minRating"] == i.ToString() ? "checked" : "")>
+                                    <label class="form-check-label" for="rating_@i">
+                                        @for (int s = 0; s < i; s++)
+                                        {
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        }
+                                        @for (int s = i; s < 5; s++)
+                                        {
+                                            <i class="bi bi-star text-warning"></i>
+                                        }
+                                        & up
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </form>
+                    <button class="btn btn-link btn-sm mt-1" onclick="clearRatingFilter()">Clear rating</button>
+                </div>
+                
+                <!-- Reset All Filters Button -->
+                <div class="filter-section">
+                    <a href="@Url.Action("Index", "Products")" class="btn btn-outline-danger w-100">
+                        <i class="bi bi-trash"></i> Reset All Filters
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Products Grid -->
+        <div class="col-lg-9 px-0">
+            <!-- Filters Bar -->
+            <div class="filters-section bg-light border rounded shadow-sm p-3 mb-4">
+                <form asp-controller="Products" asp-action="Filter" method="get" id="filterForm" onsubmit="return removeEmptyParams(this)">
+                    <input type="hidden" name="categoryCode" value="@Context.Request.Query["categoryCode"]" />
+                    <input type="hidden" name="subcategoryCode" value="@Context.Request.Query["subcategoryCode"]" />
+                    <div class="row align-items-end">
+                        <div class="col-md-3 mb-2 px-0">
+                            <label class="form-label fw-bold small">Search</label>
+                            <input name="searchString" class="form-control" type="search"
+                                   placeholder="Search products..."
+                                   value="@Context.Request.Query["searchString"]">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label fw-bold small">Search In</label>
+                            <select name="searchProperty" class="form-select">
+                                <option value="">-- All Fields --</option>
+                                @if (ViewBag.SearchComboxOptions != null)
+                                {
+                                    foreach (var option in ViewBag.SearchComboxOptions as List<SearchComboBoxDto> ?? new List<SearchComboBoxDto>())
+                                    {
+                                        var selected = Context.Request.Query["searchProperty"] == option.PropertyTitle ? "selected" : "";
+                                        <option value="@option.PropertyTitle" selected="@selected">@option.DisplayName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label fw-bold small">Sort By</label>
+                            <select name="sortProperty" class="form-select">
+                                <option value="">-- Default --</option>
+                                @if (ViewBag.OrderbyComboxOptions != null)
+                                {
+                                    foreach (var option in ViewBag.OrderbyComboxOptions as List<SearchComboBoxDto> ?? new List<SearchComboBoxDto>())
+                                    {
+                                        var selected = Context.Request.Query["sortProperty"] == option.PropertyTitle ? "selected" : "";
+                                        <option value="@option.PropertyTitle" selected="@selected">@option.DisplayName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-1 mb-2" style="width: 15%;">
+                            <label class="form-label fw-bold small">Order</label>
+                            <select name="sortAscending" class="form-select">
+                                <option value="false" selected="@(Context.Request.Query["sortAscending"] == "false" || string.IsNullOrEmpty(Context.Request.Query["sortAscending"]) ? "selected" : null)">
+                                    Desc ↓
+                                </option>
+                                <option value="true" selected="@(Context.Request.Query["sortAscending"] == "true" ? "selected" : null)">
+                                    Asc ↑
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-1 mb-2 px-0">
+                            <label class="form-label fw-bold small">&nbsp;</label>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                                <a href="@Url.Action("Index", "Products")" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Products Grid (same as before) -->
+            <div class="row">
+                @if (Model == null || !Model.Any())
+                {
+                    <p class="text-center col-12">No data available.</p>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-md-4 col-sm-6 col-12 mb-3">
+                            <div class="card h-100 d-flex flex-column">
+                                <div class="card-header text-white bg-info d-flex justify-content-between">
+                                    <h5 class="card-title m-0">@item.Name</h5>
+                                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                                    {
+                                        <a class="text-white" asp-action="Edit" asp-route-id="@item.Id">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                    }
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="row g-0 h-100">
+                                        <div class="col-md-6 col-12">
+                                            <img src="@AppConstants.RESTAPI_BASE_URL/@item.Photo" class="img-fluid w-100" style="height: 200px; object-fit: contain;" alt="@item.Name">
+                                        </div>
+                                        <div class="col-md-6 col-12">
+                                            <div class="card-body">
+                                                <p class="card-text">@item.About</p>
+                                                <p class="card-text"><b>Brand:</b> @item.Brand</p>
+                                                <p class="card-text"><b>Price:</b> <span class="text-primary fw-bold">$@item.Price.ToString("0.00")</span></p>
+                                                
+                                                <div class="d-flex align-items-center flex-wrap gap-1 mt-2">
+                                                    @{
+                                                        var averageRating = item.RatingSum.HasValue ? item.RatingSum.Value : 0;
+                                                        var totalReviews = item.Reviews.Count();
+                                                    }
+                                                    <div class="text-warning" style="font-size: 0.75rem; white-space: nowrap;">
+                                                        @for (int i = 0; i < (int)Math.Floor(averageRating); i++)
+                                                        {
+                                                            <i class="bi bi-star-fill"></i>
+                                                        }
+                                                        @if (averageRating - (int)Math.Floor(averageRating) >= 0.5)
+                                                        {
+                                                            <i class="bi bi-star-half"></i>
+                                                        }
+                                                        @for (int i = (int)Math.Ceiling(averageRating); i < 5; i++)
+                                                        {
+                                                            <i class="bi bi-star"></i>
+                                                        }
+                                                    </div>
+                                                    <span class="fw-bold text-primary" style="font-size: 0.75rem;">@averageRating.ToString("0.0")</span>
+                                                    <span class="text-muted" style="font-size: 0.7rem;">(@totalReviews)</span>
+                                                </div>
+                                                
+                                                <p class="card-text mt-2">
+                                                    @if (item.IsOutOfStock)
+                                                    {
+                                                        <span class="badge bg-info">Out of stock</span>
+                                                    }
+                                                    else if (item.IsActive)
+                                                    {
+                                                        <span class="badge bg-success">AVAILABLE</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-danger">NOT AVAILABLE</span>
+                                                    }
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent mt-auto p-0">
+                                    <div class="d-flex justify-content-between gap-2">
+                                        <a class="btn btn-outline-primary flex-grow-1" asp-action="Details" asp-route-id="@item.Id">
+                                            <i class="bi bi-eye-fill"></i> Show Details
+                                        </a>
+                                        <form asp-controller="Cart" asp-action="AddItemToCart" asp-route-productId="@item.Id" method="post" 
+                                              style="display: inline-block; flex-grow: 1; padding-right: 0!important;">
+                                            <button type="submit" class="btn btn-success w-100 @(!item.IsActive ? "disabled" : "") text-white">
+                                                <i class="bi bi-cart-plus"></i> Add to Cart
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts { 
+    <script>
+        function removeEmptyParams(form) {
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+            
+            for (const [key, value] of formData.entries()) {
+                if (value && value.trim() !== '') {
+                    params.append(key, value);
+                }
+            }
+            
+            const queryString = params.toString();
+            const baseUrl = form.action;
+            const newUrl = queryString ? baseUrl + '?' + queryString : baseUrl;
+            
+            window.location.href = newUrl;
+            return false;
+        }
+        
+        function applyPriceFilter() {
+            const fromPrice = document.getElementById('sidebarFromPrice').value;
+            const toPrice = document.getElementById('sidebarToPrice').value;
+            const params = new URLSearchParams(window.location.search);
+            
+            if (fromPrice && fromPrice.trim() !== '') {
+                params.set('fromPrice', fromPrice);
+            } else {
+                params.delete('fromPrice');
+            }
+            
+            if (toPrice && toPrice.trim() !== '') {
+                params.set('ToPrice', toPrice);
+            } else {
+                params.delete('ToPrice');
+            }
+            
+            const newUrl = '@Url.Action("Filter", "Products")' + (params.toString() ? '?' + params.toString() : '');
+            window.location.href = newUrl;
+        }
+        
+        function clearRatingFilter() {
+            const params = new URLSearchParams(window.location.search);
+            params.delete('minRating');
+            
+            for (const [key, value] of params) {
+                if (!value || value.trim() === '') {
+                    params.delete(key);
+                }
+            }
+            
+            const newUrl = '@Url.Action("Filter", "Products")' + (params.toString() ? '?' + params.toString() : '');
+            window.location.href = newUrl;
+        }
+        
+        document.querySelectorAll('input[name="minRating"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const params = new URLSearchParams(window.location.search);
+                
+                if (this.checked && this.value) {
+                    params.set('minRating', this.value);
+                } else {
+                    params.delete('minRating');
+                }
+                
+                for (const [key, value] of params) {
+                    if (!value || value.trim() === '') {
+                        params.delete(key);
+                    }
+                }
+                
+                const newUrl = '@Url.Action("Filter", "Products")' + (params.toString() ? '?' + params.toString() : '');
+                window.location.href = newUrl;
+            });
+        });
+    </script>
+}

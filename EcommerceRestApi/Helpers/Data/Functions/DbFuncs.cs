@@ -12,9 +12,11 @@ namespace EcommerceRestApi.Helpers.Data.Functions
         // Reviews 
         public static void UpdateRatingSum(Product product)
         {
-            if (product.Reviews == null || !product.Reviews.Any()) return;
+            var activeReviews = product.Reviews.Where(r => r.IsActive);
 
-            product.RatingSum = product.Reviews.Sum(r => r.Rating);
+            if (product.Reviews == null || !product.Reviews.Any() || !activeReviews.Any()) return;
+
+            product.RatingSum = activeReviews.Average(r => r.Rating);
             product.DateUpdated = DateTime.Now;
         }
 

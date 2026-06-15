@@ -45,16 +45,24 @@
         <li class="list-group-item list-group-item d-flex">
             Status  - @Model.OrderStatus
         </li>
-        @using (Html.BeginForm("Cancel", "Orders", new { code = Model.Code }, FormMethod.Post, true, new { id = "cancelForm" }))
-        {
-            @Html.AntiForgeryToken()
+        <div class="d-grid gap-2 mt-3">
+            <a asp-controller="Invoice"
+               asp-action="Generate"
+               asp-route-orderCode="@Model.Code"
+               class="btn btn-primary btn-lg">
+                <i class="bi bi-receipt"></i> Generate Invoice
+            </a>
 
-            <!-- Hidden field to simulate DELETE -->
-            <input type="hidden" name="_method" value="DELETE" />
+            @using (Html.BeginForm("Cancel", "Orders", new { code = Model.Code }, FormMethod.Post, true, new { id = "cancelForm" }))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="_method" value="DELETE" />
 
-            <button type="submit" class="btn btn-danger">Cancel Order</button>
-        }
-
+                <button type="submit" class="btn btn-danger btn-lg">
+                    <i class="bi bi-x-circle"></i> Cancel Order
+                </button>
+            }
+        </div>
 
     </ul>
 </div>

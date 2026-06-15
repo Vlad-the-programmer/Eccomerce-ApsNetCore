@@ -2,16 +2,20 @@ using EcommerceRestApi.AppGlobals;
 using EcommerceRestApi.Helpers.Cart;
 using EcommerceRestApi.Helpers.Data.Auth;
 using EcommerceRestApi.Helpers.Data.DbInitializer;
-using EcommerceRestApi.Helpers.Data.Roles;
+using EcommerceRestApi.Helpers.Data.Permissions;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Models.Dtos;
 using EcommerceRestApi.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,8 +50,9 @@ builder.Services.AddScoped<IProductsService, ProductsService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ISubcategoryService, SubCategoryService>();
 builder.Services.AddScoped<IReviewsService, ReviewService>();
-
-
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<ICouponService, CouponService>();
+builder.Services.AddScoped<IUsersManagementService, UsersManagementService>();
 
 
 //authontication and authorization
@@ -58,46 +63,81 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultScheme = "SmartScheme";
+    options.DefaultAuthenticateScheme = "SmartScheme";
+    options.DefaultChallengeScheme = "SmartScheme";
+})
+.AddPolicyScheme("SmartScheme", "JWT or Cookie", options =>
+{
+    options.ForwardDefaultSelector = context =>
+    {
+        var hasBearer = context.Request.Headers["Authorization"]
+            .FirstOrDefault()?.StartsWith("Bearer ") == true;
+
+        if (hasBearer)
+            return JwtBearerDefaults.AuthenticationScheme;
+
+        return CookieAuthenticationDefaults.AuthenticationScheme;
+    };
 })
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
 {
     options.Cookie.Name = "user-auth";
-    options.LoginPath = "/api/account/login"; // Redirect if unauthorized
+    options.LoginPath = "/api/account/login";
     options.AccessDeniedPath = "/api/account/access-denied";
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-    options.SlidingExpiration = true; // Extend session if active
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Session expiry time
+    options.SlidingExpiration = true; // Extend session if user is active
+
+    options.Events = new CookieAuthenticationEvents
+    {
+        OnRedirectToLogin = ctx =>
+        {
+            ctx.Response.StatusCode = 401;
+            return Task.CompletedTask;
+        },
+        OnRedirectToAccessDenied = ctx =>
+        {
+            ctx.Response.StatusCode = 403;
+            return Task.CompletedTask;
+        }
+    };
+})
+.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+    };
 });
-//.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-//{
-//    options.TokenValidationParameters = new TokenValidationParameters
-//    {
-//        ValidateIssuer = true,
-//        ValidateAudience = true,
-//        ValidateLifetime = true,
-//        ValidateIssuerSigningKey = true,
-//        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-//        ValidAudience = builder.Configuration["JwtSettings:Audience"],
-//        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
-//    };
-//})
+
 
 builder.Services.AddAuthorization(options =>
 {
-    // Role-based authorization
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole(UserRoles.Admin));
-    options.AddPolicy("UserOnly", policy => policy.RequireRole(UserRoles.User));
+    options.AddPolicy(Permissions.ManageCategories, policy =>
+        policy.RequireClaim("Permission", Permissions.ManageCategories));
 
-    //// Policy-based authorization (e.g., require a specific claim)
-    //options.AddPolicy("CanManageProducts", policy =>
-    //{
-    //    policy.RequireClaim("Permission", "ManageProducts");
-    //});
+    options.AddPolicy(Permissions.ManageUsers, policy =>
+        policy.RequireClaim("Permission", Permissions.ManageUsers));
+
+    options.AddPolicy(Permissions.ManageCoupons, policy =>
+        policy.RequireClaim("Permission", Permissions.ManageCoupons));
+
+    options.AddPolicy(Permissions.ManageOrders, policy =>
+        policy.RequireClaim("Permission", Permissions.ManageOrders));
+
+    options.AddPolicy(Permissions.ManageProduct, policy =>
+        policy.RequireClaim("Permission", Permissions.ManageProduct));
+
 });
 
 builder.Services.AddDistributedMemoryCache(); // Required for session storage

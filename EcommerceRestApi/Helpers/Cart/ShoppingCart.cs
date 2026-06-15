@@ -59,8 +59,11 @@ namespace EcommerceRestApi.Helpers.Cart
             }
             else
             {
-                cartItem.Amount++;
-                _context.Entry(cartItem).State = EntityState.Modified;
+                if (!(product.Stock < cartItem.Amount + 1))
+                {
+                    cartItem.Amount++;
+                    _context.Entry(cartItem).State = EntityState.Modified;
+                }
             }
             await _context.SaveChangesAsync();
         }

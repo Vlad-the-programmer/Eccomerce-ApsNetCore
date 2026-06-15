@@ -6,13 +6,13 @@
 }
 
 <div class="row">
-    <div class="col-md-6 offset-3">
+    <div class="col-md-6 offset-4">
         <p>
             <h4>Log in to your account</h4>
         </p>
 
         <div class="row">
-            <div class="col-md-8 offset-2">
+            <div class="col-md-8">
                 <form asp-action="Login">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
@@ -30,7 +30,7 @@
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mt-3">
                         <input class="btn btn-outline-success float-right" type="submit" value="Log in" />
                         <a class="btn btn-outline-secondary" asp-controller="Products" asp-action="Index">Cancel</a>
                     </div>

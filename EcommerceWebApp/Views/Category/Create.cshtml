@@ -1,0 +1,285 @@
+﻿@model EcommerceWebApp.Models.NewCategoryViewModel
+
+@{
+    ViewData["Title"] = "Create New Category";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-12">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-primary text-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-plus-circle fa-fw me-2"></i>
+                            <span class="fw-bold">Create New Category</span>
+                        </div>
+                        <a asp-action="Index" class="btn btn-light btn-sm">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" id="createCategoryForm">
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: none;"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-bold">
+                                <i class="fas fa-tag text-primary me-1"></i> Category Name
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Name" class="form-control form-control-lg"
+                                   placeholder="Enter category name (e.g., Electronics, Clothing)"
+                                   autocomplete="off" />
+                            <div class="form-text">This is the display name that customers will see.</div>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="About" class="form-label fw-bold">
+                                <i class="fas fa-info-circle text-info me-1"></i> Description
+                            </label>
+                            <textarea asp-for="About" class="form-control" rows="4"
+                                      placeholder="Provide a brief description of this category..."></textarea>
+                            <div class="form-text">Describe what products belong to this category and any important details.</div>
+                            <span asp-validation-for="About" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="SubcategoryCode" class="form-label fw-bold">
+                                <i class="fas fa-layer-group text-success me-1"></i> Subcategory
+                            </label>
+                            <select asp-for="SubcategoryCode" class="form-select"
+                                    asp-items="ViewBag.SubCategories">
+                                <option value="">-- Select a subcategory (optional) --</option>
+                            </select>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle text-muted me-1"></i>
+                                You can associate this category with an existing subcategory, or leave it empty to create a standalone category.
+                            </div>
+                            <span asp-validation-for="SubcategoryCode" class="text-danger small"></span>
+                        </div>
+
+                        <div class="alert alert-info mb-4" role="alert">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-lightbulb fa-lg"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <strong>Pro Tip:</strong> Categories help organize your products. A well-structured category system improves navigation and helps customers find products easily.
+                                    <ul class="mb-0 mt-2">
+                                        <li>Use clear, descriptive names</li>
+                                        <li>Consider your target audience when writing descriptions</li>
+                                        <li>Categories can be linked to subcategories for better organization</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <button type="reset" class="btn btn-secondary" id="resetButton">
+                                <i class="fas fa-undo-alt"></i> Reset
+                            </button>
+                            <div>
+                                <a asp-action="Index" class="btn btn-outline-secondary me-2">
+                                    <i class="fas fa-times"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn bg-primary text-white" id="submitButton">
+                                    <i class="fas fa-save"></i> Create Category
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card-header {
+            border-bottom: none;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .form-control-lg, .form-select-lg {
+            border-radius: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            transition: transform 0.2s;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .alert {
+            border-radius: 0.5rem;
+        }
+
+        .card {
+            border-radius: 0.75rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+            .card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+            }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Loading spinner */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+            .btn-loading:after {
+                content: '';
+                position: absolute;
+                width: 16px;
+                height: 16px;
+                top: 50%;
+                left: 50%;
+                margin-left: -8px;
+                margin-top: -8px;
+                border: 2px solid #fff;
+                border-radius: 50%;
+                border-top-color: transparent;
+                animation: spin 0.6s linear infinite;
+            }
+
+
+        /* Character counter */
+        .char-counter {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+            text-align: right;
+        }
+
+            .char-counter.warning {
+                color: #ffc107;
+            }
+
+            .char-counter.danger {
+                color: #dc3545;
+            }
+
+        /* Validation styles */
+        .input-validation-error {
+            border-color: #dc3545;
+        }
+
+        .field-validation-error {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: #dc3545;
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+            // Character counter for About field
+            const aboutField = $('#About');
+            const maxLength = 500;
+
+            function updateCharCounter() {
+                const currentLength = aboutField.val().length;
+                const remaining = maxLength - currentLength;
+                const counter = $('.char-counter');
+
+                if (counter.length === 0) {
+                    aboutField.after(`<div class="char-counter">${remaining} characters remaining</div>`);
+                } else {
+                    counter.text(`${remaining} characters remaining`);
+                }
+
+                if (remaining < 50) {
+                    counter.addClass('warning');
+                } else {
+                    counter.removeClass('warning');
+                }
+
+                if (remaining < 0) {
+                    counter.addClass('danger');
+                } else {
+                    counter.removeClass('danger');
+                }
+            }
+
+            aboutField.on('input', updateCharCounter);
+            updateCharCounter();
+
+            // Reset button functionality
+            $('#resetButton').on('click', function(e) {
+                e.preventDefault();
+                $('#createCategoryForm')[0].reset();
+                updateCharCounter();
+
+                // Clear validation messages
+                $('.field-validation-error').remove();
+                $('.input-validation-error').removeClass('input-validation-error');
+                $('.alert-danger').hide();
+            });
+
+            // Form submission with loading state
+            $('#createCategoryForm').on('submit', function() {
+                const submitBtn = $('#submitButton');
+                if ($(this).valid()) {
+                    submitBtn.addClass('btn-loading');
+                    submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Creating...');
+                    submitBtn.prop('disabled', true);
+                }
+            });
+
+            // Auto-dismiss alerts after 5 seconds
+            setTimeout(function() {
+                $('.alert').fadeOut('slow');
+            }, 5000);
+
+            // Real-time validation feedback
+            $('input, textarea, select').on('blur', function() {
+                $(this).valid();
+            });
+
+            // Add tooltip for help text
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}

@@ -13,8 +13,132 @@
 <div class="container mt-5">
     <div class="card shadow-lg border-0 rounded-4">
         <div class="row g-0">
-            <div class="col-md-5 d-flex align-items-center">
-                <img src="@AppConstants.RESTAPI_BASE_URL/@Model.Photo" class="img-fluid rounded-start p-3" alt="@Model.Name">
+            <div class="col-md-5">
+                @{
+                    var photos = new List<string>();
+
+                    if (!string.IsNullOrEmpty(Model.Photo))
+                    {
+                        photos.Add($"{AppConstants.RESTAPI_BASE_URL}/{Model.Photo}");
+                    }
+
+                    if (!string.IsNullOrEmpty(Model.OtherPhotos))
+                    {
+                        var otherPhotosList = Model.OtherPhotos.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var photo in otherPhotosList)
+                        {
+                            photos.Add($"{AppConstants.RESTAPI_BASE_URL}/{photo.Trim()}");
+                        }
+                    }
+                }
+
+                @if (photos.Any())
+                {
+                    <style>
+                        .carousel-item img {
+                            width: 100%;
+                            height: auto;
+                            max-height: 500px;
+                            object-fit: contain;
+                            background-color: #f8f9fa;
+                            border-radius: 8px;
+                        }
+
+                        /* Mobile devices */
+                        @@media (max-width: 768px) {
+                            .carousel-item img {
+                                max-height: 300px;
+                            }
+                        }
+
+                        /* Desktop */
+                        @@media (min-width: 769px) and (max-width: 1200px) {
+                            .carousel-item img {
+                                max-height: 400px;
+                            }
+                        }
+
+                        /* Large desktop */
+                        @@media (min-width: 1201px) {
+                            .carousel-item img {
+                                max-height: 500px;
+                            }
+                        }
+
+                        /* Add zoom effect on hover */
+                        .carousel-item img {
+                            transition: transform 0.3s ease;
+                        }
+
+                        .carousel-item:hover img {
+                            transform: scale(1.02);
+                        }
+                    </style>
+
+                    <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <!-- Carousel Indicators -->
+                        <div class="carousel-indicators">
+                            @for (int i = 0; i < photos.Count; i++)
+                            {
+                                <button type="button" data-bs-target="#productCarousel"
+                                        data-bs-slide-to="@i"
+                                        class="@(i == 0 ? "active" : "")"
+                                        aria-current="@(i == 0 ? "true" : "false")"
+                                        aria-label="Slide @(i + 1)">
+                                </button>
+                            }
+                        </div>
+
+                        <!-- Carousel Images -->
+                        <div class="carousel-inner">
+                            @for (int i = 0; i < photos.Count; i++)
+                            {
+                                <div class="carousel-item @(i == 0 ? "active" : "") text-center">
+                                    <img src="@photos[i]"
+                                         class="d-inline-block"
+                                         alt="Product Image @(i + 1)">
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Carousel Controls -->
+                        @if (photos.Count > 1)
+                        {
+                            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        }
+                    </div>
+
+                    <!-- Thumbnail Navigation -->
+                    @if (photos.Count > 1)
+                    {
+                        <div class="row mt-3 g-2">
+                            @for (int i = 0; i < photos.Count; i++)
+                            {
+                                <div class="col-3">
+                                    <img src="@photos[i]"
+                                    class="img-fluid rounded cursor-pointer thumbnail-img"
+                                    alt="Thumbnail @(i + 1)"
+                                    style="height: 70px; width: 100%; object-fit: cover; cursor: pointer;"
+                                    onclick="document.querySelector('#productCarousel').carousel?.(@i);">
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 400px;">
+                        <i class="bi bi-image fs-1 text-muted"></i>
+                        <span class="ms-2 text-muted">No image available</span>
+                    </div>
+                }
             </div>
             <div class="col-md-7">
                 <div class="card-body">
@@ -23,11 +147,15 @@
                     <h4 class="text-success">@Model.Price.ToString("C")</h4>
                     <p class="card-text">@Model.LongAbout</p>
                     <p class="card-text text-muted"><strong>About:</strong> @Model.About</p>
-                    <p class="card-text"><strong>Stock:</strong> @Model.Stock.ToString()</p>
+                    <p class="card-text"><strong>Only:</strong> @Model.Stock.ToString() <strong>Units Left</strong></p>
 
                     <div class="d-flex align-items-center">
                         <span class="me-2"><strong>Status:</strong></span>
-                        @if (Model.IsActive)
+                        @if (Model.IsOutOfStock)
+                        {
+                            <span class="badge bg-info">Out of stock</span>
+                        }
+                        else if (Model.IsActive)
                         {
                             <span class="badge bg-success">AVAILABLE</span>
                         }
@@ -41,7 +169,7 @@
                         <a class="btn btn-outline-secondary me-2" asp-action="Index">Back to List</a>
                         <form asp-controller="Cart" asp-action="AddItemToCart" asp-route-productId="@Model.Id" method="post" style="display:inline;">
                             <button type="submit" class="btn btn-success @(!Model.IsActive ? "disabled" : "") text-white">
-                                <i class="bi bi-cart-plus"></i> Add to Cart ($@Model.Price.ToString(".00"))
+                                <i class="bi bi-cart-plus"></i> Add to Cart
                             </button>
                         </form>
                     </div>
@@ -63,41 +191,118 @@
             @if (Model.Reviews.Any())
             {
                 <div class="mt-5">
-                    <h4 class="text-center mb-4">Customer Reviews</h4>
-                    @foreach (var review in Model.Reviews)
-                    {
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <h6 class="card-subtitle mb-2 text-muted">
-                                    @review.UserName
-                                    <span class="text-warning ms-2">
-                                        @for (int i = 0; i < review.Rating; i++)
-                                        {
-                                            <i class="bi bi-star-fill"></i>
-                                        }
-                                        @for (int i = review.Rating; i < 5; i++)
-                                        {
-                                            <i class="bi bi-star"></i>
-                                        }
-                                    </span>
-                                </h6>
-                                <p class="card-text">@review.ReviewText</p> 
-
-                                @if (User.Identity.IsAuthenticated)
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <h4 class="mb-3">Customer Reviews</h4>
+                            @{
+                                var averageRating = Model.RatingSum.HasValue ? Model.RatingSum.Value : 0;
+                                var totalReviews = Model.Reviews.Count();
+                                var ratingDistribution = new int[5];
+                                foreach (var review in Model.Reviews)
                                 {
-                                    @if (@ViewBag.CustomerId == @review.CustomerId) 
-                                    {
-                                        <div class="mt-2">
-                                            <button class="btn btn-sm btn-outline-primary me-2 edit-review-btn" data-id="@review.Id" data-endpoint="@($"{reviewEditDeleteEndpontBase}/{review.Id}")">Edit</button>
-                                            <button class="btn btn-sm btn-outline-danger delete-review-btn" data-id="@review.Id" data-endpoint="@($"{reviewEditDeleteEndpontBase}/{review.Id}")">Delete</button>
-                                        </div>
-                                    } 
+                                    if (review.Rating >= 1 && review.Rating <= 5)
+                                        ratingDistribution[review.Rating - 1]++;
+                                }
+                            }
 
+                            <!-- Overall Rating -->
+                            <div class="display-1 fw-bold text-primary">@averageRating.ToString("0.0")</div>
+                            <div class="text-warning fs-4 mb-2">
+                                @for (int i = 0; i < (int)Math.Floor(averageRating); i++)
+                                {
+                                    <i class="bi bi-star-fill"></i>
+                                }
+                                @if (averageRating - (int)Math.Floor(averageRating) >= 0.5)
+                                {
+                                    <i class="bi bi-star-half"></i>
+                                }
+                                @for (int i = (int)Math.Ceiling(averageRating); i < 5; i++)
+                                {
+                                    <i class="bi bi-star"></i>
+                                }
+                            </div>
+                            <div class="text-muted">Based on @totalReviews reviews</div>
+
+                            <!-- Rating Distribution -->
+                            <div class="mt-4">
+                                @for (int i = 5; i >= 1; i--)
+                                {
+                                    var count = ratingDistribution[i - 1];
+                                    var percentage = totalReviews > 0 ? (count * 100 / totalReviews) : 0;
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="me-2" style="min-width: 60px;">@i star@(i > 1 ? "s" : "")</span>
+                                        <div class="progress flex-grow-1" style="height: 8px;">
+                                            <div class="progress-bar bg-warning" role="progressbar"
+                                                 style="width: @percentage%;"
+                                                 aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                        <span class="ms-2 text-muted small" style="min-width: 45px;">@count</span>
+                                    </div>
                                 }
                             </div>
                         </div>
-                    }
 
+                        <div class="col-md-8">
+                            <h5 class="mb-3">All Reviews</h5>
+
+                            @if (Model.Reviews.Any())
+                            {
+                                <div style="max-height: 600px; overflow-y: auto;">
+                                    @foreach (var review in Model.Reviews)
+                                    {
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <h6 class="card-subtitle mb-2 text-muted">
+                                                            <i class="bi bi-person-circle"></i> @review.UserName
+                                                        </h6>
+                                                        <div class="text-warning mb-2">
+                                                            @for (int i = 0; i < review.Rating; i++)
+                                                            {
+                                                                <i class="bi bi-star-fill"></i>
+                                                            }
+                                                            @for (int i = review.Rating; i < 5; i++)
+                                                            {
+                                                                <i class="bi bi-star"></i>
+                                                            }
+                                                            <span class="text-muted ms-2 small">
+                                                                <i class="bi bi-calendar"></i> @review.DateCreated.ToString("MMMM dd, yyyy")
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    @if (User.Identity.IsAuthenticated && (ViewBag.CustomerId == review.CustomerId || User.IsInRole("Admin")))
+                                                    {
+                                                        <div>
+                                                            <button class="btn btn-sm btn-outline-primary me-2 edit-review-btn"
+                                                                    data-id="@review.Id"
+                                                                    data-endpoint="@($"{reviewEditDeleteEndpontBase}/{review.Id}")">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-outline-danger delete-review-btn"
+                                                                    data-id="@review.Id"
+                                                                    data-endpoint="@($"{reviewEditDeleteEndpontBase}/{review.Id}")">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <p class="card-text mt-2">@review.ReviewText</p>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted py-5 bg-light rounded">
+                                    <i class="bi bi-chat-dots fs-1"></i>
+                                    <p class="mt-2">No reviews yet. Be the first to review this product!</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
             }
             else
@@ -109,7 +314,7 @@
 
             @if (!User.Identity.IsAuthenticated)
             {
-                <div class="mt-5 text-center">
+                <div class="my-3 text-center">
                     <a class="btn btn-outline-primary" asp-action="Login" asp-controller="Account">
                         Login to write a review
                     </a>
@@ -118,7 +323,7 @@
             {
                 
                 <div class="mt-4">
-                    <button class="btn btn-outline-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#reviewFormCollapse" aria-expanded="false" aria-controls="reviewFormCollapse">
+                    <button class="btn btn-outline-primary mb-3 mx-3" type="button" data-bs-toggle="collapse" data-bs-target="#reviewFormCollapse" aria-expanded="false" aria-controls="reviewFormCollapse">
                         <i class="bi bi-pencil-square"></i> Write a Review
                     </button>
 
@@ -141,7 +346,7 @@
 
 
 
-                                <div class="text-center">
+                                <div class="text-center mt-2">
                                     <button type="submit" class="btn btn-success review-submit-btn">Submit Review</button>
                                 </div>
                             </form>
@@ -157,10 +362,46 @@
 
 @section Scripts {
     <script>
-                $(document).ready(function () {
+        $(document).ready(function () {
+            // Toggle Write Review Form - FIXED
+            const writeReviewBtn = document.querySelector('[data-bs-toggle="collapse"][data-bs-target="#reviewFormCollapse"]');
+            const collapseElement = document.getElementById('reviewFormCollapse');
+
+            // Remove Bootstrap's data-bs-toggle and handle manually
+            if (writeReviewBtn) {
+                // Remove Bootstrap's default behavior
+                writeReviewBtn.removeAttribute('data-bs-toggle');
+                writeReviewBtn.removeAttribute('data-bs-target');
+
+                // Add click handler
+                $(writeReviewBtn).click(function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    console.log("Write Review button clicked");
+
+                    if (collapseElement) {
+                        if (collapseElement.classList.contains('show')) {
+                            // Hide the form
+                            collapseElement.classList.remove('show');
+                            $(collapseElement).slideUp(300);
+                            // Reset form when hiding
+                            resetReviewForm();
+                        } else {
+                            // Show the form
+                            collapseElement.classList.add('show');
+                            $(collapseElement).slideDown(300);
+                            // Scroll to form
+                            collapseElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                });
+            }
+
+            // Delete review functionality
             $('.delete-review-btn').click(function () {
                 const endpoint = $(this).data('endpoint');
-                const reviewCard = $(this).closest('.card'); // Reference to the whole review card div
+                const reviewCard = $(this).closest('.card');
 
                 if (confirm("Are you sure you want to delete this review?")) {
                     $.ajax({
@@ -168,13 +409,8 @@
                         method: 'DELETE',
                         success: function () {
                             reviewCard.slideUp(300, function () {
-                                $(this).remove(); // Smoothly remove the card from the DOM
-
-                                // Check if any reviews remain
-                                if ($('.review-card').length === 0) {
-                                    $('.no-reviews-msg').show();
-                                    $('#reviewsSection h4').remove(); // remove "Customer Reviews" heading if needed
-                                }
+                                $(this).remove();
+                                location.reload();
                             });
                         },
                         error: function (xhr, status, error) {
@@ -188,30 +424,28 @@
                     });
                 }
             });
-        });
 
-
-               $(document).ready(function () {
+            // Edit review functionality
             $('.edit-review-btn').click(function () {
                 const endpoint = $(this).data('endpoint');
 
                 $.get(endpoint, function (data) {
                     console.log("Review fetched:", data);
 
-                    // Fill in the form fields BEFORE showing the collapse
-                    setTimeout(() => {
-                        $('#Id').val(data.id);
-                        $('#ProductId').val(data.productId);
-                        $('#Rating').val(data.rating);
-                        $('#ReviewText').val(data.reviewText);
-                        $('.review-submit-btn').text("Update Review");
-                    }, 100);
+                    // Fill in the form fields
+                    $('#Id').val(data.id);
+                    $('#ProductId').val(data.productId);
+                    $('#Rating').val(data.rating);
+                    $('#ReviewText').val(data.reviewText);
+                    $('.review-submit-btn').text("Update Review");
 
-
-                    // Then show the form
-                    const collapseEl = document.getElementById('reviewFormCollapse');
-                    const collapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
-                    collapse.show();
+                    // Show the form
+                    if (collapseElement) {
+                        collapseElement.classList.add('show');
+                        $(collapseElement).slideDown(300);
+                        // Scroll to form
+                        collapseElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 }).fail(function (xhr, status, error) {
                     if (xhr.status === 404) {
                         alert("Review not found.");
@@ -221,36 +455,33 @@
                     }
                 });
             });
-        });
 
+            // Submit review form
+            $('#reviewForm').submit(function (e) {
+                e.preventDefault();
 
-
-           $('#reviewForm').submit(function (e) {
-            e.preventDefault();
-
-            $.ajax({
-                url: $(this).attr('action'),
-                method: 'POST',
-                data: $(this).serialize(),
-                success: function () {
-                    const productId = $('#ProductId').val();
-                    const productUrl = '@Url.Action("Details", "Products", new { id = "__id__" })'.replace('__id__', productId);
-                    window.location.href = productUrl;
-
-                },
-                error: function (xhr) {
-                    alert("Error: " + xhr.responseText);
-                }
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function () {
+                        const productId = $('#ProductId').val();
+                        const productUrl = '@Url.Action("Details", "Products", new { id = "__id__" })'.replace('__id__', productId);
+                        window.location.href = productUrl;
+                    },
+                    error: function (xhr) {
+                        alert("Error: " + xhr.responseText);
+                    }
+                });
             });
+
+            // Reset form function
+            function resetReviewForm() {
+                $('#Id').val('');
+                $('#Rating').val('');
+                $('#ReviewText').val('');
+                $('.review-submit-btn').text("Submit Review");
+            }
         });
-
-
-                    $('#reviewFormCollapse').on('show.bs.collapse', function () {
-                    $('#Id').val('');
-                    $('#Rating').val('');
-                    $('#ReviewText').val('');
-                    $('.review-submit-btn').text("Submit Review");
-        });
-
     </script>
 }

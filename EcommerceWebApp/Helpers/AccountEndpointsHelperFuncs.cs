@@ -33,6 +33,24 @@ namespace EcommerceWebApp.Helpers
             return model;
         }
 
+        public async static Task<StaffUpdateVM> GetStaffUpdateModelObj(string endpoint, IApiService apiService)
+        {
+            var model = new StaffUpdateVM();
+            try
+            {
+                var response = await apiService.GetDataAsync(endpoint); // response is a string
+
+                model = JsonSerializer.Deserialize<StaffUpdateVM>(response, GlobalConstants.JsonSerializerOptions); // Deserialize from string
+
+            }
+            catch (HttpRequestException e)
+            {
+                model = new StaffUpdateVM();
+            }
+
+            return model;
+        }
+
     }
 }
 

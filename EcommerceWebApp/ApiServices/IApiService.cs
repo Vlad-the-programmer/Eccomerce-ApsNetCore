@@ -6,6 +6,6 @@
         Task<string> PostDataAsync(string endpoint, string jsonContent = "");
         Task<string> UpdateDataAsync(string endpoint, string jsonContent);
         Task<string> DeleteDataAsync(string endpoint);
+        Task<byte[]> GetFileAsync(string endpoint);
     }
-
 }

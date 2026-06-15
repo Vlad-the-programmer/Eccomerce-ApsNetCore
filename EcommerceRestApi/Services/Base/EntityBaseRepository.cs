@@ -1,9 +1,9 @@
-﻿using EcommerceRestApi.Models.Context;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+﻿using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Common;
-using EcommerceRestApi.Models;
+using EcommerceRestApi.Models.Context;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Linq.Expressions;
 
 namespace EcommerceRestApi.Services.Base
 {
@@ -55,7 +55,5 @@ namespace EcommerceRestApi.Services.Base
             entityEntry.State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
-
-
     }
 }

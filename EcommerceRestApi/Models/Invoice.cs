@@ -22,15 +22,13 @@ public partial class Invoice : EntityBase
 
     public bool IsPaid { get; set; }
 
-
+    public int OrderId { get; set; }
     [ForeignKey("CustomerId")]
-    [InverseProperty("Invoices")]
     public virtual Customer Customer { get; set; } = null!;
 
-    [InverseProperty("Invoice")]
+    [ForeignKey("OrderId")]
+    public virtual Order Order { get; set; } = null!;
     public virtual ICollection<InvoiceItem> InvoiceItems { get; set; } = new List<InvoiceItem>();
-
     [ForeignKey("PaymentId")]
-    [InverseProperty("Invoices")]
     public virtual Payment? Payment { get; set; }
 }

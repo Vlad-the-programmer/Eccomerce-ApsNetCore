@@ -181,148 +181,16 @@
         <member name="M:EcommerceRestApi.Migrations.InitialDb.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
-        <member name="T:EcommerceRestApi.Migrations.CategoryModelAboutFieldSizeIncreased">
+        <member name="T:EcommerceRestApi.Migrations.MakeDateDeletedUpdatedNullInit">
             <inheritdoc />
         </member>
-        <member name="M:EcommerceRestApi.Migrations.CategoryModelAboutFieldSizeIncreased.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:EcommerceRestApi.Migrations.MakeDateDeletedUpdatedNullInit.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:EcommerceRestApi.Migrations.CategoryModelAboutFieldSizeIncreased.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:EcommerceRestApi.Migrations.MakeDateDeletedUpdatedNullInit.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:EcommerceRestApi.Migrations.CategoryModelAboutFieldSizeIncreased.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:EcommerceRestApi.Migrations.AddedFirstNamePropertyToUserModel">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddedFirstNamePropertyToUserModel.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddedFirstNamePropertyToUserModel.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddedFirstNamePropertyToUserModel.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:EcommerceRestApi.Migrations.AddedLastNamePropertyToUserModel">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddedLastNamePropertyToUserModel.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddedLastNamePropertyToUserModel.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddedLastNamePropertyToUserModel.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:EcommerceRestApi.Migrations.AddedShoppingCartItemModelfixedModelDatValidationInCategoryModel">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddedShoppingCartItemModelfixedModelDatValidationInCategoryModel.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddedShoppingCartItemModelfixedModelDatValidationInCategoryModel.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddedShoppingCartItemModelfixedModelDatValidationInCategoryModel.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:EcommerceRestApi.Migrations.UserstringtoGuidIdandCustomerUserIdFKbeGuidtype">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.UserstringtoGuidIdandCustomerUserIdFKbeGuidtype.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.UserstringtoGuidIdandCustomerUserIdFKbeGuidtype.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.UserstringtoGuidIdandCustomerUserIdFKbeGuidtype.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:EcommerceRestApi.Migrations.applicationUserIsAuthenticatedField">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.applicationUserIsAuthenticatedField.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.applicationUserIsAuthenticatedField.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.applicationUserIsAuthenticatedField.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:EcommerceRestApi.Migrations.ChangedPriceTypeIntToDecimal">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.ChangedPriceTypeIntToDecimal.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.ChangedPriceTypeIntToDecimal.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.ChangedPriceTypeIntToDecimal.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:EcommerceRestApi.Migrations.MadeDateTimeFieldsNullable">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.MadeDateTimeFieldsNullable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.MadeDateTimeFieldsNullable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.MadeDateTimeFieldsNullable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:EcommerceRestApi.Migrations.IncreasedShoppingCartIdFieldLengthLonger">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.IncreasedShoppingCartIdFieldLengthLonger.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.IncreasedShoppingCartIdFieldLengthLonger.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.IncreasedShoppingCartIdFieldLengthLonger.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:EcommerceRestApi.Migrations.ChangeInvoiceNumber16to25length">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.ChangeInvoiceNumber16to25length.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.ChangeInvoiceNumber16to25length.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.ChangeInvoiceNumber16to25length.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:EcommerceRestApi.Migrations.AddCostFieldToDeliveryMethod">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddCostFieldToDeliveryMethod.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddCostFieldToDeliveryMethod.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddCostFieldToDeliveryMethod.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:EcommerceRestApi.Migrations.AddIsPaidFieldtoOrder">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddIsPaidFieldtoOrder.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddIsPaidFieldtoOrder.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:EcommerceRestApi.Migrations.AddIsPaidFieldtoOrder.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+        <member name="M:EcommerceRestApi.Migrations.MakeDateDeletedUpdatedNullInit.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
     </members>

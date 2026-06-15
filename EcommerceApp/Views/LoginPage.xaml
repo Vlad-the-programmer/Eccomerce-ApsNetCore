@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="EcommerceApp.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:EcommerceApp.AppLogic.VMs">
+
+    <ContentPage.BindingContext>
+        <vm:LoginViewModel />
+    </ContentPage.BindingContext>
+
+    <StackLayout Padding="30" VerticalOptions="CenterAndExpand">
+
+        <Label Text="Welcome Back" 
+               FontSize="32" 
+               HorizontalOptions="Center"
+               TextColor="Black"
+               FontAttributes="Bold"/>
+
+        <!-- Email Entry -->
+        <Frame HasShadow="False" BorderColor="Gray" CornerRadius="25" Padding="10" BackgroundColor="Transparent">
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                <Entry Placeholder="Email"
+                       TextColor="Black"
+                       PlaceholderColor="#BDC3C7"
+                       Text="{Binding Email}"
+                       HorizontalOptions="FillAndExpand"/>
+            </StackLayout>
+        </Frame>
+
+        <!-- Password Entry -->
+        <Frame HasShadow="False" BorderColor="Gray" CornerRadius="25" Padding="10" BackgroundColor="Transparent">
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                <Entry Placeholder="Password" 
+                       IsPassword="True"
+                       TextColor="Black"
+                       PlaceholderColor="#BDC3C7"
+                       Text="{Binding Password}"
+                       HorizontalOptions="FillAndExpand"/>
+            </StackLayout>
+        </Frame>
+
+        <!-- Login Button -->
+        <Button Text="Login"
+                BackgroundColor="#E74C3C"
+                TextColor="White"
+                FontSize="18"
+                CornerRadius="25"
+                HeightRequest="50"
+                Command="{Binding LoginCommand}"/>
+
+    </StackLayout>
+
+</ContentPage>

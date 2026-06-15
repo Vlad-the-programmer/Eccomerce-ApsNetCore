@@ -1,9 +1,11 @@
 ﻿using EcommerceRestApi.Helpers.Data.ResponseModels;
+using EcommerceRestApi.Helpers.Data.Roles;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Services;
 using Inventory_Management_Sustem.Models.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceRestApi.Controllers
@@ -41,7 +43,7 @@ namespace EcommerceRestApi.Controllers
 
         // POST: api/Reviews
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult> PostReview([FromBody] ReviewCreateEditVM model)
         {
             if (!ModelState.IsValid)
@@ -63,7 +65,7 @@ namespace EcommerceRestApi.Controllers
 
         // PUT: api/Reviews/5
         [HttpPut("{id}")]
-        //[Authorize]
+        [Authorize(Roles = $"{UserRoles.Admin}, {UserRoles.User}")]
         public async Task<IActionResult> PutReview(int id, ReviewUpdateViewModel model)
         {
             if (id != model.Id) return BadRequest();
@@ -77,7 +79,7 @@ namespace EcommerceRestApi.Controllers
 
         // DELETE: api/Reviews/5
         [HttpDelete("{id}")]
-        //[Authorize]
+        [Authorize(Roles = $"{UserRoles.Admin}, {UserRoles.User}")]
         public async Task<IActionResult> DeleteReview(int id)
         {
             var review = await _context.Reviews.FindAsync(id);

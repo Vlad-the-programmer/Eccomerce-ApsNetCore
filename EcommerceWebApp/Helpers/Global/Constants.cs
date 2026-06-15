@@ -5,8 +5,10 @@ public static class GlobalConstants
     // JSON Serializer Options
     public static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions
     {
+        PropertyNameCaseInsensitive = true,
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
+
 
     // API Endpoints
     public const string CountriesEndpoint = "api/countries/";
@@ -17,6 +19,8 @@ public static class GlobalConstants
     public const string ProductUpdateEndpoint = "api/products/update";
     public const string ProductCreateEndpoint = "api/products/create";
     public const string FilterProductsEndpoint = $"{ProductsEndpoint}/filter";
+    public const string GetSearchComboboxDtosEndpoint = $"{ProductsEndpoint}/search-combo-box-dtos";
+    public const string GetOrderByComboboxDtosEndpoint = $"{ProductsEndpoint}/order-by-combo-box-dtos";
 
     // Orders
     public const string OrdersEndpoint = "api/orders";
@@ -26,9 +30,17 @@ public static class GlobalConstants
     public const string OrderCreateEndpoint = "api/orders/create";
     public const string GetOrderCreateModelEndpoint = "api/orders/get-order-create-model";
 
+    public const string FilterOrdersEndpoint = $"{OrdersEndpoint}/filter";
+    public const string GetSearchComboboxDtosOrdersEndpoint = $"{OrdersEndpoint}/search-combo-box-dtos";
+    public const string GetOrderByComboboxDtosOrdersEndpoint = $"{OrdersEndpoint}/order-by-combo-box-dtos";
+
     // Categories
-    public const string CategoriesEndpoint = "api/categories/";
-    public const string SubCategoriesEndpoint = "api/subcategories/";
+    public const string CategoriesEndpoint = "api/categories";
+    public const string CategoriesAdminEndpoint = "api/categories/admin";
+
+    public const string CategoryDeleteEndpoint = "api/account";
+    public const string CategoryUpdateEndpoint = "api/account";
+    public const string SubCategoriesEndpoint = "api/subcategories";
 
     // Users
     public const string UsersEndpoint = "api/account/users/";
@@ -62,8 +74,17 @@ public static class GlobalConstants
     // PaymentMethods
     public const string PaymentMethodsEndpoint = "api/PaymentMethods";
 
+    // Invoices
+    public const string InvoiceEndpoint = "api/invoice";
+
+    // Coupons
+    public const string CouponEndpoint = "api/coupon";
+    public const string ApplyCouponEndpoint = "api/coupon/apply";
+    public const string RemoveCouponEndpoint = "api/coupon/remove-coupon";
+
     // Upload Photo
     public const string UploadPhotoEndpoint = "api/ImageUpload/upload-photo";
+
 
     // Other Constants
     public const int MaxRetryAttempts = 3;

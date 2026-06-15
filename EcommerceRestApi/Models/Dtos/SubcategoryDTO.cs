@@ -1,4 +1,4 @@
-﻿using EcommerceRestApi.Helpers.Data.ViewModels;
+﻿using Inventory_Management_Sustem.Models.Dtos;
 using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceRestApi.Models.Dtos
@@ -21,7 +21,9 @@ namespace EcommerceRestApi.Models.Dtos
         public int CategoryId { get; set; }
 
         public CategoryDTO Category { get; set; } = null!;
+        public bool IsActive { get; set; }
 
-        public IList<NewProductViewModel> Products { get; set; } = new List<NewProductViewModel>();
+        public IList<ProductDto> Products { get; set; } = new List<ProductDto>();
+        public DateTime? DateDeleted { get; set; }
     }
 }

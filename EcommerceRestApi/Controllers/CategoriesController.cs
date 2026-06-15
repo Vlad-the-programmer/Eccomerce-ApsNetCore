@@ -1,12 +1,11 @@
-﻿using EcommerceRestApi.Helpers.Data.Roles;
+﻿using EcommerceRestApi.Helpers.Data.Permissions;
+using EcommerceRestApi.Helpers.Data.ResponseModels;
+using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Models.Context;
-using EcommerceRestApi.Models.Dtos;
 using EcommerceRestApi.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace EcommerceRestApi.Controllers
@@ -30,6 +29,14 @@ namespace EcommerceRestApi.Controllers
             return Ok(categories);
         }
 
+        [HttpGet("admin")]
+        [Authorize(Policy = Permissions.ManageCategories)]
+        public async Task<IActionResult> GetAllCategoriesForAdmin()
+        {
+            var categories = await _service.GetAllCategoriesForAdmin();
+            return Ok(categories);
+        }
+
         // GET: api/categories/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
@@ -43,31 +50,51 @@ namespace EcommerceRestApi.Controllers
         }
 
         // POST: api/categories
-        [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryDTO))]
+        [Authorize(Policy = Permissions.ManageCategories)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NewCategoryVM))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CategoryDTO model)
+        public async Task<IActionResult> Create([FromBody] NewCategoryVM model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            var categories = await _service.GetAllCategories();
+            if (categories.Where(c => c.Name.Equals(model.Name)).FirstOrDefault() != null)
+            {
+                return BadRequest(new ResponseModel
+                {
+                    Message = "Category with such name already exists!",
+                });
+            }
             await _service.AddNewCategoryAsync(model);
-            return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
+            return Created();
         }
 
         // PUT: api/categories/5
-        [Authorize(Roles = UserRoles.Admin)]
         [HttpPut("{id}")]
+        [Authorize(Policy = Permissions.ManageCategories)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryUpdateVM))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update(int id, [FromBody] CategoryUpdateVM model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                var errors = ModelState
+                .Where(x => x.Value.Errors.Count > 0)
+                .Select(x => new
+                {
+                    x.Key,
+                    Errors = x.Value.Errors.Select(e => e.ErrorMessage)
+                }).ToList();
+
+                return BadRequest(new ResponseModel
+                {
+                    Message = "Validation failed",
+                    Errors = (IList<string>)errors
+                });
             }
 
             var category = await _service.GetCategoryByIDAsync(id);
@@ -83,10 +110,11 @@ namespace EcommerceRestApi.Controllers
 
         // DELETE: api/categories/5
         [HttpDelete("{id}")]
+        [Authorize(Policy = Permissions.ManageCategories)]
         public async Task<IActionResult> Delete(int id)
         {
-            var product = await _service.GetCategoryByIDAsync(id);
-            if (product == null)
+            var category = await _service.GetCategoryByIDAsync(id);
+            if (category == null)
             {
                 return NotFound();
             }
