@@ -4,17 +4,58 @@
         <name>EcommerceRestApi</name>
     </assembly>
     <members>
+        <member name="M:EcommerceRestApi.Controllers.RefundsController.GetActiveRefunds(System.Int32)">
+            <summary>
+            Get all active refunds for a specific customer
+            </summary>
+            <param name="customerId">The customer ID</param>
+            <returns>List of refunds</returns>
+        </member>
+        <member name="M:EcommerceRestApi.Controllers.RefundsController.GetAllRefunds">
+            <summary>
+            Get all refunds (Admin/Staff only)
+            </summary>
+            <returns>List of all refunds</returns>
+        </member>
+        <member name="M:EcommerceRestApi.Controllers.RefundsController.GetRefundByCode(System.String)">
+            <summary>
+            Get a specific refund by its code
+            </summary>
+            <param name="code">The refund code</param>
+            <returns>The refund details</returns>
+        </member>
+        <member name="M:EcommerceRestApi.Controllers.RefundsController.ApplyForRefund(EcommerceRestApi.Models.Dtos.CreateRefundDto)">
+            <summary>
+            Apply for a refund for specific order items
+            </summary>
+            <param name="request">The refund request containing order code and item IDs</param>
+            <returns>Result of the operation</returns>
+        </member>
+        <member name="M:EcommerceRestApi.Controllers.RefundsController.ChangeRefundStatus(EcommerceRestApi.Controllers.ChangeRefundStatusRequest)">
+            <summary>
+            Change the status of a refund (Admin/Staff only)
+            </summary>
+            <param name="request">The status change request</param>
+            <returns>Result of the operation</returns>
+        </member>
+        <member name="M:EcommerceRestApi.Controllers.RefundsController.CancelRefund(System.String)">
+            <summary>
+            Cancel a refund request
+            </summary>
+            <param name="code">The refund code to cancel</param>
+            <returns>Result of the operation</returns>
+        </member>
         <member name="M:EcommerceRestApi.Helpers.Data.Functions.InvoicePaymentHelperFuncs.GenerateInvoiceNumber">
             <summary>
             Generates a unique invoice number.
             </summary>
         </member>
-        <member name="M:EcommerceRestApi.Helpers.Data.Functions.InvoicePaymentHelperFuncs.GenerateInvoice(EcommerceRestApi.Models.Order,EcommerceRestApi.Models.Context.AppDbContext)">
+        <member name="M:EcommerceRestApi.Helpers.Data.Functions.InvoicePaymentHelperFuncs.GenerateInvoice(EcommerceRestApi.Models.Order,EcommerceRestApi.Models.Context.AppDbContext,EcommerceRestApi.Services.INotificationService)">
             <summary>
             Generates an invoice for a completed payment.
             </summary>
         </member>
-        <member name="M:EcommerceRestApi.Helpers.Data.Functions.InvoicePaymentHelperFuncs.MarkInvoiceAsPaid(System.Int32,EcommerceRestApi.Models.Order,EcommerceRestApi.Models.Context.AppDbContext)">
+        <member name="M:EcommerceRestApi.Helpers.Data.Functions.InvoicePaymentHelperFuncs.MarkInvoiceAsPaid(System.Int32,EcommerceRestApi.Models.Order,EcommerceRestApi.Models.Context.AppDbContext,EcommerceRestApi.Services.INotificationService)">
             <summary>
             Marks an invoice as paid.
             </summary>
@@ -191,6 +232,210 @@
             <inheritdoc />
         </member>
         <member name="M:EcommerceRestApi.Migrations.MakeDateDeletedUpdatedNullInit.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.CreateShopCoinTables">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.CreateShopCoinTables.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.CreateShopCoinTables.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.CreateShopCoinTables.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.FixFkForShopCoinTH">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixFkForShopCoinTH.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixFkForShopCoinTH.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixFkForShopCoinTH.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.Add5TablesAndConfig">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.Add5TablesAndConfig.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.Add5TablesAndConfig.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.Add5TablesAndConfig.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.FixNotifications">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixNotifications.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixNotifications.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixNotifications.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.FixNotifsCascades">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixNotifsCascades.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixNotifsCascades.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixNotifsCascades.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.AddFieldsToShoppingCartItems">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddFieldsToShoppingCartItems.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddFieldsToShoppingCartItems.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddFieldsToShoppingCartItems.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.AddIndexesAndFixCartIdStringLengthShopingCartItems">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddIndexesAndFixCartIdStringLengthShopingCartItems.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddIndexesAndFixCartIdStringLengthShopingCartItems.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddIndexesAndFixCartIdStringLengthShopingCartItems.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.ChangeTypeForOrderStatusesChangedByToString">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.ChangeTypeForOrderStatusesChangedByToString.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.ChangeTypeForOrderStatusesChangedByToString.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.ChangeTypeForOrderStatusesChangedByToString.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.AddRefundItem">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddRefundItem.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddRefundItem.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddRefundItem.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.ChangeRefundAndItemModels">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.ChangeRefundAndItemModels.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.ChangeRefundAndItemModels.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.ChangeRefundAndItemModels.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.AddRefundStatusHistoryTable">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddRefundStatusHistoryTable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddRefundStatusHistoryTable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AddRefundStatusHistoryTable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.AlterReturnRefund">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AlterReturnRefund.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AlterReturnRefund.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AlterReturnRefund.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.AlterRefundAddOnlyOneReturnLimit">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AlterRefundAddOnlyOneReturnLimit.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AlterRefundAddOnlyOneReturnLimit.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.AlterRefundAddOnlyOneReturnLimit.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.FixRefundReturnRelation">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixRefundReturnRelation.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixRefundReturnRelation.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixRefundReturnRelation.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.FixRefundReturnRelations">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixRefundReturnRelations.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixRefundReturnRelations.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixRefundReturnRelations.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.FixShopCoinRelations">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixShopCoinRelations.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixShopCoinRelations.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixShopCoinRelations.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:EcommerceRestApi.Migrations.FixRefundReturnFluentApi">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixRefundReturnFluentApi.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixRefundReturnFluentApi.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EcommerceRestApi.Migrations.FixRefundReturnFluentApi.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
     </members>

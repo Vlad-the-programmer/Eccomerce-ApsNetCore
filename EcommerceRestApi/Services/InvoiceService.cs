@@ -12,11 +12,12 @@ namespace EcommerceRestApi.Services
     public class InvoiceService : IInvoiceService
     {
         private readonly AppDbContext _context;
-
-        public InvoiceService(AppDbContext context)
+        private readonly INotificationService _notificationService;
+        public InvoiceService(AppDbContext context, INotificationService notificationService)
         {
             _context = context;
             QuestPDF.Settings.License = LicenseType.Community;
+            _notificationService = notificationService;
         }
 
         public async Task<InvoiceDto> GetInvoiceByOrderCodeAsync(string orderCode)
@@ -45,7 +46,7 @@ namespace EcommerceRestApi.Services
                                             .FirstOrDefaultAsync(i => i.OrderId == order.Id);
             if (invoiceobj == null)
             {
-                invoiceobj = await InvoicePaymentHelperFuncs.GenerateInvoice(order, _context);
+                invoiceobj = await InvoicePaymentHelperFuncs.GenerateInvoice(order, _context, _notificationService);
 
                 if (invoiceobj == null)
                 {

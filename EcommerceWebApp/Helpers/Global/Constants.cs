@@ -53,6 +53,7 @@ public static class GlobalConstants
     public const string UserCreateEndpoint = "api/account/";
     public const string GetCurrentUserEndpoint = "api/account/get-current-user/";
     public const string GetUserUpdateModelEndpoint = "api/account/get-update-user-model";
+    public const string GetUserProfile = "api/account/user-profile";
 
     // ShopppingCart
     public const string GetCartEndpoint = "api/cart/";
@@ -61,6 +62,17 @@ public static class GlobalConstants
     public const string AddItemToCartEndpoint = "api/cart"; //HTTP_POST
     public const string RemoveItemFromCartEndpoint = "api/cart/remove-item"; // + id
     public const string GetCartProductById = "api/cart/cart-item"; // + {product_id}/
+
+    // Refunds
+    public const string RefundsEndpoint = "api/refunds";
+
+    public const string GetSearchComboboxDtosRefundsEndpoint = $"{RefundsEndpoint}/search-combo-box-dtos";
+    public const string GetOrderByComboboxDtosRefundsEndpoint = $"{RefundsEndpoint}/order-by-combo-box-dtos";
+
+    // Returns
+    public const string ReturnsEndpoint = "api/return";
+    public const string GetSearchComboboxDtosReturnsEndpoint = $"{ReturnsEndpoint}/search-combo-box-dtos";
+    public const string GetOrderByComboboxDtosReturnsEndpoint = $"{ReturnsEndpoint}/order-by-combo-box-dtos";
 
     // Reviews 
     public const string ReviewsEndpoint = "api/reviews";
@@ -76,6 +88,10 @@ public static class GlobalConstants
 
     // Invoices
     public const string InvoiceEndpoint = "api/invoice";
+
+    // Analitics
+    public const string AnaliticsEndpoint = "api/analitics";
+
 
     // Coupons
     public const string CouponEndpoint = "api/coupon";

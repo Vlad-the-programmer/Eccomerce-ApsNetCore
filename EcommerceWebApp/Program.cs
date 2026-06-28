@@ -15,9 +15,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddDistributedMemoryCache(); // Required for session storage
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+    options.IdleTimeout = TimeSpan.FromDays(30); // Set session timeout
     options.Cookie.HttpOnly = true; // Prevents JavaScript access (security)
     options.Cookie.IsEssential = true; // Ensures session is maintained
+    options.Cookie.MaxAge = TimeSpan.FromDays(30);
 });
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

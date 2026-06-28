@@ -2,6 +2,7 @@
 using EcommerceRestApi.Helpers.Enums;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceRestApi.Helpers.Data.Functions
@@ -21,7 +22,7 @@ namespace EcommerceRestApi.Helpers.Data.Functions
         /// Generates an invoice for a completed payment.
         /// </summary>
 
-        public async static Task<Invoice?> GenerateInvoice(Order? item, AppDbContext context)
+        public async static Task<Invoice?> GenerateInvoice(Order? item, AppDbContext context, INotificationService _notificationService)
         {
             if (item == null) return null;
 
@@ -59,6 +60,10 @@ namespace EcommerceRestApi.Helpers.Data.Functions
             }
 
             await context.SaveChangesAsync();
+
+            var message = $"You can download your Invoice in the Order Detail page in your profile!";
+            await _notificationService.AddNotificationForCustomerAsync(item.CustomerId, message);
+
             return await context.Invoices
                .Include(i => i.InvoiceItems)
                    .ThenInclude(it => it.Product)
@@ -69,8 +74,11 @@ namespace EcommerceRestApi.Helpers.Data.Functions
         /// <summary>
         /// Marks an invoice as paid.
         /// </summary>
-        private async static Task<bool> MarkInvoiceAsPaid(int invoiceId, Order order, AppDbContext context)
+        private async static Task<bool> MarkInvoiceAsPaid(int invoiceId, Order order, AppDbContext context, INotificationService _notificationService)
         {
+            var message = "";
+
+
             var invoice = await context.Invoices.FindAsync(invoiceId);
             if (invoice == null)
                 return false;
@@ -81,6 +89,10 @@ namespace EcommerceRestApi.Helpers.Data.Functions
                 invoice.IsPaid = false;
                 invoice.DateUpdated = DateTime.Now;
                 await context.SaveChangesAsync();
+
+                message = $"You did not pay for your order #{invoice.Order.Code} yet!";
+                await _notificationService.AddNotificationForCustomerAsync(invoice.CustomerId, message);
+
                 return false;
             }
 
@@ -89,10 +101,15 @@ namespace EcommerceRestApi.Helpers.Data.Functions
             invoice.DateUpdated = DateTime.Now;
 
             await context.SaveChangesAsync();
+
+            message = $"Your invoice #{invoice.Number} is paid!";
+            await _notificationService.AddNotificationForCustomerAsync(invoice.CustomerId, message);
+
             return true;
         }
 
-        public static async Task CreatePayment(Order order, int paymentMethodId, int invoiceId, AppDbContext context)
+        public static async Task CreatePayment(Order order, int paymentMethodId,
+            int invoiceId, AppDbContext context, INotificationService _notificationService)
         {
             var payment = new Payment
             {
@@ -112,7 +129,10 @@ namespace EcommerceRestApi.Helpers.Data.Functions
             context.Orders.Update(order);
             await context.SaveChangesAsync();
 
-            await MarkInvoiceAsPaid(invoiceId, order, context);
+            var message = $"Your payment for the order #{order.Code} is succesfull!";
+            await _notificationService.AddNotificationForCustomerAsync(order.CustomerId, message);
+
+            await MarkInvoiceAsPaid(invoiceId, order, context, _notificationService);
         }
 
         public async static Task<Payment?> GetPaymentByOrderId(int orderId, AppDbContext context)

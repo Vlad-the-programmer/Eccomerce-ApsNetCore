@@ -35,24 +35,26 @@ namespace EcommerceRestApi.Models.Context
         public virtual DbSet<OrderItem> OrderItems { get; set; }
 
         public virtual DbSet<Payment> Payments { get; set; }
-
         public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
-
         public virtual DbSet<Product> Products { get; set; }
-
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
-
         public virtual DbSet<Review> Reviews { get; set; }
-
         public virtual DbSet<Shipment> Shipments { get; set; }
-
         public virtual DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
-
         public virtual DbSet<Subcategory> Subcategories { get; set; }
         public virtual DbSet<Coupon> Coupons { get; set; }
         public virtual DbSet<OrderCoupon> OrderCoupons { get; set; }
         public virtual DbSet<Wishlist> Wishlists { get; set; }
         public virtual DbSet<WishlistItem> WishlistItems { get; set; }
+        public virtual DbSet<ShopCoin> ShopCoins { get; set; }
+        public virtual DbSet<ShopCoinTransactionHistory> ShopCoinTransactions { get; set; }
+        public virtual DbSet<ShopCoinSettings> ShopCoinSettings { get; set; }
+        public virtual DbSet<Notification> Notification { get; set; }
+        public virtual DbSet<Refund> Refund { get; set; }
+        public virtual DbSet<RefundItem> RefundItem { get; set; }
+        public virtual DbSet<Return> Return { get; set; }
+        public virtual DbSet<OrderStatusHistory> OrderStatusHistory { get; set; }
+        public virtual DbSet<RefundStatusHistory> RefundStatusHistory { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -60,6 +62,195 @@ namespace EcommerceRestApi.Models.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Refund>(entity =>
+            {
+                entity.ToTable("Refunds");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Amount)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .HasDefaultValue("Pending");
+
+                entity.Property(e => e.DateCreated)
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(e => e.Payment)
+                    .WithMany(p => p.Refunds)
+                    .HasForeignKey(e => e.PaymentId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(e => e.Return)
+                    .WithOne(r => r.Refund)
+                    .HasForeignKey<Return>(r => r.RefundId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+            });
+
+            modelBuilder.Entity<Return>(entity =>
+            {
+                entity.ToTable("Returns");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Reason)
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .HasDefaultValue("Pending");
+
+                entity.Property(e => e.RefundAmount)
+                    .HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.DateCreated)
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(e => e.Order)
+                    .WithMany(o => o.Returns)
+                    .HasForeignKey(e => e.OrderId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(e => e.Customer)
+                    .WithMany(c => c.Returns)
+                    .HasForeignKey(e => e.CustomerId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasIndex(e => e.RefundId).IsUnique();
+            });
+
+            modelBuilder.Entity<RefundItem>(entity =>
+            {
+                entity.ToTable("RefundItems");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.RefundAmount)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.Reason)
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.DateCreated)
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(x => x.Refund)
+                .WithMany(r => r.RefundItems)
+                .HasForeignKey(x => x.RefundId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(x => x.OrderItem)
+                    .WithMany()
+                    .HasForeignKey(x => x.OrderItemId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<OrderStatusHistory>(entity =>
+            {
+                entity.ToTable("OrderStatusHistory");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.DateCreated)
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(e => e.Order)
+                    .WithMany(o => o.StatusHistory)
+                    .HasForeignKey(e => e.OrderId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.ToTable("Notifications");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Message)
+                    .HasMaxLength(500)
+                    .IsRequired();
+
+                entity.Property(e => e.IsRead)
+                    .HasDefaultValue(false);
+
+                entity.Property(e => e.DateCreated)
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(e => e.Customer)
+                    .WithMany(c => c.Notifications)
+                    .HasForeignKey(e => e.CustomerId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(e => e.User)
+                    .WithMany(u => u.Notifications)
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<ShopCoinSettings>(entity =>
+            {
+                entity.ToTable("ShopCoinSettings");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.EarnRate)
+                    .HasColumnType("decimal(10,2)");
+
+                entity.Property(e => e.SpendRate)
+                    .HasColumnType("decimal(10,2)");
+
+                entity.Property(e => e.MaxSpendPercentage)
+                    .HasColumnType("decimal(5,2)");
+
+                entity.Property(e => e.DateCreated)
+                    .HasDefaultValueSql("(getdate())");
+            });
+
+
+            modelBuilder.Entity<ShopCoin>()
+               .HasOne(sc => sc.Customer)
+               .WithMany()
+               .HasForeignKey(sc => sc.CustomerId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ShopCoinTransactionHistory>()
+                .HasOne(t => t.Customer)
+                .WithMany()
+                .HasForeignKey(t => t.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ShopCoinTransactionHistory>()
+                .HasOne(t => t.Order)
+                .WithMany(o => o.ShopCoinTransactionHistory)
+                .HasForeignKey(t => t.OrderId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<RefundStatusHistory>(entity =>
+            {
+                entity.ToTable("RefundStatusHistory");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.DateCreated)
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(e => e.Refund)
+                    .WithMany(o => o.RefundStatusHistory)
+                    .HasForeignKey(e => e.RefundId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             modelBuilder.Entity<Address>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("PK__Addresse__3214EC073E442168");
@@ -488,6 +679,43 @@ namespace EcommerceRestApi.Models.Context
                     .IsUnique()
                     .HasDatabaseName("IX_WishlistItems_WishlistProduct");
             });
+
+            modelBuilder.Entity<ShopCoinSettings>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.EarnRate)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.SpendRate)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.MaxSpendPercentage)
+                    .HasColumnType("decimal(5,2)")
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Message)
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.IsRead)
+                    .HasDefaultValue(false);
+
+                entity.Property(e => e.DateCreated)
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(e => e.Customer)
+                    .WithMany(c => c.Notifications)
+                    .HasForeignKey(e => e.CustomerId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
 
             // Explicitly configure the primary key for IdentityUserLogin
             modelBuilder.Entity<IdentityUserLogin<string>>()

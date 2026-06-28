@@ -12,115 +12,138 @@
             <h2>Your shopping cart summary</h2>
         </div>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Selected amount</th>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Subtotal</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.ShoppingCartItems)
-                {
+        <form id="orderForm" asp-controller="Orders" asp-action="SelectCartItems" method="post">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td class="align-middle">@item.Amount</td>
-                        <td class="align-middle">@item.ProductName</td>
-                        <td class="align-middle">@item.ProductPrice.ToString("c")</td>
-                        <td class="align-middle">@( (item.Amount * item.ProductPrice ).ToString("c"))</td>
-                        <td class="align-middle">
-                            <form asp-controller="Cart" asp-action="RemoveItemFromCart" asp-route-productId="@item.ProductId" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-link text-danger p-0 m-0" style="text-decoration: none;">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                            |
-                            <form asp-controller="Cart" asp-action="AddItemToCart" asp-route-productId="@item.ProductId" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-link text-success p-0 m-0" style="text-decoration: none;">
-                                    <i class="bi bi-cart-plus"></i>
-                                </button>
-                            </form>
-
-                        </td>
+                        <th>
+                            <input type="checkbox" id="selectAll" checked />
+                            <label for="selectAll">Select All</label>
+                        </th>
+                        <th>Selected amount</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="2"></td>
-                    <td><b>Total:</b></td>
-                    <td>
-                        @Model.CartTotal.ToString("c")
-                    </td>
-                    <td></td>
-                </tr>
-            </tfoot>
-        </table>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.ShoppingCartItems.Count; i++)
+                    {
+                        var item = Model.ShoppingCartItems[i];
+                        <tr>
+                            <td class="align-middle">
+                                <input type="checkbox"
+                                       class="item-checkbox"
+                                       name="SelectedItemIds"
+                                       value="@item.ProductId"
+                                       checked="@item.IsSelected"
+                                       data-price="@item.ProductPrice"
+                                       data-amount="@item.Amount" />
+                            </td>
+                            <td class="align-middle">@item.Amount</td>
+                            <td class="align-middle">@item.ProductName</td>
+                            <td class="align-middle">@item.ProductPrice.ToString("c")</td>
+                            <td class="align-middle subtotal">@((item.Amount * item.ProductPrice).ToString("c"))</td>
+                            <td class="align-middle">
+                                <form asp-controller="Cart" asp-action="RemoveItemFromCart" asp-route-productId="@item.ProductId" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-link text-danger p-0 m-0" style="text-decoration: none;">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                                |
+                                <form asp-controller="Cart" asp-action="AddItemToCart" asp-route-productId="@item.ProductId" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-link text-success p-0 m-0" style="text-decoration: none;">
+                                        <i class="bi bi-cart-plus"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td><b>Total:</b></td>
+                        <td id="selectedTotal">
+                            @Model.CartTotal.ToString("c")
+                        </td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
 
-        <div class="btn-group">
-            <a class="btn btn-outline-primary  @(!Model.ShoppingCartItems.Any() ? "disabled" : "") " asp-controller="Orders" asp-action="Create">
-                Complete order
-            </a>
+            <div class="btn-group">
+                <button type="submit" class="btn btn-outline-primary @(!Model.ShoppingCartItems.Any() ? "disabled" : "")" id="completeOrderBtn">
+                    Complete order (<span id="selectedCount">@Model.ShoppingCartItems.Count</span> items)
+                </button>
 
-            <a class="btn btn-outline-danger" asp-controller="Cart" asp-action="Clear" asp-route-returnUrl="@Context.Request.Path">
-                Clear cart
-            </a>
+                <a class="btn btn-outline-danger" asp-controller="Cart" asp-action="Clear" asp-route-returnUrl="@Context.Request.Path">
+                    Clear cart
+                </a>
 
-            <a class="btn btn-outline-success" asp-controller="Products" asp-action="Index">
-                Add more items
-            </a>
-        </div>
-
-
+                <a class="btn btn-outline-success" asp-controller="Products" asp-action="Index">
+                    Add more items
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 
 @section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Select All functionality
+            $('#selectAll').change(function() {
+                var isChecked = $(this).prop('checked');
+                $('.item-checkbox').prop('checked', isChecked);
+                updateTotalAndCount();
+            });
 
-    @* <script src="https://www.paypalobjects.com/api/checkout.js"></script> *@
+            // Individual checkbox changes
+            $('.item-checkbox').change(function() {
+                updateTotalAndCount();
 
-    @* <script> *@
+                // Update Select All checkbox state
+                var allChecked = $('.item-checkbox:checked').length === $('.item-checkbox').length;
+                $('#selectAll').prop('checked', allChecked);
+            });
 
-    @*     let _total = @Html.Raw(Model.CartTotal); *@
+            // Update total and count when page loads
+            updateTotalAndCount();
 
-    @*     paypal.Button.render({ *@
-    @*         //Configure environment *@
-    @*         env: 'sandbox', *@
-    @*         client: { *@
-    @*             sandbox: 'AbYdwuNP8Q__4T5JbL-iCEHGzrAK9GAl5LiPskc5FkEiZUJSFeR5tt8auSvBTswOjdbivInW0PEKE_Ry' *@
-    @*         }, *@
+            // Form submission validation
+            $('#orderForm').submit(function(e) {
+                var selectedItems = $('.item-checkbox:checked');
+                if (selectedItems.length === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one item to complete the order.');
+                    return false;
+                }
+                return true;
+            });
 
-    @*         //Customize button *@
-    @*         locale: 'en_US', *@
-    @*         style: { *@
-    @*             size: 'small', *@
-    @*             color: 'gold', *@
-    @*             shape: 'pill' *@
-    @*         }, *@
-    @*         commit: true, *@
+            function updateTotalAndCount() {
+                var total = 0;
+                var count = 0;
 
-    @*         //Set up a payment *@
-    @*         payment: function (data, actions) { *@
-    @*             return actions.payment.create({ *@
-    @*                 transactions: [{ *@
-    @*                     amount: { *@
-    @*                         total: _total, *@
-    @*                         currency: 'USD' *@
-    @*                     } *@
-    @*                 }] *@
-    @*             }); *@
-    @*         }, *@
+                $('.item-checkbox:checked').each(function() {
+                    var price = parseFloat($(this).data('price'));
+                    var amount = parseInt($(this).data('amount'));
+                    total += price * amount;
+                    count++;
+                });
 
-    @*         //Execute the payment *@
-    @*         onAuthorize: function (data, actions) { *@
-    @*             return actions.payment.execute().then(function () { *@
-    @*                 var url = '@Url.Action("CompleteOrder", "Orders", new { })'; *@
-    @*                 window.location.href = url; *@
-    @*             }); *@
-    @*         } *@
+                $('#selectedTotal').text(total.toFixed(2) + ' $');
+                $('#selectedCount').text(count);
 
-    @*     }, '#paypal-btn') *@
-    @* </script> *@
+                // Disable/enable complete order button
+                if (count === 0) {
+                    $('#completeOrderBtn').addClass('disabled');
+                } else {
+                    $('#completeOrderBtn').removeClass('disabled');
+                }
+            }
+        });
+    </script>
 }

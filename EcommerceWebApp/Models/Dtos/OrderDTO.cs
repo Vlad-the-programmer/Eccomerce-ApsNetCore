@@ -13,6 +13,7 @@
         public CustomerDTO Customer { get; set; } = new CustomerDTO();
 
         public IList<OrderItemDTO> OrderItems { get; set; } = new List<OrderItemDTO>();
+        public IList<OrderStatusHistoryDto> StatusHistory { get; set; } = new List<OrderStatusHistoryDto>();
 
         public string DeliveryMethod { get; set; }
 

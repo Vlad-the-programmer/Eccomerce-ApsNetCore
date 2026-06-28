@@ -14,7 +14,6 @@ namespace EcommerceRestApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = UserRoles.Admin)]
     public class UsersManagementController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -29,6 +28,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpGet("get-staff-users")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> GetStaffUsers()
         {
             var users = await _usersManagerService.GetStaffUsers();
@@ -36,8 +36,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpGet("get-update-user-model/{id}")]
-        [Authorize(Roles = UserRoles.Admin)]
-        [Authorize(Policy = Permissions.ManageUsers)]
+        [Authorize(Roles = $"{UserRoles.Admin}, {UserRoles.Stuff}")]
         public async Task<IActionResult> GetUpdateUserModel(string id)
         {
             var user = await _userManager.Users
@@ -55,7 +54,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = Permissions.ManageUsers)]
+        [Authorize(Roles = $"{UserRoles.Admin}, {UserRoles.Stuff}")]
         public async Task<IActionResult> Update(string id, [FromBody] StaffUpdateVM model)
         {
 
@@ -80,11 +79,12 @@ namespace EcommerceRestApi.Controllers
                 return NotFound();
             }
 
-            await _usersManagerService.UpdateStaffAsync(user, model);
+            await _usersManagerService.UpdateStaffAsync(user, model, user.Role);
             return NoContent();
         }
 
         [HttpGet("{userId}/permissions")]
+        [Authorize(Policy = Permissions.ManageUsers)]
         public async Task<IActionResult> GetPermissions(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -144,6 +144,45 @@ namespace EcommerceRestApi.Controllers
             var result = await _usersManagerService.CreateStaff(model);
 
             return Ok(result);
+        }
+
+        [HttpGet("filter-staff")]
+        [Authorize(Policy = Permissions.ManageUsers)]
+        public async Task<IActionResult> Filter(
+               [FromQuery] string searchString = "",
+               [FromQuery] string? searchProperty = null,
+               [FromQuery] string? sortProperty = null,
+               [FromQuery] string? statusFilter = null,
+               [FromQuery] bool sortAscending = false)
+        {
+            try
+            {
+                var filteredStaff = await _usersManagerService.FilterStaffAsync(
+                    searchString, searchProperty, sortProperty, statusFilter, sortAscending);
+                return Ok(filteredStaff);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseModel
+                {
+                    Message = "An error occurred while filtering products.",
+                    Errors = new List<string>().Append(ex.Message).ToList()
+                });
+            }
+        }
+
+        [HttpGet("search-combo-box-dtos")]
+        public IActionResult GetSearchComboBoxDtos()
+        {
+            var dtos = _usersManagerService.GetSearchComboBoxDtos();
+            return Ok(dtos);
+        }
+
+        [HttpGet("order-by-combo-box-dtos")]
+        public IActionResult GetOrderByComboBoxDtos()
+        {
+            var dtos = _usersManagerService.GetOrderByComboBoxDtos();
+            return Ok(dtos);
         }
 
         public class UpdatePermissionsDto

@@ -23,8 +23,8 @@ namespace EcommerceRestApi.Controllers
             _httpContextAccessor = httpContextAccessor;
             _context = context;
             _session = _httpContextAccessor?.HttpContext?.Session;
-            _cart = new ShoppingCart(_context, _session).GetShoppingCart();
-            ShoppingCartId = _cart.IdCartSession;
+            _cart = new ShoppingCart(_context, _session, httpContextAccessor);
+            ShoppingCartId = _cart.GetCartId();
             Debug.WriteLine($"Shopping cart id: {ShoppingCartId}");
         }
 
@@ -128,7 +128,7 @@ namespace EcommerceRestApi.Controllers
                 return NotFound(new ResponseModel { Message = "Cart does not exist" });
             }
 
-            await _cart.ClearCart();
+            await _cart.ClearCart(null);
 
             return Ok();
         }

@@ -3,6 +3,7 @@ using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace EcommerceRestApi.Helpers.Cart
 {
@@ -10,46 +11,85 @@ namespace EcommerceRestApi.Helpers.Cart
     {
         private readonly AppDbContext _context;
         private readonly ISession _session;
-        public string IdCartSession;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly string _cartId;
+        private readonly string _userId;
+        private readonly bool _isAuthenticated;
 
-        public ShoppingCart(AppDbContext context, ISession session)
+        public ShoppingCart(
+            AppDbContext context,
+            ISession session,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _session = session;
-            IdCartSession = session.GetString("CartId") ?? Guid.NewGuid().ToString();
-            Debug.WriteLine($"CartId: {IdCartSession}");
+            _httpContextAccessor = httpContextAccessor;
+
+            var user = _httpContextAccessor.HttpContext?.User;
+            _isAuthenticated = user?.Identity?.IsAuthenticated ?? false;
+            _userId = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            _cartId = GetOrCreateCartId();
+
+            Debug.WriteLine($"CartId: {_cartId}, UserId: {_userId}, IsAuthenticated: {_isAuthenticated}");
         }
 
-        public ShoppingCart GetShoppingCart()
+        private string GetOrCreateCartId()
         {
-            _session.SetString("CartId", IdCartSession);
-            return new ShoppingCart(_context, _session);
+            // For authenticated users, use their user ID as the cart identifier
+            if (_isAuthenticated && !string.IsNullOrEmpty(_userId))
+            {
+                // Check if user has an existing cart
+                var existingCart = _context.ShoppingCartItems
+                    .FirstOrDefault(c => c.UserId == _userId && c.IsActive);
+
+                if (existingCart != null)
+                {
+                    return existingCart.ShoppingCartId;
+                }
+
+                // Create a new cart ID for the user
+                var cartId = $"USER_{_userId}_{Guid.NewGuid()}";
+                _session.SetString("CartId", cartId);
+                return cartId;
+            }
+
+            // For guest users, use session ID
+            var sessionCartId = _session.GetString("CartId");
+            if (!string.IsNullOrEmpty(sessionCartId))
+            {
+                return sessionCartId;
+            }
+
+            // Create new guest cart
+            var newCartId = $"GUEST_{Guid.NewGuid()}";
+            _session.SetString("CartId", newCartId);
+            return newCartId;
         }
+
+        public string GetCartId() => _cartId;
+        public string GetUserId() => _userId;
+        public bool IsAuthenticated() => _isAuthenticated;
 
         public async Task AddToCartHandler(int productId)
         {
             var product = await _context.Products.FindAsync(productId);
-            if (product == null)
-            {
-                return;
-            }
+            if (product == null) return;
 
-            //check if item is already in cart!
-            var cartItem =
-                (
-                from cartitem in _context.ShoppingCartItems
-                where cartitem.ShoppingCartId == this.IdCartSession
-                        && cartitem.ProductId == productId
-                        && cartitem.IsActive == true
-                select cartitem
-                ).FirstOrDefault();
+            // Check if item is already in cart
+            var cartItem = await _context.ShoppingCartItems
+                .FirstOrDefaultAsync(c =>
+                    c.ShoppingCartId == _cartId &&
+                    c.ProductId == productId &&
+                    c.IsActive);
 
             if (cartItem == null)
             {
                 cartItem = new ShoppingCartItem
                 {
                     ProductId = productId,
-                    ShoppingCartId = this.IdCartSession,
+                    ShoppingCartId = _cartId,
+                    UserId = _userId, // Store user ID if authenticated
                     Product = product,
                     Amount = 1,
                     DateCreated = DateTime.Now,
@@ -57,122 +97,256 @@ namespace EcommerceRestApi.Helpers.Cart
                 };
                 _context.ShoppingCartItems.Add(cartItem);
             }
-            else
+            else if (product.Stock > cartItem.Amount)
             {
-                if (!(product.Stock < cartItem.Amount + 1))
-                {
-                    cartItem.Amount++;
-                    _context.Entry(cartItem).State = EntityState.Modified;
-                }
+                cartItem.Amount++;
+                _context.Entry(cartItem).State = EntityState.Modified;
             }
+
             await _context.SaveChangesAsync();
+
+            // Update session expiry for guest users
+            if (!_isAuthenticated)
+            {
+                _session.SetString("CartId", _cartId);
+                _session.SetInt32("CartLastActivity", (int)DateTime.UtcNow.Ticks);
+            }
         }
 
         public async Task DeleteFromCartHandler(int productId)
         {
-            var cartItem = await _context.ShoppingCartItems.FirstOrDefaultAsync(item =>
-                                                    item.ShoppingCartId == IdCartSession
-                                                    && item.ProductId == productId);
-            if (cartItem != null)
+            var cartItem = await _context.ShoppingCartItems
+                .FirstOrDefaultAsync(item =>
+                    item.ShoppingCartId == _cartId &&
+                    item.ProductId == productId &&
+                    item.IsActive);
+
+            if (cartItem == null) return;
+
+            if (cartItem.Amount <= 1)
             {
-                if (cartItem.Amount <= 1)
-                {
-                    await DeleteCratItem(cartItem.Id);
-                }
-                else
-                {
-                    cartItem.Amount--;
-                    _context.Entry(cartItem).State = EntityState.Modified;
-                }
+                await DeleteCartItem(cartItem.Id);
+            }
+            else
+            {
+                cartItem.Amount--;
+                _context.Entry(cartItem).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
         }
+
         public async Task<List<ShoppingCartItemDTO>> GetCartItems()
-            => await _context.ShoppingCartItems
-                .Where(item => item.ShoppingCartId == IdCartSession
-                               && item.IsActive)
+        {
+            var query = await _context.ShoppingCartItems
                 .Include(item => item.Product)
+                .Where(item => item.ShoppingCartId == _cartId && item.IsActive)
+                .ToListAsync();
+
+            // For authenticated users, also check by user ID
+            if (_isAuthenticated && !string.IsNullOrEmpty(_userId))
+            {
+                query = query.Where(item => item.UserId == _userId || item.UserId == null).ToList();
+            }
+
+            return query
                 .Select(item => new ShoppingCartItemDTO
                 {
                     Id = item.Id,
                     Amount = item.Amount,
-                    ShoppingCartId = IdCartSession,
+                    ShoppingCartId = item.ShoppingCartId,
                     ProductId = item.ProductId,
                     ProductName = item.Product.Name,
                     ProductPrice = item.Product.Price,
-                    DateCreated = DateTime.Now
-                })
-                .ToListAsync();
-
+                    DateCreated = item.DateCreated
+                }).ToList();
+        }
 
         public async Task<decimal> GetTotal()
         {
-            var items =
-            (
-                from element in _context.ShoppingCartItems
-                where element.ShoppingCartId == IdCartSession
-                select (decimal?)element.Amount * element.Product.Price
-                );
+            var items = _context.ShoppingCartItems
+                .Where(item => item.ShoppingCartId == _cartId && item.IsActive)
+                .Select(item => (decimal?)item.Amount * item.Product.Price);
 
             return await items.SumAsync() ?? decimal.Zero;
         }
 
-        public async Task DeleteCratItem(int id)
+        public async Task DeleteCartItem(int id)
         {
             var cartItem = await _context.ShoppingCartItems
-                                    .FirstOrDefaultAsync(item =>
-                                        item.ShoppingCartId == IdCartSession
-                                        && item.Id == id);
+                .FirstOrDefaultAsync(item =>
+                    item.ShoppingCartId == _cartId &&
+                    item.Id == id &&
+                    item.IsActive);
 
             if (cartItem == null) return;
 
             cartItem.IsActive = false;
             cartItem.DateDeleted = DateTime.Now;
-
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Order> ConvertToOrder(Order order)
+        public async Task<Order> ConvertToOrder(Order order, List<int> cartItemsIds)
         {
             var orderItems = await _context.ShoppingCartItems
-                                    .Where(item =>
-                                            item.ShoppingCartId == IdCartSession
-                                            && item.IsActive)
-                                    .Include(item => item.Product)
-                                    .ToListAsync();
-            //order.TotalAmount = await GetTotal();
-            //order.TotalAmount *= AppConstants.TAXES_RATE;
+                .Where(item => item.ShoppingCartId == _cartId
+                               && item.IsActive
+                               && cartItemsIds.Contains(item.ProductId))
+                .Include(item => item.Product)
+                .ToListAsync();
 
-            order.OrderItems = orderItems.Select(cartItem =>
-                                    OrderItem.CartItemToOrderItem(cartItem, order.Id))
-                                .ToList();
+            if (!orderItems.Any())
+            {
+                throw new Exception("No items selected for the order.");
+            }
+
+            order.OrderItems = orderItems
+                .Select(cartItem => OrderItem.CartItemToOrderItem(cartItem, order.Id))
+                .ToList();
+
+            order.TotalAmount = orderItems.Sum(item => item.Product.Price * item.Amount);
 
             foreach (var item in orderItems)
             {
-                if (item == null)
-                {
-                    continue;
-                }
                 var orderItem = OrderItem.CartItemToOrderItem(item, order.Id);
                 await _context.OrderItems.AddAsync(orderItem);
-
-                // Delete items from cart after submitting an order
-                await DeleteCratItem(item.Id);
+                await DeleteCartItem(item.Id);
             }
 
             await _context.SaveChangesAsync();
             return order;
         }
 
-        public async Task ClearCart()
+        public async Task ClearCart(List<int>? SelectedItemsIds)
         {
-            var cartItems = await GetCartItems();
+            var cartItems = await _context.ShoppingCartItems
+                .Where(item => item.ShoppingCartId == _cartId && item.IsActive && SelectedItemsIds.Contains(item.ProductId))
+                .ToListAsync();
 
-            foreach (var cartItem in cartItems)
+            foreach (var item in cartItems)
             {
-                await DeleteCratItem(cartItem.Id);
+                item.IsActive = false;
+                item.DateDeleted = DateTime.Now;
             }
+
+            await _context.SaveChangesAsync();
         }
 
+        // Method to merge guest cart into user cart on login
+        public async Task MergeCartWithUser(string userId, string guestCartId)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(guestCartId))
+                return;
+
+            // Get guest cart items
+            var guestItems = await _context.ShoppingCartItems
+                .Where(item => item.ShoppingCartId == guestCartId && item.IsActive)
+                .ToListAsync();
+
+            if (!guestItems.Any())
+            {
+                // No items to merge, just update the cart ID
+                await UpdateCartIdForUser(userId);
+                return;
+            }
+
+            // Get or create user's cart
+            var userCartId = await GetOrCreateUserCartId(userId);
+
+            // Merge items
+            foreach (var guestItem in guestItems)
+            {
+                // Check if product already exists in user's cart
+                var existingItem = await _context.ShoppingCartItems
+                    .FirstOrDefaultAsync(item =>
+                        item.ShoppingCartId == userCartId &&
+                        item.ProductId == guestItem.ProductId &&
+                        item.IsActive);
+
+                if (existingItem != null)
+                {
+                    // Combine quantities
+                    existingItem.Amount += guestItem.Amount;
+                    _context.Entry(existingItem).State = EntityState.Modified;
+                }
+                else
+                {
+                    // Move guest item to user's cart
+                    guestItem.ShoppingCartId = userCartId;
+                    guestItem.UserId = userId;
+                    _context.Entry(guestItem).State = EntityState.Modified;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Update session with new cart ID
+            _session.SetString("CartId", userCartId);
+
+            // Clear guest cart
+            await ClearGuestCart(guestCartId);
+        }
+
+        private async Task<string> GetOrCreateUserCartId(string userId)
+        {
+            var existingCart = await _context.ShoppingCartItems
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.IsActive);
+
+            if (existingCart != null)
+            {
+                return existingCart.ShoppingCartId;
+            }
+
+            var cartId = $"USER_{userId}_{Guid.NewGuid()}";
+            return cartId;
+        }
+
+        private async Task UpdateCartIdForUser(string userId)
+        {
+            var cartId = $"USER_{userId}_{Guid.NewGuid()}";
+            _session.SetString("CartId", cartId);
+        }
+
+        private async Task ClearGuestCart(string guestCartId)
+        {
+            var guestItems = await _context.ShoppingCartItems
+                .Where(item => item.ShoppingCartId == guestCartId && item.IsActive)
+                .ToListAsync();
+
+            foreach (var item in guestItems)
+            {
+                item.IsActive = false;
+                item.DateDeleted = DateTime.Now;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task CleanupAbandonedCarts(int daysOld = 30)
+        {
+            var cutoffDate = DateTime.Now.AddDays(-daysOld);
+            var abandonedCarts = await _context.ShoppingCartItems
+                .Where(item =>
+                    item.IsActive &&
+                    item.DateCreated < cutoffDate &&
+                    string.IsNullOrEmpty(item.UserId))
+                .Select(item => item.ShoppingCartId)
+                .Distinct()
+                .ToListAsync();
+
+            foreach (var cartId in abandonedCarts)
+            {
+                var items = await _context.ShoppingCartItems
+                    .Where(item => item.ShoppingCartId == cartId && item.IsActive)
+                    .ToListAsync();
+
+                foreach (var item in items)
+                {
+                    item.IsActive = false;
+                    item.DateDeleted = DateTime.Now;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
+using EcommerceRestApi.Models.Dtos;
 
 namespace EcommerceRestApi.Services
 {
@@ -11,5 +12,6 @@ namespace EcommerceRestApi.Services
         public Task<ApplicationUser> GetUserByIDAsync(string id);
 
         public Task UpdateUserAsync(string id, UserUpdateVM data);
+        public Task<UserProfileDto> GetUserProfile(string userId);
     }
 }

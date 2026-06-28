@@ -23,10 +23,18 @@
                 </button>
 
                 <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
-                    <ul class="navbar-nav">
-                        @await Component.InvokeAsync("ShoppingCartSummary")
-                    </ul>
-
+                    @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin") && !User.IsInRole("Stuff"))
+                    {
+                        <ul class="navbar-nav">
+                            @await Component.InvokeAsync("ShoppingCartSummary")
+                        </ul>
+                        <ul class="navbar-nav">
+                            @await Component.InvokeAsync("WishListSummary")
+                        </ul>
+                        <ul class="navbar-nav pe-3">
+                            @await Component.InvokeAsync("NotificationSummary")
+                        </ul>
+                    }
                     <partial name="_Identity.cshtml" />
                 </div>
             </div>

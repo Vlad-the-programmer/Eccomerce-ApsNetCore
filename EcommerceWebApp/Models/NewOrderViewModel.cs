@@ -18,6 +18,7 @@ namespace EcommerceWebApp.Models
         public int OrderStatus { get; set; }
 
         public string? CouponCode { get; set; }
+        public List<int> SelectedItemsIds { get; set; } = new List<int>();
     }
 
 }

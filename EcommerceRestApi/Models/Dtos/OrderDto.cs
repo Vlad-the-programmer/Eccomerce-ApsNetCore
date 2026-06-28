@@ -17,6 +17,7 @@ namespace EcommerceRestApi.Models.Dtos
         public OrderCustomerDTO Customer { get; set; } = new OrderCustomerDTO();
 
         public IList<OrderItemDTO> OrderItems { get; set; } = new List<OrderItemDTO>();
+        public IList<OrderStatusHistoryDto> StatusHistory { get; set; } = new List<OrderStatusHistoryDto>();
 
         public string DeliveryMethod { get; set; }
 
@@ -48,7 +49,12 @@ namespace EcommerceRestApi.Models.Dtos
                     ProductBrand = oi.Product.Brand,
                 }).ToList(),
                 Customer = new OrderCustomerDTO(),
-                IsPaid = order.IsPaid
+                IsPaid = order.IsPaid,
+                StatusHistory = order.StatusHistory.Select(s => new OrderStatusHistoryDto
+                {
+                    Status = s.Status,
+                    DateCreated = s.DateCreated
+                }).ToList()
             };
 
             orderDto.Customer = OrderCustomerDTO.ToVM(order.Customer, userManager);

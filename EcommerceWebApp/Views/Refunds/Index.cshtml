@@ -1,0 +1,603 @@
+﻿@using EcommerceWebApp.AppGlobals
+@model List<EcommerceWebApp.Models.Dtos.RefundDto>
+@{
+    ViewData["Title"] = "My Refunds";
+    Layout = "_Layout";
+}
+
+<style>
+    /* Refund Card Styles */
+    .refund-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+
+    .refund-card:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        transform: translateY(-2px);
+    }
+
+    .refund-card .card-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-bottom: 2px solid #dee2e6;
+        padding: 1rem 1.25rem;
+    }
+
+    .refund-status-badge {
+        padding: 0.35rem 1rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .refund-status-badge i {
+        font-size: 0.9rem;
+    }
+
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffc107;
+    }
+
+    .status-approved {
+        background-color: #cce5ff;
+        color: #004085;
+        border: 1px solid #007bff;
+    }
+
+    .status-rejected {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #dc3545;
+    }
+
+    .status-processed {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #17a2b8;
+    }
+
+    .status-completed {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #28a745;
+    }
+
+    .status-failed {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #dc3545;
+    }
+
+    .refund-items-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        padding: 0.5rem 0;
+    }
+
+    .refund-item-card {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: background 0.2s ease;
+    }
+
+    .refund-item-card:hover {
+        background: #e9ecef;
+    }
+
+    .refund-item-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        flex-shrink: 0;
+    }
+
+    .refund-item-details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .refund-item-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #212529;
+        margin-bottom: 0.1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .refund-item-brand {
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+
+    .refund-item-meta {
+        display: flex;
+        gap: 0.75rem;
+        font-size: 0.8rem;
+        color: #495057;
+        margin-top: 0.25rem;
+    }
+
+    .refund-item-meta span {
+        background: white;
+        padding: 0.1rem 0.3rem;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+    }
+
+    .refund-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        padding: 0.5rem 0;
+    }
+
+    .refund-summary-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .refund-summary-item .label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .refund-summary-item .value {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #212529;
+    }
+
+    .refund-amount {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #28a745;
+    }
+
+    .refund-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h4 {
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+        max-width: 400px;
+        margin: 0 auto 1.5rem;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .refund-items-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .refund-summary {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .refund-card .card-header {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .refund-actions {
+            width: 100%;
+        }
+
+        .refund-actions .btn {
+            flex: 1;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .refund-item-image {
+            width: 50px;
+            height: 50px;
+        }
+
+        .refund-item-name {
+            font-size: 0.8rem;
+        }
+
+        .refund-status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+        }
+    }
+
+    /* Animation */
+    .refund-card {
+        animation: fadeInUp 0.5s ease;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .refund-card:nth-child(2) { animation-delay: 0.1s; }
+    .refund-card:nth-child(3) { animation-delay: 0.2s; }
+    .refund-card:nth-child(4) { animation-delay: 0.3s; }
+    .refund-card:nth-child(5) { animation-delay: 0.4s; }
+</style>
+
+@section top {
+    <div class="bg-light py-4 border-bottom shadow-sm mb-4">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-0">My Refunds</h1>
+                    <p class="text-muted small mb-0">Track and manage your refund requests</p>
+                </div>
+                <a asp-controller="Orders" asp-action="Index" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left"></i> Back to Orders
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container">
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <!-- Stats Summary -->
+                <div class="row mb-4">
+                    <div class="col-md-3 col-6 mb-2">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h3 class="mb-0">@Model.Count</h3>
+                                <small>Total Refunds</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-2">
+                        <div class="card bg-warning text-dark">
+                            <div class="card-body text-center">
+                                <h3 class="mb-0">@Model.Count(r => r.Status == "Pending")</h3>
+                                <small>In Progress</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-2">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h3 class="mb-0">@Model.Count(r => r.Status == "Completed")</h3>
+                                <small>Completed</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-2">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body text-center">
+                                <h3 class="mb-0">@Model.Count(r => r.Status == "Rejected" || r.Status == "Cancelled" || r.Status == "Failed")</h3>
+                                <small>Rejected/Cancelled/Failed</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Refund Cards -->
+                @foreach (var refund in Model.OrderByDescending(r => r.DateCreated))
+                {
+                    var statusClass = refund.Status?.ToLower() switch
+                    {
+                        "pending" => "status-pending",
+                        "approved" => "status-approved",
+                        "rejected" => "status-rejected",
+                        "cancelled" => "status-cancelled",
+                        "processed" => "status-processed",
+                        "completed" => "status-completed",
+                        "failed" => "status-failed",
+                        _ => "status-pending"
+                    };
+
+                    var statusIcon = refund.Status?.ToLower() switch
+                    {
+                        "pending" => "bi-clock-history",
+                        "approved" => "bi-check-circle",
+                        "rejected" => "bi-x-circle",
+                        "cancelled" => "bi-x-circle",
+                        "processed" => "bi-arrow-repeat",
+                        "completed" => "bi-check-circle-fill",
+                        "failed" => "bi-exclamation-circle",
+                        _ => "bi-clock-history"
+                    };
+
+                    <div class="card refund-card">
+                        <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                            <div>
+                                <span class="fw-bold">Refund #@refund.Code</span>
+                                <span class="text-muted ms-2 small">
+                                    <i class="bi bi-calendar3"></i> @refund.DateCreated.ToString("MMM dd, yyyy")
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="refund-status-badge @statusClass">
+                                    <i class="bi @statusIcon"></i>
+                                    @refund.Status
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Items -->
+                            <div class="mb-3">
+                                <h6 class="text-muted small text-uppercase mb-2">Items to Refund</h6>
+                                <div class="refund-items-grid">
+                                    @foreach (var item in refund.RefundItems)
+                                    {
+                                        <div class="refund-item-card">
+                                            @if (!string.IsNullOrEmpty(item.ProductPhoto))
+                                            {
+                                                var photoUrl = $"{AppConstants.RESTAPI_BASE_URL}/{item.ProductPhoto}";
+                                                <img src="@photoUrl" alt="@item.ProductName" class="refund-item-image" />
+                                            }
+                                            else
+                                            {
+                                                <div class="refund-item-image d-flex align-items-center justify-content-center bg-light">
+                                                    <i class="bi bi-box text-muted fs-4"></i>
+                                                </div>
+                                            }
+                                            <div class="refund-item-details">
+                                                <div class="refund-item-name" title="@item.ProductName">@item.ProductName</div>
+                                                <div class="refund-item-brand">@item.ProductBrand</div>
+                                                <div class="refund-item-meta">
+                                                    <span>Qty: @item.Quantity</span>
+                                                    <span>@item.RefundAmount.ToString("C")</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Summary -->
+                            <div class="border-top pt-3 mt-2">
+                                <div class="refund-summary">
+                                    <div class="refund-summary-item">
+                                        <span class="label">Refund Amount:</span>
+                                        <span class="refund-amount">@refund.Amount.ToString("C")</span>
+                                    </div>
+                                    <div class="refund-summary-item">
+                                        <span class="label">Items:</span>
+                                        <span class="value">@refund.RefundItems.Count</span>
+                                    </div>
+                                    @if (refund.ProcessedDate.HasValue)
+                                    {
+                                        <div class="refund-summary-item">
+                                            <span class="label">Processed:</span>
+                                            <span class="value">@refund.ProcessedDate.Value.ToString("MMM dd, yyyy")</span>
+                                        </div>
+                                    }
+                                    <div class="refund-summary-item">
+                                        <span class="label">Status:</span>
+                                        <span class="value">@refund.Status</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                <div class="small text-muted">
+                                    <i class="bi bi-calendar-event"></i>
+                                    @if (refund.ProcessedDate.HasValue)
+                                    {
+                                        <span>Processed on @refund.ProcessedDate.Value.ToString("MMM dd, yyyy h:mm tt")</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Submitted on @refund.DateCreated.ToString("MMM dd, yyyy h:mm tt")</span>
+                                    }
+                                </div>
+                                <div class="refund-actions">
+                                    @if (refund.Status?.ToLower() == "pending")
+                                    {
+                                        <a href="#" class="btn btn-outline-danger btn-sm"
+                                           onclick="cancelRefund('@refund.Code')">
+                                            <i class="bi bi-x-circle"></i> Cancel
+                                        </a>
+                                    }
+                                    <a class="btn btn-outline-success btn-sm"
+                                       asp-action="Details" asp-controller="Refunds" asp-route-code="@refund.Code"
+                                    >
+                                        <i class="bi bi-receipt"></i> Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Empty State -->
+        <div class="empty-state">
+            <i class="bi bi-box-seam"></i>
+            <h4>No Refunds Found</h4>
+            <p>You haven't requested any refunds yet. If you need to return an item, please visit your orders page.</p>
+            <a asp-controller="Orders" asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-box-arrow-right"></i> View My Orders
+            </a>
+        </div>
+    }
+</div>
+
+<!-- Cancel Refund Modal -->
+<div class="modal fade" id="cancelRefundModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Cancel Refund Request</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this refund request?</p>
+                <p class="text-muted small">This action cannot be undone. You will need to submit a new refund request if you change your mind.</p>
+                <input type="hidden" id="cancelRefundCode" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="confirmCancelRefund()">
+                    <i class="bi bi-check-circle"></i> Yes, Cancel Refund
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function cancelRefund(refundCode) {
+            document.getElementById('cancelRefundCode').value = refundCode;
+            var modal = new bootstrap.Modal(document.getElementById('cancelRefundModal'));
+            modal.show();
+        }
+
+        function confirmCancelRefund() {
+            const refundCode = document.getElementById('cancelRefundCode').value;
+
+            if (!refundCode) {
+                alert('Refund code not found.');
+                return;
+            }
+
+            const confirmBtn = document.querySelector('#cancelRefundModal .btn-danger');
+            const originalText = confirmBtn.innerHTML;
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Cancelling...';
+
+            fetch(`refunds/${refundCode}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Failed to cancel refund');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('cancelRefundModal'));
+                    modal.hide();
+
+                    showToast('success', 'Refund cancelled successfully.');
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    throw new Error(data.message || 'Failed to cancel refund');
+                }
+            })
+            .catch(error => {
+                showToast('error', error.message || 'An error occurred while cancelling the refund.');
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = originalText;
+            });
+        }
+
+        function viewInvoice(refundCode) {
+            window.location.href = `/Invoice/Generate?refundCode=${refundCode}`;
+        }
+
+        function showToast(type, message) {
+            const toastContainer = document.getElementById('toastContainer') || createToastContainer();
+
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+            toast.role = 'alert';
+            toast.ariaLive = 'assertive';
+            toast.ariaAtomic = 'true';
+
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill'} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast, { delay: 5000 });
+            bsToast.show();
+
+            toast.addEventListener('hidden.bs.toast', () => {
+                toast.remove();
+            });
+        }
+
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.style.position = 'fixed';
+            container.style.top = '20px';
+            container.style.right = '20px';
+            container.style.zIndex = '9999';
+            container.style.minWidth = '300px';
+            document.body.appendChild(container);
+            return container;
+        }
+    </script>
+}

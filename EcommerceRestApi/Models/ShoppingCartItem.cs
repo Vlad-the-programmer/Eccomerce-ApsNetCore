@@ -7,13 +7,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace EcommerceRestApi.Models;
 
 [Index("ProductId", Name = "IX_ShoppingCartItems_ProductId")]
+[Index("UserId", Name = "IX_ShoppingCartItems_UserId")]
+[Index("ShoppingCartId", Name = "IX_ShoppingCartItems_ShoppingCartId")]
 public partial class ShoppingCartItem : EntityBase
 {
     public int ProductId { get; set; }
 
     public int Amount { get; set; }
-
     [StringLength(50)]
+    public string? UserId { get; set; }
+
+    public DateTime? LastActivity { get; set; }
+
+    [StringLength(350)]
     public string ShoppingCartId { get; set; } = null!;
 
     [ForeignKey("ProductId")]

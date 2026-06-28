@@ -172,6 +172,11 @@
                                 <i class="bi bi-cart-plus"></i> Add to Cart
                             </button>
                         </form>
+                        <form asp-controller="Wishlist" asp-action="Add" asp-route-productId="@Model.Id" method="post" style="display:inline; margin-left: 8px;">
+                            <button class="btn btn-outline-primary">
+                                ❤️ Add to Wishlist
+                            </button>
+                        </form>
                     </div>
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     {

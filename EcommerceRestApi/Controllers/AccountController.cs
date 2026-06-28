@@ -1,8 +1,5 @@
 ﻿using EcommerceRestApi.Helpers.Data.AuthVms;
-using EcommerceRestApi.Helpers.Data.Functions;
-using EcommerceRestApi.Helpers.Data.Permissions;
 using EcommerceRestApi.Helpers.Data.ResponseModels;
-using EcommerceRestApi.Helpers.Data.Roles;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Models.Context;
@@ -28,12 +25,14 @@ namespace EcommerceRestApi.Controllers
         private readonly IUserService _service;
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
+        private readonly IAccountService _accountService;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             AppDbContext context,
             IUserService service,
+            IAccountService accountService,
             ITokenService tokenService,
             IConfiguration configuration)
         {
@@ -42,6 +41,7 @@ namespace EcommerceRestApi.Controllers
             _signInManager = signInManager;
             _context = context;
             _service = service;
+            _accountService = accountService;
             _tokenService = tokenService;
         }
 
@@ -63,6 +63,15 @@ namespace EcommerceRestApi.Controllers
                 });
             }
 
+            //var clientType = Request.Headers["X-Client-Type"].ToString();
+            //var isMobileApp = clientType.Equals("mobile", StringComparison.OrdinalIgnoreCase);
+
+            //var response = await _accountService.Login(loginVM, isMobileApp);
+            //if (response.Success)
+            //{
+            //    return Ok(response);
+            //}
+            //return BadRequest(response);
             var user = await _userManager.Users
                 .Include(u => u.Customers)
                 .FirstOrDefaultAsync(u => u.Email == loginVM.Email);
@@ -102,12 +111,15 @@ namespace EcommerceRestApi.Controllers
 
             var userClaims = await _userManager.GetClaimsAsync(user);
 
+            var customer = user.Customers.FirstOrDefault();
+
             // Set cookie for web app
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim("CustomerId", customer != null ? customer.Id.ToString() : string.Empty)
             };
 
             claims.AddRange(userClaims);
@@ -159,43 +171,14 @@ namespace EcommerceRestApi.Controllers
                 });
             }
 
-            var user = await _userManager.FindByEmailAsync(registerVM.Email);
-            if (user != null)
+            ResponseModel response = await _accountService.Register(registerVM);
+
+            if (response.Errors.Count > 0)
             {
-                return Conflict(new ResponseModel { Message = "This email address is already in use." });
+                return BadRequest(response);
             }
 
-            var newUser = await DbFuncs.GetApplicationUserObjForRegister(registerVM, _context);
-
-
-            var newUserResponse = await _userManager.CreateAsync(newUser, registerVM.Password);
-            if (!newUserResponse.Succeeded)
-            {
-                return BadRequest(new ResponseModel
-                {
-                    Message = "User registration failed.",
-                    Errors = newUserResponse.Errors.Select(e => e.Description).ToList()
-                });
-            }
-
-            if (newUser.Email.Contains("admin"))
-            {
-                await _userManager.AddToRoleAsync(newUser, UserRoles.Admin);
-
-                newUser.IsAdmin = true;
-            }
-            else
-            {
-                await _userManager.AddToRoleAsync(newUser, UserRoles.User);
-
-                newUser.IsAdmin = false;
-            }
-
-            newUser.IsActive = true;
-
-            await _userManager.UpdateAsync(newUser);
-
-            return Ok(new ResponseModel { Message = "User registered successfully." });
+            return Ok(response);
         }
 
         [HttpGet("get-current-user")]
@@ -239,85 +222,44 @@ namespace EcommerceRestApi.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await _accountService.Logout();
             return Ok();
         }
 
         [HttpGet("get-update-user-model/{id}")]
-        [Authorize(Roles = UserRoles.User)]
+        [Authorize]
         public async Task<IActionResult> GetUpdateUserModel(string id)
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Console.WriteLine($"Current user rest: {currentUserId}");
 
-            if (string.IsNullOrEmpty(currentUserId))
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound("User not found ");
             }
 
-            var userExists = await _context.Users.FindAsync(currentUserId);
-            if (userExists == null)
+            try
             {
-                return NotFound("User does not exist");
-            }
-
-            var user = await _service.GetUserByIDAsync(currentUserId);
-            if (user == null)
-            {
-                return NotFound("User not found");
-            }
-
-            var customer = user.Customers?.FirstOrDefault();
-            if (customer == null)
-            {
-                var userUpdateModelWithoutCustomer = new UserUpdateVM
+                var user = await _service.GetUserByIDAsync(id);
+                if (user == null)
                 {
-                    Id = currentUserId,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    PhoneNumber = user.PhoneNumber,
-                    Username = user.UserName,
-                    Nip = null,
-                    State = null,
-                    City = null,
-                    Street = null,
-                    HouseNumber = null,
-                    FlatNumber = null,
-                    PostalCode = null,
-                    CountryName = null,
-                };
-                return Ok(userUpdateModelWithoutCustomer);
+                    return NotFound("User not found");
+                }
+
+                var userUpdateVM = await _accountService.GetUpdateUserModel(user);
+
+                return Ok(userUpdateVM);
+
             }
-
-            var address = await _context.Addresses
-                .Include(a => a.Country)
-                .Where(a => a.CustomerId == customer.Id)
-                .FirstOrDefaultAsync();
-
-            var userUpdateModel = new UserUpdateVM
+            catch (Exception e)
             {
-                Id = currentUserId,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                Username = user.UserName,
-                Nip = customer.Nip,
-                State = address?.State,
-                City = address?.City,
-                Street = address?.Street,
-                HouseNumber = address?.HouseNumber,
-                FlatNumber = address?.FlatNumber,
-                PostalCode = address?.PostalCode,
-                CountryName = address?.Country?.CountryName,
-            };
-
-            return Ok(userUpdateModel);
+                return BadRequest(new ResponseModel { Message = e.Message });
+            }
         }
 
         // PUT: api/account/5
         [HttpPut("{id}")]
-        [Authorize(Policy = Permissions.ManageUsers)]
+        [Authorize]
         public async Task<IActionResult> Update(string id, [FromBody] UserUpdateVM model)
         {
             if (User.Identity == null || User.FindFirstValue(ClaimTypes.NameIdentifier) != id)
@@ -350,7 +292,7 @@ namespace EcommerceRestApi.Controllers
 
         // DELETE: api/account/5
         [HttpDelete("{id}")]
-        [Authorize(Policy = Permissions.ManageUsers)]
+        [Authorize]
         public async Task<IActionResult> Delete(string id)
         {
             if (User.Identity == null || User.FindFirstValue(ClaimTypes.NameIdentifier) != id)
@@ -374,6 +316,28 @@ namespace EcommerceRestApi.Controllers
         public IActionResult AccessDenied()
         {
             return Unauthorized(new ResponseModel { Message = "Access denied. You do not have permission to access this resource." });
+        }
+
+        [HttpGet("user-profile")]
+        [Authorize]
+        public async Task<IActionResult> GetUserProfile()
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var profile = await _service.GetUserProfile(userId);
+
+                if (profile == null)
+                {
+                    return NotFound(new ResponseModel { Message = "User profile not found." });
+                }
+
+                return Ok(profile);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseModel { Message = ex.Message });
+            }
         }
     }
 }

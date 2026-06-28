@@ -13,38 +13,254 @@
     </div>
 }
 
-<div class="row">
-    <ul class="list-group col-sm-8">
-        <li class="list-group-item list-group-item-primary">Products</li>
-        @foreach (KeyValuePair<OrderItemDTO, int> kvp in ViewBag.Products)
-        {
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href=@Url.Action("Details", "Products", new { id = kvp.Key.ProductId }) class="text-dark nounderline">@kvp.Key.ProductBrand @kvp.Key.ProductName</a>
-                @if (kvp.Value > 1)
-                {
-                    <span class="badge badge-primary badge-pill">@kvp.Value unit(s)</span>
-                }
-            </li>
-        }
-    </ul>
-    <ul class="list-group col-sm-4">
-        <li class="list-group-item list-group-item-primary">Status</li>
-        @if (Model.IsPaid)
-        {
-            <li class="list-group-item list-group-item-success d-flex">
-                Paid - @Model.TotalAmount.ToString("C")
-            </li>
-        }
-        else
-        {
-            <li class="list-group-item list-group-item-danger d-flex">
-                UnPaid - @Model.TotalAmount.ToString("C")
-            </li>
+<style>
+    .order-item-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        flex-shrink: 0;
+    }
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 20px;
+        padding-left: 20px;
+        border-left: 2px solid #dee2e6;
+    }
+
+        .timeline-item:last-child {
+            border-left: 2px solid transparent;
         }
 
-        <li class="list-group-item list-group-item d-flex">
-            Status  - @Model.OrderStatus
-        </li>
+        .timeline-item .timeline-badge {
+            position: absolute;
+            left: -8px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #6c757d;
+            border: 2px solid #fff;
+        }
+
+            .timeline-item .timeline-badge.status-completed {
+                background: #28a745;
+            }
+
+            .timeline-item .timeline-badge.status-current {
+                background: #007bff;
+                box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.3);
+                animation: pulse 2s infinite;
+            }
+
+            .timeline-item .timeline-badge.status-cancelled {
+                background: #dc3545;
+            }
+
+    @@keyframes pulse {
+        0%
+
+    {
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+    }
+
+    }
+
+    .timeline-item .timeline-content {
+        padding-bottom: 5px;
+    }
+
+        .timeline-item .timeline-content .status-title {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .timeline-item .timeline-content .status-date {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .timeline-item .timeline-content .status-user {
+            font-size: 0.8rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+    .order-status-badge {
+        font-size: 1rem;
+        padding: 8px 16px;
+        border-radius: 20px;
+    }
+</style>
+
+<div class="row">
+    <!-- Products Column -->
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-box-seam"></i> Products</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                @foreach (KeyValuePair<OrderItemDTO, int> kvp in ViewBag.Products)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @if (!string.IsNullOrEmpty(kvp.Key.ProductPhoto))
+                        {
+                            var photoUrl = $"{AppConstants.RESTAPI_BASE_URL}/{kvp.Key.ProductPhoto}";
+                            <img src="@photoUrl" alt="@kvp.Key.ProductName" class="order-item-image" />
+                        }
+                        else
+                        {
+                            <div class="refund-item-image d-flex align-items-center justify-content-center bg-light">
+                                <i class="bi bi-box text-muted fs-4"></i>
+                            </div>
+                        }
+                        <div>
+                            <a href="@Url.Action("Details", "Products", new { id = kvp.Key.ProductId })" class="text-dark text-decoration-none">
+                                <strong>@kvp.Key.ProductBrand</strong> @kvp.Key.ProductName
+                            </a>
+                        </div>
+                        @if (kvp.Value > 1)
+                        {
+                            <span class="badge bg-secondary rounded-pill">@kvp.Value units</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary rounded-pill">1 unit</span>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <!-- Order Details Column -->
+    <div class="col-md-5">
+        <!-- Status and Payment Card -->
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Order Details</h5>
+            </div>
+            <div class="card-body">
+                <!-- Current Status -->
+                <div class="mb-3">
+                    <strong>Current Status:</strong>
+                    <span class="badge
+                        @(Model.OrderStatus == "Completed" ? "bg-success" :
+                                                    Model.OrderStatus == "Cancelled" ? "bg-danger" :
+                                                    Model.OrderStatus == "Shipped" ? "bg-info" :
+                                                    Model.OrderStatus == "Processing" ? "bg-warning" :
+                                                    "bg-secondary")
+                        order-status-badge">
+                        @Model.OrderStatus
+                    </span>
+                </div>
+
+                <!-- Payment Status -->
+                <div class="mb-3">
+                    <strong>Payment Status:</strong>
+                    @if (Model.IsPaid)
+                    {
+                        <span class="badge bg-success order-status-badge">
+                            <i class="bi bi-check-circle"></i> Paid - @Model.TotalAmount.ToString("C")
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger order-status-badge">
+                            <i class="bi bi-x-circle"></i> Unpaid - @Model.TotalAmount.ToString("C")
+                        </span>
+                    }
+                </div>
+
+                <!-- Delivery Method -->
+                <div class="mb-3">
+                    <strong>Delivery Method:</strong>
+                    <span class="badge bg-secondary">@Model.DeliveryMethod</span>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="mb-3">
+                    <strong>Payment Method:</strong>
+                    <span class="badge bg-secondary">@Model.PaymentMethod</span>
+                </div>
+
+                <!-- Order Date -->
+                <div class="mb-3">
+                    <strong>Order Date:</strong>
+                    <span>@Model.OrderDate.ToString("MMM dd, yyyy HH:mm")</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status History Card -->
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Status History</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.StatusHistory != null && Model.StatusHistory.Any())
+                {
+                    <div class="timeline">
+                        @{
+                            var statusHistory = Model.StatusHistory.OrderByDescending(s => s.DateCreated).ToList();
+                            var currentStatus = statusHistory.FirstOrDefault();
+                        }
+
+                        @foreach (var status in statusHistory)
+                        {
+                            var isCurrent = status == currentStatus;
+                            var isCompleted = status.Status == "Completed";
+                            var isCancelled = status.Status == "Cancelled";
+
+                            <div class="timeline-item">
+                                <div class="timeline-badge
+                                            @(isCurrent ? "status-current" :
+                                                                           isCompleted ? "status-completed" :
+                                                                           isCancelled ? "status-cancelled" : "")">
+                        </div>
+                        <div class="timeline-content">
+                            <div class="status-title">
+                                @status.Status
+                                @if (isCurrent)
+                                        {
+                                            <span class="badge bg-primary ms-2">Current</span>
+                                        }
+                                    </div>
+                                    <div class="status-date">
+                                        <i class="bi bi-calendar-event"></i>
+                                        @status.DateCreated.ToString("MMM dd, yyyy HH:mm")
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-inbox display-6 d-block mb-2"></i>
+                        <p>No status history available</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
         <div class="d-grid gap-2 mt-3">
             <a asp-controller="Invoice"
                asp-action="Generate"
@@ -53,40 +269,82 @@
                 <i class="bi bi-receipt"></i> Generate Invoice
             </a>
 
-            @using (Html.BeginForm("Cancel", "Orders", new { code = Model.Code }, FormMethod.Post, true, new { id = "cancelForm" }))
+            @if (Model.OrderStatus != "Cancelled" && Model.OrderStatus != "Delivered")
             {
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="_method" value="DELETE" />
+                using (Html.BeginForm("Cancel", "Orders", new { code = Model.Code }, FormMethod.Post, true, new { id = "cancelForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="_method" value="DELETE" />
 
-                <button type="submit" class="btn btn-danger btn-lg">
-                    <i class="bi bi-x-circle"></i> Cancel Order
-                </button>
+                    <button type="submit" class="btn btn-danger btn-lg w-100">
+                        <i class="bi bi-x-circle"></i> Cancel Order
+                    </button>
+                }
             }
-        </div>
 
-    </ul>
+            <!-- Apply for Refund Button -->
+            @if (Model.OrderStatus == "Delivered" && Model.IsPaid && ViewBag.CanApplyForRefund)
+            {
+                <a asp-controller="Refunds"
+                   asp-action="Apply"
+                   asp-route-orderCode="@Model.Code"
+                   class="btn btn-warning btn-lg">
+                    <i class="bi bi-arrow-counterclockwise"></i> Apply for Refund
+                </a>
+            }
+
+            <a asp-controller="Orders" asp-action="Index" class="btn btn-secondary btn-lg">
+                <i class="bi bi-arrow-left"></i> Back to Orders
+            </a>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // This submits the form with DELETE request when clicking the "Cancel Order" button.
+            // Handle cancel order with AJAX
             $('#cancelForm').submit(function (event) {
                 event.preventDefault();
+
+                if (!confirm('Are you sure you want to cancel this order?')) {
+                    return;
+                }
+
                 var form = $(this);
+                var actionUrl = form.attr('action');
+
                 $.ajax({
-                    url: form.attr('action'),
-                    console.log(form.attr('action'));
+                    url: actionUrl,
                     type: 'DELETE',
                     data: form.serialize(),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
                     success: function (data) {
-                        window.location.href = '@Url.Action("Index", "Orders")';
+                        if (data.success) {
+                            window.location.href = '@Url.Action("Index", "Orders")';
+                        } else {
+                            alert('Error: ' + (data.message || 'Failed to cancel order'));
+                        }
                     },
                     error: function (error) {
-                        alert('Error: ' + error.responseText);
+                        console.error('Error:', error);
+                        if (error.responseJSON && error.responseJSON.message) {
+                            alert('Error: ' + error.responseJSON.message);
+                        } else {
+                            alert('An error occurred while cancelling the order. Please try again.');
+                        }
                     }
                 });
             });
+
+            // Auto-refresh status history every 30 seconds (optional)
+            if (window.autoRefreshEnabled) {
+                setInterval(function() {
+                    location.reload();
+                }, 30000);
+            }
         });
     </script>
 }

@@ -1,5 +1,6 @@
 ﻿using EcommerceWebApp.ApiServices;
 using EcommerceWebApp.Helpers;
+using EcommerceWebApp.Helpers.Enums;
 using EcommerceWebApp.Models;
 using EcommerceWebApp.Models.AppViewModels;
 using EcommerceWebApp.Models.UpdateViewModels;
@@ -30,6 +31,11 @@ namespace EcommerceWebApp.Controllers
                 var response = await _apiService.GetDataAsync($"{BASE}/get-staff-users");
                 var users = JsonSerializer.Deserialize<List<CurrentUserDTO>>(response,
                     GlobalConstants.JsonSerializerOptions);
+
+                ViewBag.SearchComboxOptions = await ProductsEndpointsHelperFuncs.GetSearchComboBoxDtos(
+                $"{BASE}/search-combo-box-dtos", _apiService);
+                ViewBag.OrderbyComboxOptions = await ProductsEndpointsHelperFuncs.GetOrderByComboBoxDtos(
+                    $"{BASE}/order-by-combo-box-dtos", _apiService);
 
                 return View(users);
             }
@@ -99,7 +105,7 @@ namespace EcommerceWebApp.Controllers
 
                 return View(updatedUser);
             }
-            return RedirectToAction("Index", "UsersManagement");
+            return RedirectToAction("Details", "Account");
         }
 
         [HttpPost("delete/{id}")]
@@ -141,6 +147,59 @@ namespace EcommerceWebApp.Controllers
             }
 
             return View("Index");
+        }
+
+        [HttpGet("filter")]
+        public async Task<IActionResult> Filter(
+        [FromQuery] string searchString = "",
+        [FromQuery] string? searchProperty = null,
+        [FromQuery] string? sortProperty = null,
+        [FromQuery] string? statusFilter = null,
+        [FromQuery] bool sortAscending = false)
+        {
+            try
+            {
+                var filterStatus = UserStatusFilter.All;
+                if (!string.IsNullOrEmpty(statusFilter))
+                {
+                    switch (statusFilter.ToLower())
+                    {
+                        case "active":
+                            filterStatus = UserStatusFilter.ActiveOnly;
+                            break;
+                        case "inactive":
+                            filterStatus = UserStatusFilter.InactiveOnly;
+                            break;
+                        case "all":
+                        default:
+                            filterStatus = UserStatusFilter.All;
+                            break;
+                    }
+                }
+
+                List<CurrentUserDTO> filteredStaff = await AccountEndpointsHelperFuncs.GetFilteredStaff(
+                $"{BASE}/filter-staff", searchString, searchProperty, sortProperty, filterStatus, sortAscending, _apiService);
+
+                ViewBag.SearchComboxOptions = await ProductsEndpointsHelperFuncs.GetSearchComboBoxDtos(
+                $"{BASE}/search-combo-box-dtos", _apiService);
+                ViewBag.OrderbyComboxOptions = await ProductsEndpointsHelperFuncs.GetOrderByComboBoxDtos(
+                    $"{BASE}/order-by-combo-box-dtos", _apiService);
+
+                return View("Index", filteredStaff);
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+
+            ViewBag.CurrentStatusFilter = statusFilter;
+
+            ViewBag.SearchComboxOptions = await ProductsEndpointsHelperFuncs.GetSearchComboBoxDtos(
+                $"{BASE}/search-combo-box-dtos", _apiService);
+            ViewBag.OrderbyComboxOptions = await ProductsEndpointsHelperFuncs.GetOrderByComboBoxDtos(
+                $"{BASE}/order-by-combo-box-dtos", _apiService);
+
+            return RedirectToAction("Index", "UsersManagement");
         }
 
         public class UpdatePermissionsDto

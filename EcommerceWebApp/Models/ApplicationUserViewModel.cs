@@ -28,6 +28,7 @@ namespace EcommerceWebApp.Models
 
         [Display(Name = "Role")]
         public string? Role { get; set; }
+        public int? CoinsBalance { get; set; }
         public bool IsActive { get; set; }
         public bool IsAdmin { get; set; }
         public bool IsAuthenticated { get; set; }

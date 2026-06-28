@@ -1,5 +1,5 @@
 ﻿using EcommerceApp.Helpers.Session;
-using EcommerceApp.Views;
+using EcommerceMobileApp.Views;
 
 namespace EcommerceApp
 {

@@ -21,5 +21,6 @@ namespace EcommerceWebApp.Models.Dtos
         [Required]
         public decimal ProductPrice { get; set; }
 
+        public bool IsSelected { get; set; } = true;
     }
 }

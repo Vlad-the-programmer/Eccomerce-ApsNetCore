@@ -1,0 +1,140 @@
+﻿@model EcommerceWebApp.Models.ApplicationUserViewModel
+
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<h2 class="mb-4">👤 User Profile</h2>
+
+<div class="row">
+
+    <!-- 🔹 LEFT: BASIC INFO -->
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <strong>Basic Information</strong>
+            </div>
+            <div class="card-body">
+
+                <p><strong>Name:</strong> @Model.FirstName @Model.LastName</p>
+                <p><strong>Email:</strong> @Model.Email</p>
+                <p><strong>Username:</strong> @Model.UserName</p>
+                <p><strong>Phone:</strong> @Model.PhoneNumber</p>
+                <p><strong>Role:</strong> @Model.Role</p>
+
+                <p>
+                    <strong>Status:</strong>
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Inactive</span>
+                    }
+                </p>
+
+                <p>
+                    <strong>Role:</strong>
+                    <span class="badge bg-warning text-dark">@Model.Role</span>
+                </p>
+
+                <p>
+                    <strong>Authenticated:</strong>
+                    @if (Model.IsAuthenticated)
+                    {
+                        <span class="badge bg-success">Yes</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">No</span>
+                    }
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔹 RIGHT: ADDRESS + COINS -->
+    <div class="col-md-6">
+        @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin") && !User.IsInRole("Staff"))
+        {
+            <!-- Coins -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <strong>💰 Shop Coins</strong>
+                </div>
+                <a asp-controller="ShopCoins" asp-action="Index" class="btn btn-outline-info">
+                    View Coins History
+                </a>
+
+                <div class="card-body">
+                    <h3 class="text-success">@(Model.CoinsBalance > 0 ? Model.CoinsBalance : 0) coins</h3>
+                </div>
+            </div>
+            
+        }
+
+        <!-- Address -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <strong>Address</strong>
+            </div>
+            <div class="card-body">
+
+                <p><strong>Country:</strong> @Model.CountryName</p>
+                <p><strong>City:</strong> @Model.City</p>
+                <p><strong>State:</strong> @Model.State</p>
+
+                <p>
+                    <strong>Street:</strong>
+                    @Model.Street @Model.HouseNumber
+                    @if (!string.IsNullOrEmpty(Model.FlatNumber))
+                    {
+                        <span>/ @Model.FlatNumber</span>
+                    }
+                </p>
+
+                <p><strong>Postal Code:</strong> @Model.PostalCode</p>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 🔹 ACTIONS -->
+<div class="mt-4 d-flex gap-2">
+
+    @if (User.IsInRole("Stuff") || User.IsInRole("Admin"))
+    {
+        <a 
+           asp-controller="UsersManagement"
+           asp-action="Edit"
+           asp-route-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value"
+           class="btn btn-primary">
+            Edit Profile
+        </a>
+    } 
+    else
+    {
+        <a asp-action="Edit"
+           asp-route-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value"
+           class="btn btn-primary">
+            Edit Profile
+        </a>
+    }
+
+    <button type="button"
+            class="btn btn-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#confirmDeleteModal">
+        Delete Account
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Back
+    </a>
+
+</div>

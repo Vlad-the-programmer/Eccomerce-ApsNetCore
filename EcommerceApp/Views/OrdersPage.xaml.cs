@@ -2,7 +2,7 @@
 using EcommerceApp.AppLogic.Services;
 using EcommerceApp.Helpers.Session;
 
-namespace EcommerceApp.Views
+namespace EcommerceMobileApp.Views
 {
     public partial class OrdersPage : ContentPage
     {

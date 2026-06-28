@@ -1,8 +1,238 @@
 ﻿@model List<EcommerceWebApp.Models.AppViewModels.CurrentUserDTO>
 @using EcommerceWebApp.Helpers.Permissions
 @using EcommerceWebApp.AppGlobals
+@using EcommerceWebApp.Models.Dtos
 
 <h2>Staff Users</h2>
+
+<style>
+    .text-warning {
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+        .text-warning i {
+            font-size: 0.7rem;
+            margin-right: 1px;
+        }
+
+    @@media (max-width: 768px) {
+        .text-warning i {
+            font-size: 0.6rem;
+        }
+    }
+
+    .card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+    .card-header {
+        flex-shrink: 0;
+    }
+
+    .card-footer {
+        flex-shrink: 0;
+        padding: 0.75rem 1rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+        .row > [class*='col-'] {
+            display: flex;
+            flex-direction: column;
+        }
+
+    @@media (max-width: 576px) {
+        .card-footer .d-flex {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .card-footer .btn,
+        .card-footer form {
+            width: 100%;
+        }
+    }
+
+    .filter-header {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .filter-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-section-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: #495057;
+    }
+
+    .status-filter-group {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        padding-top: 0.5rem;
+    }
+
+        .status-filter-group .form-check {
+            margin-bottom: 0;
+        }
+
+        .status-filter-group .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+            .status-filter-group .form-check-input:checked + .form-check-label {
+                font-weight: 600;
+            }
+</style>
+
+<div class="col-lg-12 px-0">
+    <!-- Filters Bar -->
+    <div class="filters-section bg-light border rounded shadow-sm p-3 mb-4">
+        <form asp-controller="UsersManagement" asp-action="Filter" method="get" id="filterForm" onsubmit="return removeEmptyParams(this)">
+            <div class="row align-items-end">
+                <div class="col-md-3 mb-2 px-0">
+                    <label class="form-label fw-bold small">Search</label>
+                    <input name="searchString" class="form-control" type="search"
+                           placeholder="Search staff members..."
+                           value="@Context.Request.Query["searchString"]">
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label class="form-label fw-bold small">Search In</label>
+                    <select name="searchProperty" class="form-select">
+                        <option value="">-- All Fields --</option>
+                        @if (ViewBag.SearchComboxOptions != null)
+                        {
+                            foreach (var option in ViewBag.SearchComboxOptions as List<SearchComboBoxDto> ?? new List<SearchComboBoxDto>())
+                            {
+                                var selected = Context.Request.Query["searchProperty"] == option.PropertyTitle ? "selected" : "";
+                                <option value="@option.PropertyTitle" selected="@selected">@option.DisplayName</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label class="form-label fw-bold small">Sort By</label>
+                    <select name="sortProperty" class="form-select">
+                        <option value="">-- Default --</option>
+                        @if (ViewBag.OrderbyComboxOptions != null)
+                        {
+                            foreach (var option in ViewBag.OrderbyComboxOptions as List<SearchComboBoxDto> ?? new List<SearchComboBoxDto>())
+                            {
+                                var selected = Context.Request.Query["sortProperty"] == option.PropertyTitle ? "selected" : "";
+                                <option value="@option.PropertyTitle" selected="@selected">@option.DisplayName</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-1 mb-2" style="width: 15%;">
+                    <label class="form-label fw-bold small">Order</label>
+                    <select name="sortAscending" class="form-select">
+                        <option value="false" selected="@(Context.Request.Query["sortAscending"] == "false" || string.IsNullOrEmpty(Context.Request.Query["sortAscending"]) ? "selected" : null)">
+                            Desc ↓
+                        </option>
+                        <option value="true" selected="@(Context.Request.Query["sortAscending"] == "true" ? "selected" : null)">
+                            Asc ↑
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-1 mb-2 px-0">
+                    <label class="form-label fw-bold small">&nbsp;</label>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i>
+                        </button>
+                        <a href="@Url.Action("Index", "UsersManagement")" class="btn btn-secondary">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Users Filter - New Row -->
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="status-filter-group">
+                        <span class="fw-bold small me-2">Status:</span>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio"
+                                   name="statusFilter"
+                                   id="statusAll"
+                                   value="all"
+                                   @(string.IsNullOrEmpty(Context.Request.Query["statusFilter"]) || Context.Request.Query["statusFilter"] == "all" ? "checked" : "") />
+                            <label class="form-check-label" for="statusAll">
+                                <i class="bi bi-people"></i> All
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio"
+                                   name="statusFilter"
+                                   id="statusActive"
+                                   value="active"
+                                   @(Context.Request.Query["statusFilter"] == "active" ? "checked" : "") />
+                            <label class="form-check-label" for="statusActive">
+                                <i class="bi bi-check-circle-fill text-success"></i> Active Only
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio"
+                                   name="statusFilter"
+                                   id="statusInactive"
+                                   value="inactive"
+                                   @(Context.Request.Query["statusFilter"] == "inactive" ? "checked" : "") />
+                            <label class="form-check-label" for="statusInactive">
+                                <i class="bi bi-x-circle-fill text-danger"></i> Inactive Only
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Status filter indicator -->
+@if (Context.Request.Query.ContainsKey("statusFilter") && !string.IsNullOrEmpty(Context.Request.Query["statusFilter"]))
+{
+    var statusFilter = Context.Request.Query["statusFilter"].ToString();
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="bi bi-funnel"></i>
+        @if (statusFilter == "active")
+        {
+            <span>Showing active users only</span>
+        }
+        else if (statusFilter == "inactive")
+        {
+            <span>Showing inactive users only</span>
+        }
+        else if (statusFilter == "all")
+        {
+            <span>Showing all users</span>
+        }
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+                onclick="clearStatusFilter()"></button>
+    </div>
+}
 
 <div class="mb-3">
     <a asp-controller="UsersManagement"
@@ -22,40 +252,52 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var user in Model)
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Email</td>
+                    <td>@user.FullName</td>
+                    <td>
+                        @if (!user.IsActive)
+                        {
+                            <span class="badge bg-warning text-dark ms-2">
+                                <i class="fas fa-ban"></i> Inactive
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success ms-2">
+                                <i class="fas fa-check-circle"></i> Active
+                            </span>
+                        }
+                    </td>
+
+                    <td>
+                        <a asp-controller="UsersManagement" asp-action="Edit" asp-route-id="@user.UserId" class="btn btn-warning">Edit</a>
+
+                        <button class="btn btn-danger"
+                                onclick="openDeleteModal('@user.UserId')"
+                                data-bs-toggle="modal"
+                                data-bs-target="#staffConfirmDeleteModal">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+
+                        <button class="btn btn-primary"
+                                onclick="openPermissions('@user.UserId')">
+                            Permissions
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@user.Email</td>
-                <td>@user.FullName</td>
-                <td>
-                    @if (!@user.IsActive)
-                    {
-                        <span class="badge bg-warning text-dark ms-2">
-                            <i class="fas fa-ban"></i> Inactive
-                        </span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-success ms-2">
-                            <i class="fas fa-check-circle"></i> Active
-                        </span>
-                    }
-                </td>
-                
-                <td>
-                    <a asp-controller="UsersManagement" asp-action="Edit" asp-route-id="@user.UserId" class="btn btn-warning">Edit</a>
-
-                    <button class="btn btn-danger"
-                            onclick="openDeleteModal('@user.UserId')"
-                            data-bs-toggle="modal"
-                            data-bs-target="#staffConfirmDeleteModal">
-                        <i class="bi bi-trash"></i> Delete
-                    </button>
-
-                    <button class="btn btn-primary"
-                            onclick="openPermissions('@user.UserId')">
-                        Permissions
-                    </button>
+                <td colspan="4" class="text-center py-4">
+                    <i class="bi bi-inbox display-4 d-block mb-2 text-muted"></i>
+                    <span class="text-muted">No staff members found</span>
                 </td>
             </tr>
         }
@@ -63,7 +305,7 @@
 </table>
 
 <div id="permModal" style="display:none; background:#00000088; position:fixed; top:0; left:0; width:100%; height:100%;">
-    <div style="background:white; padding:20px; margin:10% auto; width:400px;">
+    <div style="background:white; padding:20px; margin:10% auto; width:400px; border-radius:8px;">
         <h3>Manage Permissions</h3>
 
         <form id="permForm">
@@ -71,9 +313,9 @@
 
             @foreach (var perm in Permissions.AllPermissions)
             {
-                <div>
-                    <input type="checkbox" name="permissions" value="@perm" />
-                    <label>@perm</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="permissions" value="@perm" id="perm_@perm" />
+                    <label class="form-check-label" for="perm_@perm">@perm</label>
                 </div>
             }
 
@@ -106,7 +348,6 @@
         </div>
     </div>
 </div>
-
 
 <script>
     function openPermissions(userId) {
@@ -146,20 +387,45 @@
                     permissions: selected
                 })
             })
-            .then(r => {
-                console.log(r.json());
-            });
+            .then(r => r.json());
 
             location.reload();
         } catch (err) {
             console.error("Error updating permissions:", err);
+            alert("Failed to update permissions. Please try again.");
         }
     }
 
     function openDeleteModal(userId) {
         const form = document.getElementById("deleteForm");
-
         form.action = `/UsersManagement/Delete/${userId}`;
     }
 
+    function removeEmptyParams(form) {
+        const inputs = form.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            if (input.type === 'search' && !input.value.trim()) {
+                input.disabled = true;
+            }
+        });
+        return true;
+    }
+
+        function clearStatusFilter() {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('statusFilter');
+        window.location.href = url.toString();
+    }
+
+    // Auto-submit when radio buttons change
+    document.addEventListener('DOMContentLoaded', function() {
+        const radioButtons = document.querySelectorAll('input[name="statusFilter"]');
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    document.getElementById('filterForm').submit();
+                }
+            });
+        });
+    });
 </script>

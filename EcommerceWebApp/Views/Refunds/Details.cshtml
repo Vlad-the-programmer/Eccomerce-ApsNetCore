@@ -1,0 +1,286 @@
+﻿@model EcommerceWebApp.Models.Dtos.RefundDto
+
+@{
+    ViewData["Title"] = "Refund Details";
+}
+
+<h2 class="mb-4">💸 Refund Details</h2>
+
+@if (Model == null)
+{
+    <div class="alert alert-danger">Refund not found.</div>
+}
+else
+{
+    <!-- 🔹 HEADER -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Refund Code:</strong> @Model.Code
+            </div>
+
+            <span class="badge bg-@(Model.Status == "Approved" ? "success" :
+                                                     Model.Status == "Rejected" ? "danger" :
+                                                     Model.Status == "Pending" ? "warning" :
+                                                     Model.Status == "Cancelled" ? "secondary" : "dark")">
+            @Model.Status
+        </span>
+    </div>
+
+        <div class="card-body">
+            <p><strong>Amount:</strong> @Model.Amount.ToString("C")</p>
+
+            <p>
+                <strong>Created:</strong>
+                @Model.DateCreated.ToLocalTime().ToString("dd MMM yyyy HH:mm")
+            </p>
+
+        @if (Model.ProcessedDate.HasValue)
+            {
+                <p>
+                    <strong>Processed:</strong>
+                    @Model.ProcessedDate.Value.ToLocalTime().ToString("dd MMM yyyy HH:mm")
+                </p>
+            }
+
+            @if (Model.Payment != null)
+            {
+                <p><strong>Payment Method:</strong> @Model.Payment.PaymentType</p>
+            }
+        </div>
+    </div>
+
+    <!-- 🔹 REFUND ITEMS -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+            <strong>📦 Refunded Items</strong>
+        </div>
+
+        <div class="card-body">
+            @if (!Model.RefundItems.Any())
+            {
+                <div class="alert alert-info">No items in this refund.</div>
+            }
+            else
+            {
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.RefundItems)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Reason</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <!-- 🔹 STATUS HISTORY -->
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <strong>📜 Status History</strong>
+        </div>
+
+        <div class="card-body">
+
+            @if (!Model.RefundStatusHistory.Any())
+            {
+                <div class="alert alert-info">No status history available.</div>
+            }
+            else
+            {
+                <ul class="list-group">
+
+                    @foreach (var status in Model.RefundStatusHistory
+                                .OrderByDescending(s => s.DateCreated))
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                            <div>
+                                <strong>@status.Status</strong>
+                            </div>
+
+                            <small class="text-muted">
+                                @status.DateCreated.ToLocalTime().ToString("dd MMM yyyy HH:mm")
+                            </small>
+                        </li>
+                    }
+
+                </ul>
+            }
+        </div>
+    </div>
+
+    <!-- 🔹 ACTIONS -->
+    <div class="mt-4 d-flex gap-2">
+        <a asp-action="Index" class="btn btn-secondary">⬅ Back</a>
+
+        @if (Model.Status == "Pending")
+        {
+            if(User.IsInRole("Admin") || User.IsInRole("Stuff"))
+            {
+                <button class="btn btn-success"
+                        onclick="changeStatus('@Model.Code', 'Approved')">
+                    Approve
+                </button>
+
+                <button class="btn btn-danger"
+                        onclick="changeStatus('@Model.Code', 'Rejected')">
+                    Reject
+                </button>
+            } 
+            else if (User.IsInRole("User"))
+            {
+                @if (Model.Status?.ToLower() == "pending")
+                {
+                    <a href="#" class="btn btn-outline-danger btn"
+                       onclick="cancelRefund('@Model.Code')">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                }
+            }
+        }
+        else if (Model.Status == "Approved" || Model.Status == "Completed")
+        {
+            <a class="btn btn-info" asp-action="Details" asp-controller="Return" asp-route-code="@Model.Code">
+                    Return info
+            </a>
+        }
+    </div>
+}
+
+<!-- Cancel Refund Modal -->
+<div class="modal fade" id="cancelRefundModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Cancel Refund Request</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this refund request?</p>
+                <p class="text-muted small">This action cannot be undone. You will need to submit a new refund request if you change your mind.</p>
+                <input type="hidden" id="cancelRefundCode" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="confirmCancelRefund()">
+                    <i class="bi bi-check-circle"></i> Yes, Cancel Refund
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function cancelRefund(refundCode) {
+            document.getElementById('cancelRefundCode').value = refundCode;
+            var modal = new bootstrap.Modal(document.getElementById('cancelRefundModal'));
+            modal.show();
+        }
+
+        function confirmCancelRefund() {
+            const refundCode = document.getElementById('cancelRefundCode').value;
+
+            if (!refundCode) {
+                alert('Refund code not found.');
+                return;
+            }
+
+            const confirmBtn = document.querySelector('#cancelRefundModal .btn-danger');
+            const originalText = confirmBtn.innerHTML;
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Cancelling...';
+
+            fetch(`/refunds/${refundCode}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Failed to cancel refund');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('cancelRefundModal'));
+                    modal.hide();
+
+                    showToast('success', 'Refund cancelled successfully.');
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    throw new Error(data.message || 'Failed to cancel refund');
+                }
+            })
+            .catch(error => {
+                showToast('error', 'An error occurred while cancelling the refund.');
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = originalText;
+            });
+        }
+
+        function showToast(type, message) {
+            const toastContainer = document.getElementById('toastContainer') || createToastContainer();
+
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+            toast.role = 'alert';
+            toast.ariaLive = 'assertive';
+            toast.ariaAtomic = 'true';
+
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill'} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast, { delay: 5000 });
+            bsToast.show();
+
+            toast.addEventListener('hidden.bs.toast', () => {
+                toast.remove();
+            });
+        }
+
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.style.position = 'fixed';
+            container.style.top = '20px';
+            container.style.right = '20px';
+            container.style.zIndex = '9999';
+            container.style.minWidth = '300px';
+            document.body.appendChild(container);
+            return container;
+        }
+    </script>
+}

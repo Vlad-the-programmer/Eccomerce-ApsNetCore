@@ -3,8 +3,10 @@ using EcommerceRestApi.Helpers.Data.ResponseModels;
 using EcommerceRestApi.Helpers.Data.Roles;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateVIewModels;
+using EcommerceRestApi.Helpers.Enums;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Models.Dtos;
+using EcommerceRestApi.Models.Dtos.FilteringDtos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -16,10 +18,14 @@ namespace EcommerceRestApi.Services
     {
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        public UsersManagementService(AppDbContext context, UserManager<ApplicationUser> userManager)
+        private readonly INotificationService _notificationService;
+
+        public UsersManagementService(AppDbContext context,
+                UserManager<ApplicationUser> userManager, INotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
+            _notificationService = notificationService;
         }
 
         public async Task<IList<string>> GetPermissions(ApplicationUser user)
@@ -60,6 +66,17 @@ namespace EcommerceRestApi.Services
                     await _userManager.RemoveClaimAsync(user, claim);
                 }
             }
+
+            var addedPermissions = toAdd.Any()
+                ? string.Join(", ", toAdd)
+                : "none";
+
+            var removedPermissions = toRemove.Any()
+                ? string.Join(", ", toRemove)
+                : "none";
+
+            var message = $"Your Permissions got updated. Added: {addedPermissions}. Removed: {removedPermissions}.";
+            await _notificationService.AddNotificationForUserAsync(user.Id, message);
         }
 
         public async Task<StaffUpdateVM> GetUpdateUserModel(ApplicationUser user)
@@ -128,10 +145,13 @@ namespace EcommerceRestApi.Services
 
             await _userManager.AddToRoleAsync(newUser, UserRoles.Stuff);
 
+            var message = $"Your profile got created. Welocome in our staff!";
+            await _notificationService.AddNotificationForUserAsync(newUser.Id, message);
+
             return new ResponseModel { Message = "Staff member created successfully." };
         }
 
-        public async Task UpdateStaffAsync(ApplicationUser updatedUser, StaffUpdateVM userUpdateVM)
+        public async Task UpdateStaffAsync(ApplicationUser updatedUser, StaffUpdateVM userUpdateVM, string currentUserRole)
         {
             if (updatedUser != null)
             {
@@ -143,19 +163,127 @@ namespace EcommerceRestApi.Services
                 updatedUser.PhoneNumber = userUpdateVM.PhoneNumber ?? updatedUser.PhoneNumber;
                 updatedUser.DateUpdated = DateTime.Now;
 
-                if (userUpdateVM.IsActive)
+                if (currentUserRole == UserRoles.Admin)
                 {
-                    updatedUser.IsActive = true;
-                    updatedUser.DateDeleted = null;
-                }
-                else
-                {
-                    updatedUser.IsActive = false;
+                    if (userUpdateVM.IsActive)
+                    {
+                        updatedUser.IsActive = true;
+                        updatedUser.DateDeleted = null;
+                    }
+                    else
+                    {
+                        updatedUser.IsActive = false;
+                    }
+
                 }
 
                 await _context.SaveChangesAsync();
             }
         }
 
+        public List<SearchComboBoxDto> GetSearchComboBoxDtos()
+        {
+            return new List<SearchComboBoxDto>()
+            {
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = nameof(ApplicationUser.Email),
+                    DisplayName = "Email"
+                },
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = "FullName",
+                    DisplayName = "Full Name"
+                }
+            };
+        }
+
+        public List<SearchComboBoxDto> GetOrderByComboBoxDtos()
+        {
+            return new List<SearchComboBoxDto>()
+            {
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = nameof(ApplicationUser.Email),
+                    DisplayName = "Email"
+                },
+                new SearchComboBoxDto()
+                {
+                    PropertyTitle = "FullName",
+                    DisplayName = "Full Name"
+                }
+            };
+        }
+
+        public async Task<List<CurrentUserViewModel>> FilterStaffAsync(
+            string searchString, string? searchProperty, string? sortProperty,
+                string statusFilter = "",
+                bool sortAscending = false)
+        {
+            var filterEnum = UserStatusFilter.All;
+            if (!string.IsNullOrEmpty(statusFilter))
+            {
+                switch (statusFilter.ToLower())
+                {
+                    case "active":
+                        filterEnum = UserStatusFilter.ActiveOnly;
+                        break;
+                    case "inactive":
+                        filterEnum = UserStatusFilter.InactiveOnly;
+                        break;
+                    case "all":
+                    default:
+                        filterEnum = UserStatusFilter.All;
+                        break;
+                }
+            }
+
+            var staff = await GetStaffUsers();
+
+            switch (filterEnum)
+            {
+                case UserStatusFilter.ActiveOnly:
+                    staff = staff.Where(item => item.IsActive).ToList();
+                    break;
+                case UserStatusFilter.InactiveOnly:
+                    staff = staff.Where(item => !item.IsActive).ToList();
+                    break;
+                case UserStatusFilter.All:
+                default:
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                switch (searchProperty)
+                {
+                    case "Email":
+                        staff = staff.Where(item => item.Email.ToLower().Contains(searchString.ToLower())).ToList();
+                        break;
+                    case "FullName":
+                        staff = staff.Where(item => item.FullName.ToLower().Contains(searchString.ToLower())).ToList();
+                        break;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(sortProperty))
+            {
+                switch (sortProperty)
+                {
+                    case "FullName":
+                        staff = sortAscending ? staff.OrderBy(item => item.FullName).ToList() : staff.OrderByDescending(item => item.FullName).ToList();
+                        break;
+                    case "Email":
+                        staff = sortAscending ? staff.OrderBy(item => item.Email).ToList() : staff.OrderByDescending(item => item.Email).ToList();
+                        break;
+                }
+            }
+            else
+            {
+                staff = staff.OrderBy(o => o.FullName).ToList();
+            }
+
+            return staff;
+        }
     }
 }

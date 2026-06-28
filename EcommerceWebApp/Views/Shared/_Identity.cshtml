@@ -40,12 +40,10 @@ else
                 @if (User.Identity.IsAuthenticated) {
                     <a class="dropdown-item"
                     asp-controller="Account"
-                    asp-action="Edit"
-                    asp-route-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value">
-                        <i class="bi bi-person-gear"></i> Edit Account
-                    </a>
-                    <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
-                        <i class="bi bi-trash"></i> Delete Account
+                    asp-action="Details"
+                       @* asp-route-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" *@
+                    >
+                        <i class="bi bi-person-gear"></i> Account info
                     </a>
                 }
 
@@ -78,12 +76,43 @@ else
                   (User.IsInRole("Admin") || User.HasPermission(Permissions.ManageUsers)))
                 {
                     <a class="dropdown-item" asp-controller="UsersManagement" asp-action="Index" asp-route-area="">
-                        <i class="bi bi-ticket-perforated"></i> Users Management
+                        <i class="bi bi-person-gear"></i> Users Management
+                    </a>
+                }
+
+                @if (User.Identity.IsAuthenticated &&
+                  (User.IsInRole("Admin") || User.HasPermission(Permissions.ManageUsers)))
+                {
+                    <a class="dropdown-item" asp-controller="ShopCoinSettings" asp-action="Index" asp-route-area="">
+                        ⚙️ ShopCoin Settings
+                    </a>
+                }
+
+
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    var from = DateTime.UtcNow.AddMonths(-1).ToString("yyyy-MM-dd");
+                    var to = DateTime.UtcNow.ToString("yyyy-MM-dd");
+
+                    <a class="dropdown-item"
+                       asp-controller="Analitics"
+                       asp-action="Index"
+                       asp-route-from="@from"
+                       asp-route-to="@to">
+                        📊 Analytics Dashboard
                     </a>
                 }
 
                 @if (User.Identity.IsAuthenticated)
                 {
+                    <a class="dropdown-item" asp-controller="Refunds" asp-action="Index" asp-route-area="">
+                        💸 Refunds
+                    </a>
+
+                    <a class="dropdown-item" asp-controller="Return" asp-action="Index" asp-route-area="">
+                        @{ var s = "\u23CE"; } @s Returns
+                    </a>
+
                     <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-outline-danger my-2 my-sm-0 mt-3 mx-3">

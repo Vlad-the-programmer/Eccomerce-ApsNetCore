@@ -1,16 +1,12 @@
-﻿using EcommerceRestApi.AppGlobals;
-using EcommerceRestApi.Helpers.Cart;
-using EcommerceRestApi.Helpers.Data.Permissions;
+﻿using EcommerceRestApi.Helpers.Data.Permissions;
 using EcommerceRestApi.Helpers.Data.ResponseModels;
 using EcommerceRestApi.Helpers.Data.Roles;
 using EcommerceRestApi.Helpers.Data.ViewModels;
-using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Models.Dtos;
 using EcommerceRestApi.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace EcommerceRestApi.Controllers
 {
@@ -18,20 +14,11 @@ namespace EcommerceRestApi.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IOrderService _orderService;
-        private readonly AppDbContext _context;
-        private readonly ShoppingCart _cart;
 
-        public OrdersController(UserManager<ApplicationUser> userManager,
-                                IOrderService orderService,
-                                AppDbContext context,
-                                ShoppingCart cart)
+        public OrdersController(IOrderService orderService)
         {
-            _userManager = userManager;
             _orderService = orderService;
-            _context = context;
-            _cart = cart;
         }
 
         [HttpGet("filter")]
@@ -91,24 +78,7 @@ namespace EcommerceRestApi.Controllers
         public async Task<IActionResult> CreateOrderCreateTemplate(string shoppingCartId)
         {
 
-            var model = new NewOrderViewModel();
-            model.Customer = new CreateOrderCustomerDto();
 
-            var customer = await _context.Customers
-                                            .Include(c => c.User)
-                                            .Include(c => c.Addresses)
-                                                .ThenInclude(a => a.Country)
-                                            .Where(c => c.UserId == _userManager.GetUserId(User))
-                                            .FirstOrDefaultAsync();
-            if (customer != null)
-            {
-                model.Customer = CreateOrderCustomerDto.ToDto(customer, _userManager);
-            }
-
-            model.TotalAmount += await _cart.GetTotal();
-            //model.TotalAmount += model.TotalAmount * AppConstants.TAXES_RATE;
-
-            model.TaxRate = AppConstants.TAXES_RATE;
 
             if (!ModelState.IsValid)
             {
@@ -122,13 +92,13 @@ namespace EcommerceRestApi.Controllers
                 });
             }
 
+            var model = await _orderService.CreateOrderCreateTemplate(shoppingCartId, User);
             return Ok(model);
         }
 
         [HttpPost("create")]
-        [Authorize(Policy = Permissions.ManageOrders)]
-        public async Task<IActionResult> CreateOrder([FromBody][Bind("DeliveryMethod,   " +
-            "                               PaymentMethod,OrderStatus,Customer,TotalAmount")] NewOrderViewModel model)
+        [Authorize]
+        public async Task<IActionResult> CreateOrder([FromBody] NewOrderViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -142,13 +112,20 @@ namespace EcommerceRestApi.Controllers
                 });
             }
 
-            var order = await _orderService.AddNewOrderAsync(model);
+            try
+            {
+                var order = await _orderService.AddNewOrderAsync(model);
 
-            return CreatedAtAction(nameof(GetOrder), new { code = order.Code }, order);
+                return CreatedAtAction(nameof(GetOrder), new { code = order.Code }, order);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new ResponseModel { Message = e.Message });
+            }
         }
 
         [HttpPut("update/{code}")]
-        [Authorize(Roles = UserRoles.User)]
+        [Authorize]
         public async Task<IActionResult> UpdateOrder(string code, [FromBody] NewOrderViewModel model)
         {
             var order = await _orderService.GetOrderByCodeAsync(code);
@@ -168,9 +145,32 @@ namespace EcommerceRestApi.Controllers
             if (order == null)
                 return NotFound();
 
-            await _orderService.DeleteOrderAsync(code);
+            try
+            {
+
+                await _orderService.DeleteOrderAsync(code);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
 
             return NoContent();
+        }
+
+        [HttpPost("change-order-status")]
+        [Authorize(Policy = Permissions.ManageOrders)]
+        public async Task<IActionResult> ChangeOrderStatus([FromBody] ChangeOrderStatusDto changeOrderStatusDto)
+        {
+            try
+            {
+                await _orderService.ChangeOrderStatusAsync(changeOrderStatusDto, User.FindFirstValue(ClaimTypes.NameIdentifier));
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new ResponseModel { Message = e.Message });
+            }
         }
 
         [HttpGet("search-combo-box-dtos")]

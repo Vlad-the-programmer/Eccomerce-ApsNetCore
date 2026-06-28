@@ -4,10 +4,14 @@
     "Projects": [
       {
         "Path": "EcommerceRestApi\\EcommerceRestApi.csproj",
-        "Action": "Start"
+        "Action": "StartWithoutDebugging"
       },
       {
         "Path": "EcommerceWebApp\\EcommerceWebApp.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "EcommerceMobileApp\\EcommerceMobileApp.csproj",
         "Action": "Start"
       }
     ]

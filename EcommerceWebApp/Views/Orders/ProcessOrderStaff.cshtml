@@ -1,0 +1,387 @@
+﻿@model List<EcommerceWebApp.Models.Dtos.OrderDTO>
+@using EcommerceWebApp.Models.Dtos;
+@using EcommerceWebApp.AppGlobals;
+
+@{
+    ViewData["Title"] = "All Orders";
+}
+
+@section Filters {
+    <style>
+        .filters-section {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: #f8f9fa;
+        }
+
+            .filters-section .form-label {
+                font-size: 0.7rem;
+                margin-bottom: 0.2rem;
+                color: #6c757d;
+            }
+
+            .filters-section .form-control,
+            .filters-section .form-select {
+                font-size: 0.875rem;
+            }
+
+            .filters-section .btn {
+                width: 100%;
+            }
+
+            .filters-section .container {
+                max-width: 1200px;
+                padding-left: 0 !important;
+                margin-left: 0 !important;
+            }
+
+    </style>
+
+    <div class="filters-section bg-light border-bottom shadow-sm py-2 pb-0">
+        <div class="container">
+            <form asp-controller="Orders" asp-action="Filter" method="get">
+                <!-- Main Filters Row - All in One Line -->
+                <div class="row align-items-end g-1">
+                    <!-- Search Input -->
+                    <div class="col-auto mb-1" style="min-width: 180px;">
+                        <label class="form-label fw-bold small">Search</label>
+                        <input name="searchString" class="form-control form-control-sm" type="search"
+                               placeholder="Search orders..."
+                               value="@Context.Request.Query["searchString"]">
+                    </div>
+
+                    <!-- Search Property Dropdown -->
+                    <div class="col-md-2 mb-1">
+                        <label class="form-label fw-bold small">Search In</label>
+                        <select name="searchProperty" class="form-select">
+                            <option value="">-- All Fields --</option>
+                            @if (ViewBag.SearchComboxOptions != null)
+                            {
+                                foreach (var option in ViewBag.SearchComboxOptions as List<SearchComboBoxDto> ?? new List<SearchComboBoxDto>())
+                                {
+                                    var selected = Context.Request.Query["searchProperty"] == option.PropertyTitle ? "selected" : "";
+                                    <option value="@option.PropertyTitle" selected="@selected">@option.DisplayName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- From Date Filter -->
+                    <div class="col-auto mb-1" style="width: 140px;">
+                        <label class="form-label fw-bold small">From Date</label>
+                        <input type="date" name="fromDate" class="form-control form-control-sm"
+                               value="@Context.Request.Query["fromDate"]">
+                    </div>
+
+                    <!-- To Date Filter -->
+                    <div class="col-auto mb-1" style="width: 140px;">
+                        <label class="form-label fw-bold small">To Date</label>
+                        <input type="date" name="toDate" class="form-control form-control-sm"
+                               value="@Context.Request.Query["toDate"]">
+                    </div>
+
+                    <!-- Sort By Dropdown -->
+                    <div class="col-md-2 mb-1">
+                        <label class="form-label fw-bold small">Sort By</label>
+                        <select name="sortProperty" class="form-select">
+                            <option value="">-- Default --</option>
+                            @if (ViewBag.OrderbyComboxOptions != null)
+                            {
+                                foreach (var option in ViewBag.OrderbyComboxOptions as List<SearchComboBoxDto> ?? new List<SearchComboBoxDto>())
+                                {
+                                    var selected = Context.Request.Query["sortProperty"] == option.PropertyTitle ? "selected" : "";
+                                    <option value="@option.PropertyTitle" selected="@selected">@option.DisplayName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Sort Direction -->
+                    <div class="col-md-1 mb-1">
+                        <label class="form-label fw-bold small">Order</label>
+                        <select name="sortAscending" class="form-select">
+                            <option value="false" selected="@(Context.Request.Query["sortAscending"] == "false" || string.IsNullOrEmpty(Context.Request.Query["sortAscending"]) ? "selected" : null)">
+                                Desc ↓
+                            </option>
+                            <option value="true" selected="@(Context.Request.Query["sortAscending"] == "true" ? "selected" : null)">
+                                Asc ↑
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="col-md-1 mb-1 mx-2">
+                        <label class="form-label fw-bold small">&nbsp;</label>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search"></i>
+                            </button>
+                            <a href="@Url.Action("Index", "Products")" class="btn btn-secondary">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Active Filters Display -->
+            @{
+                var hasActiveFilters = (!string.IsNullOrEmpty(Context.Request.Query["searchString"]) ||
+                !string.IsNullOrEmpty(Context.Request.Query["searchProperty"]) ||
+                !string.IsNullOrEmpty(Context.Request.Query["sortProperty"]) ||
+                !string.IsNullOrEmpty(Context.Request.Query["fromDate"]) ||
+                !string.IsNullOrEmpty(Context.Request.Query["toDate"]));
+            }
+
+            @if (hasActiveFilters)
+            {
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <div class="d-flex flex-wrap gap-1 align-items-center">
+                            <span class="text-muted small">Active:</span>
+
+                            @if (!string.IsNullOrEmpty(Context.Request.Query["searchString"]))
+                            {
+                                <span class="badge bg-primary" style="font-size: 0.7rem;">
+                                    <i class="bi bi-search"></i> "@Context.Request.Query["searchString"]"
+                                    <a href="#" onclick="removeFilter('searchString')" class="text-white ms-1 text-decoration-none">&times;</a>
+                                </span>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Context.Request.Query["searchProperty"]))
+                            {
+                                <span class="badge bg-secondary" style="font-size: 0.7rem;">
+                                    Field: @Context.Request.Query["searchProperty"]
+                                    <a href="#" onclick="removeFilter('searchProperty')" class="text-white ms-1 text-decoration-none">&times;</a>
+                                </span>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Context.Request.Query["fromDate"]))
+                            {
+                                <span class="badge bg-info" style="font-size: 0.7rem;">
+                                    <i class="bi bi-calendar"></i> From: @Context.Request.Query["fromDate"]
+                                    <a href="#" onclick="removeFilter('fromDate')" class="text-white ms-1 text-decoration-none">&times;</a>
+                                </span>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Context.Request.Query["toDate"]))
+                            {
+                                <span class="badge bg-warning" style="font-size: 0.7rem;">
+                                    <i class="bi bi-calendar"></i> To: @Context.Request.Query["toDate"]
+                                    <a href="#" onclick="removeFilter('toDate')" class="text-white ms-1 text-decoration-none">&times;</a>
+                                </span>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Context.Request.Query["sortProperty"]))
+                            {
+                                <span class="badge bg-success" style="font-size: 0.7rem;">
+                                    Sort: @Context.Request.Query["sortProperty"]
+                                    @(Context.Request.Query["sortAscending"] == "true" ? "↑" : "↓")
+                                    <a href="#" onclick="removeFilter('sortProperty')" class="text-white ms-1 text-decoration-none">&times;</a>
+                                </span>
+                            }
+
+                            <a href="@Url.Action("Index", "Orders")" class="btn btn-sm btn-outline-danger" style="padding: 0.1rem 0.4rem; font-size: 0.7rem;">
+                                <i class="bi bi-trash"></i> Clear
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="mb-4 text-center">
+                <h3 class="fw-bold">All Orders</h3>
+                <hr />
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover shadow-sm w-100">
+                        <thead class="table-dark text-center">
+                            <tr>
+                                <th style="width: 15%">Order Code</th>
+                                <th style="width: 15%">Order Date</th>
+                                <th style="width: 30%">Items</th>
+                                <th style="width: 15%">Total</th>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <th style="width: 15%">Customer</th>
+                                }
+                                <th style="width: 15%">Action</th>
+                                <th style="width: 15%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    <td class="align-middle text-center">@order.Code</td>
+                                    <td class="align-middle text-center">@order.OrderDate</td>
+
+                                    <td class="align-middle">
+                                        <ul class="list-unstyled mb-0">
+                                            @foreach (var item in order.OrderItems)
+                                            {
+                                                <li class="mb-1">
+                                                    <div class="alert alert-secondary p-2 mb-0">
+                                                        <span class="badge bg-success">@item.Quantity</span>
+                                                        <strong>@item.ProductBrand @item.ProductName</strong>
+                                                        <small class="text-muted">@item.UnitPrice.ToString("C", new System.Globalization.CultureInfo("en-US"))</small>
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </td>
+                                    <td class="align-middle text-center fw-bold text-primary">
+                                        @order.TotalAmount.ToString("C", new System.Globalization.CultureInfo("en-US"))
+                                    </td>
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <td class="align-middle text-center">
+                                            @order.Customer.FirstName @order.Customer.LastName
+                                        </td>
+                                    }
+                                    <td class="align-middle text-center">
+                                        <a class="btn btn-outline-primary btn-sm"
+                                           asp-controller="Orders"
+                                           asp-action="Status"
+                                           asp-route-code="@order.Code">
+                                            <i class="bi bi-card-checklist"></i> Check Status
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2 justify-content-center">
+
+                                            @{
+                                                string nextStatus = order.OrderStatus switch
+                                                {
+                                                    "Pending" => "Processing",
+                                                    "Paid" => "Processing",
+                                                    "Processing" => "ReadyToShip",
+                                                    "ReadyToShip" => "Shipped",
+                                                    "Shipped" => "InDelivery",
+                                                    "InDelivery" => "Delivered",
+                                                    _ => null
+                                                };
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(nextStatus))
+                                            {
+                                                <button class="btn btn-primary btn-sm change-status-btn"
+                                                        data-order-code="@order.Code"
+                                                        data-status="@nextStatus"
+                                                >
+                                                    ➡️ @nextStatus
+                                                </button>
+                                            }
+
+                                            @if (order.OrderStatus != "Cancelled" && order.OrderStatus != "Delivered")
+                                            {
+                                                <button class="btn btn-danger btn-sm"
+                                                        data-order-code="@order.Code"
+                                                        data-status="@nextStatus">
+                                                    ❌ Cancel
+                                                </button>
+                                            }
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-inbox"></i> No orders found.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function syncSearchProperty() {
+            const searchProperty = document.querySelector('select[name="searchProperty"]').value;
+            const navbarSearchInput = document.querySelector('#navbarSearchForm input[name="searchString"]');
+            const navbarSearchForm = document.querySelector('#navbarSearchForm');
+
+            if (searchProperty) {
+                const url = new URL(navbarSearchForm.action);
+                url.searchParams.set('searchProperty', searchProperty);
+                navbarSearchForm.action = url.toString();
+            }
+        }
+
+        function removeFilter(filterName) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete(filterName);
+
+            if (filterName === 'fromDate') {
+            } else if (filterName === 'toDate') {
+            }
+
+            window.location.href = url.toString();
+        }
+
+        function resetAllFilters() {
+            window.location.href = '@Url.Action("Index", "Orders")';
+        }
+        document.querySelector('#navbarSearchForm')?.addEventListener('submit', function(e) {
+            const searchProperty = document.querySelector('select[name="searchProperty"]')?.value;
+            if (searchProperty) {
+                const searchInput = this.querySelector('input[name="searchString"]');
+                const action = this.action;
+                const url = new URL(action);
+                url.searchParams.set('searchProperty', searchProperty);
+                this.action = url.toString();
+            }
+        });
+
+        async function changeStatus(orderCode, status) {
+
+            try {
+                const response = await fetch("@Url.Action("ChangeOrderStatus")", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orderCode: orderCode,
+                        status: status
+                    })
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    const error = await response.json();
+                    alert(error.message || "Failed to update status");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error updating order");
+            }
+        }
+
+        document.querySelectorAll('.change-status-btn').forEach(btn => {
+            btn.addEventListener('click', async function () {
+                const orderId = this.dataset.orderCode;
+                const newStatus = this.dataset.status;
+
+                await changeStatus(orderId, newStatus);
+            });
+        });
+    </script>
+}

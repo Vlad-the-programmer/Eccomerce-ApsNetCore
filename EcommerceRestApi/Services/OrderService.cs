@@ -10,6 +10,7 @@ using EcommerceRestApi.Models.Dtos.FilteringDtos;
 using EcommerceRestApi.Services.Base;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace EcommerceRestApi.Services
 {
@@ -21,18 +22,24 @@ namespace EcommerceRestApi.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ShoppingCart _cart;
         private readonly ICouponService _couponService;
+        private readonly IShopCoinsService _coinsService;
+        private readonly INotificationService _notificationService;
 
         public OrderService(AppDbContext context,
                             IHttpContextAccessor httpContextAccessor,
                             UserManager<ApplicationUser> userManager,
                             ShoppingCart cart,
-                            ICouponService couponService) : base(context)
+                            ICouponService couponService,
+                            IShopCoinsService coinsService,
+                            INotificationService notificationService) : base(context)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _cart = cart;
             _couponService = couponService;
+            _coinsService = coinsService;
+            _notificationService = notificationService;
         }
 
         private ISession Session => _httpContextAccessor.HttpContext?.Session;
@@ -51,12 +58,14 @@ namespace EcommerceRestApi.Services
                DeliveryMethod = order.DeliveryMethodOrders.FirstOrDefault().DeliveryMethod.MethodName ?? string.Empty,
                OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
                {
+                   Id = oi.Id,
                    ProductId = oi.ProductId,
                    Quantity = oi.Quantity,
                    UnitPrice = oi.Product.Price,
                    OrderId = oi.OrderId,
                    ProductName = oi.Product.Name,
                    ProductBrand = oi.Product.Brand,
+                   ProductPhoto = oi.Product.Photo ?? string.Empty
                }).ToList(),
                Customer = new OrderCustomerDTO
                {
@@ -78,7 +87,12 @@ namespace EcommerceRestApi.Services
                    Role = order.Customer.User.Role,
                    UserName = order.Customer.User.UserName,
                },
-               IsPaid = order.IsPaid
+               IsPaid = order.IsPaid,
+               StatusHistory = order.StatusHistory.Select(s => new OrderStatusHistoryDto
+               {
+                   Status = s.Status,
+                   DateCreated = s.DateCreated
+               }).ToList()
            })
            .FirstOrDefaultAsync(o => o.Code == code);
 
@@ -125,10 +139,6 @@ namespace EcommerceRestApi.Services
             if (order == null)
                 return;
 
-            var pointsForOrder = (int)(order.TotalAmount * AppConstants.POINTS_PER_DOLLAR);
-            order.Customer.Points -= pointsForOrder;
-            order.Customer.DateUpdated = DateTime.Now;
-
             order.DateDeleted = DateTime.Now;
             order.IsActive = false;
             order.Status = OrderProcessingFuncs.GetStringValue(OrderStatuses.Cancelled);
@@ -165,10 +175,20 @@ namespace EcommerceRestApi.Services
             order.DateUpdated = DateTime.Now;
 
             await _context.SaveChangesAsync();
+
+            if (order.Customer != null)
+            {
+                await _coinsService.RefundCoinsForOrder(order.Id);
+            }
         }
 
         public async Task<OrderDto> AddNewOrderAsync(NewOrderViewModel data)
         {
+            if (data.SelectedItemsIds == null || !data.SelectedItemsIds.Any())
+            {
+                throw new ArgumentException("No items selected for the order.");
+            }
+
             var customer = await _context.Customers
                                     .Include(c => c.Addresses)
                                         .ThenInclude(a => a.Country)
@@ -186,7 +206,7 @@ namespace EcommerceRestApi.Services
             };
 
             order.TotalAmount = data.TotalAmount;
-            order = await _cart.ConvertToOrder(order);
+            order = await _cart.ConvertToOrder(order, data.SelectedItemsIds);
 
             var appliedCouponCode = Session.GetString("AppliedCouponCode");
 
@@ -214,15 +234,6 @@ namespace EcommerceRestApi.Services
                 order.TotalAmount -= couponDiscountAmount;
 
                 Session.Remove("AppliedCouponCode");
-            }
-
-            if (customer != null)
-            {
-                customer.Nip = data.Customer?.Nip ?? customer.Nip;
-
-                var pointsForOrder = (int)(order.TotalAmount * AppConstants.POINTS_PER_DOLLAR);
-                customer.Points += pointsForOrder;
-                customer.DateUpdated = DateTime.Now;
             }
 
             order.Status = OrderProcessingFuncs.GetStringValue((OrderStatuses)data.OrderStatus);
@@ -306,6 +317,15 @@ namespace EcommerceRestApi.Services
             await _context.Orders.AddAsync(order);
             await _context.SaveChangesAsync();
 
+            var message = $"Your order with code {order.Code} has been submitted with status: {order.Status}.";
+            await _notificationService.AddNotificationForCustomerAsync(order.CustomerId, message);
+
+
+            if (customer != null)
+            {
+                await _coinsService.SpendCoinsForOrder(order.Id);
+            }
+
             var newOrder = await _context.Orders
                     .Include(o => o.OrderCoupons)
                     .Include(o => o.Customer)
@@ -322,7 +342,8 @@ namespace EcommerceRestApi.Services
 
             var invoice = await InvoicePaymentHelperFuncs.GenerateInvoice(
                 newOrder,
-                _context
+                _context,
+                _notificationService
             );
             await OrderProcessingFuncs.CreateShippment(order.Id,
                                                         estimatedArrivalDateShippment,
@@ -335,13 +356,20 @@ namespace EcommerceRestApi.Services
                                                    (PaymentMethods)data.PaymentMethod));
             if (paymentMethod != null && invoice != null)
             {
-                await InvoicePaymentHelperFuncs.CreatePayment(order,
+                await InvoicePaymentHelperFuncs.CreatePayment(newOrder,
                                                               paymentMethod.Id,
                                                               invoice.Id,
-                                                              _context);
+                                                              _context,
+                                                              _notificationService);
             }
 
-            await _cart.ClearCart(); // Clear cart after order submit
+            if (customer != null)
+            {
+                await _coinsService.RewardCoinsForOrder(order.Id);
+            }
+
+            await _cart.ClearCart(data.SelectedItemsIds); // Clear cart items baught after order submit
+
             return OrderDto.OrderToDto(order, _context, _userManager);
         }
 
@@ -392,6 +420,62 @@ namespace EcommerceRestApi.Services
            .ToListAsync();
 
             return orders;
+        }
+
+        public async Task ChangeOrderStatusAsync(ChangeOrderStatusDto dto, string? currentUserId)
+        {
+            if (string.IsNullOrEmpty(currentUserId)) return;
+
+            var order = await _context.Orders
+                .FirstOrDefaultAsync(o => o.Code == dto.OrderCode);
+
+            if (order == null)
+                throw new Exception("Order not found");
+
+            string nextStatus = order.Status switch
+            {
+                "Pending" => "Processing",
+                "Paid" => "Processing",
+                "Processing" => "ReadyToShip",
+                "ReadyToShip" => "Shipped",
+                "Shipped" => "InDelivery",
+                "InDelivery" => "Delivered",
+                _ => null
+            };
+
+            if (dto.Status == "Cancelled")
+            {
+                order.Status = "Cancelled";
+            }
+            else if (nextStatus == null || dto.Status != nextStatus)
+            {
+                throw new Exception($"Invalid status transition from {order.Status} to {dto.Status}");
+            }
+            else
+            {
+                order.Status = dto.Status;
+            }
+
+            if (dto.Status == "Delivered")
+            {
+                order.IsPaid = true;
+            }
+
+            await _context.SaveChangesAsync();
+
+            await _context.OrderStatusHistory.AddAsync(new OrderStatusHistory()
+            {
+                Status = dto.Status,
+                ChangedBy = currentUserId,
+                DateCreated = DateTime.Now,
+                IsActive = true,
+                OrderId = order.Id
+            });
+
+            await _context.SaveChangesAsync();
+
+            var message = $"Your order with code {order.Code} has been updated to status: {order.Status}.";
+            await _notificationService.AddNotificationForCustomerAsync(order.CustomerId, message);
         }
 
         public async Task<List<OrderDto>> FilterOrdersAsync(
@@ -626,6 +710,29 @@ namespace EcommerceRestApi.Services
                     DisplayName = "Order Date"
                 }
             };
+        }
+
+        public async Task<NewOrderViewModel> CreateOrderCreateTemplate(string shoppingCartId, ClaimsPrincipal User)
+        {
+            var model = new NewOrderViewModel();
+            model.Customer = new CreateOrderCustomerDto();
+
+            var customer = await _context.Customers
+                                            .Include(c => c.User)
+                                            .Include(c => c.Addresses)
+                                                .ThenInclude(a => a.Country)
+                                            .Where(c => c.UserId == _userManager.GetUserId(User))
+                                            .FirstOrDefaultAsync();
+            if (customer != null)
+            {
+                model.Customer = CreateOrderCustomerDto.ToDto(customer, _userManager);
+            }
+
+            model.TotalAmount += await _cart.GetTotal();
+
+            model.TaxRate = AppConstants.TAXES_RATE;
+
+            return model;
         }
     }
 }

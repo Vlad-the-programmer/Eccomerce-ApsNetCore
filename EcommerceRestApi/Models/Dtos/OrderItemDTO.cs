@@ -7,6 +7,8 @@ namespace EcommerceRestApi.Models.Dtos
 {
     public class OrderItemDTO
     {
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "Order ID is required.")]
         public int OrderId { get; set; }
 
@@ -27,6 +29,7 @@ namespace EcommerceRestApi.Models.Dtos
         //public virtual Product Product { get; set; } = null!;
         public string ProductName { get; set; }
         public string ProductBrand { get; set; }
+        public string ProductPhoto { get; set; }
 
         public static async Task<OrderItemDTO> ToOrderItemVM(ShoppingCartItemDTO cartItemVM, AppDbContext context)
         {

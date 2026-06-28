@@ -1,0 +1,21 @@
+﻿@model EcommerceWebApp.Models.Dtos.ShopCoinSettingsDto
+
+@{
+    ViewData["Title"] = "Shop Coin Settings";
+}
+
+<h2 class="mb-4">⚙️ Shop Coin Settings</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <p><strong>Earn Rate:</strong> @Model.EarnRate</p>
+        <p><strong>Spend Rate:</strong> @Model.SpendRate</p>
+        <p><strong>Max Spend %:</strong> @Model.MaxSpendPercentage</p>
+        <p><strong>Last Updated:</strong> @Model.LastUpdated</p>
+
+        <a asp-action="Edit" class="btn btn-primary mt-2">Edit</a>
+        <a asp-action="Create" class="btn btn-success mt-2">Create New</a>
+
+    </div>
+</div>

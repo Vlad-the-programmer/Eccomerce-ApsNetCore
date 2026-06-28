@@ -1,0 +1,34 @@
+﻿@model EcommerceWebApp.Models.Dtos.ShopCoinSettingsDto
+
+@{
+    ViewData["Title"] = "Create Settings";
+}
+
+<h2>Create Shop Coin Settings</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="EarnRate" class="form-label"></label>
+        <input asp-for="EarnRate" class="form-control" />
+        <span asp-validation-for="EarnRate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SpendRate" class="form-label"></label>
+        <input asp-for="SpendRate" class="form-control" />
+        <span asp-validation-for="SpendRate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="MaxSpendPercentage" class="form-label"></label>
+        <input asp-for="MaxSpendPercentage" class="form-control" />
+        <span asp-validation-for="MaxSpendPercentage" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

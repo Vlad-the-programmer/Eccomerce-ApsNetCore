@@ -25,6 +25,29 @@ namespace EcommerceWebApp.Helpers
             return orders;
         }
 
+        public async static Task<int> CalculateCoinsAmountToSpend(IApiService apiService, decimal cartTotal, string? customerId)
+        {
+            if (string.IsNullOrEmpty(customerId)) return 0;
+
+            try
+            {
+                Int32.TryParse(customerId, out int customerIdInt);
+
+                var json = await apiService.GetDataAsync($"api/shopcoins/max-spend/{customerIdInt}?cartTotal={cartTotal}");
+
+                using var doc = JsonDocument.Parse(json);
+
+                int maxCoins = doc.RootElement
+                    .GetProperty("maxCoinsUsable")
+                    .GetInt32();
+                return maxCoins;
+            }
+            catch (HttpRequestException ex)
+            {
+                return 0;
+            }
+            catch (Exception) { return 0; }
+        }
 
         public async static Task<OrderDTO?> GetOrderByCode(string endpoint, string code, IApiService apiService)
         {

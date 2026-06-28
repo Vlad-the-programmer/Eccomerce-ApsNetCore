@@ -1,0 +1,86 @@
+﻿@model List<EcommerceWebApp.Models.Dtos.NotificationDto>
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+
+<h2 class="mb-4">🔔 Notifications</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No notifications yet.
+    </div>
+}
+else
+{
+
+    <div class="list-group">
+
+        @foreach (var item in Model)
+        {
+            <div id="notif-@item.Id"
+                 class="list-group-item d-flex justify-content-between align-items-start @(item.IsRead ? "bg-light text-muted" : "border-start border-4 border-primary")">
+
+                <div class="ms-2 me-auto">
+                    <div>@item.Message</div>
+
+                    <small class="text-muted">
+                        @item.DateCreated.ToLocalTime().ToString("dd MMM yyyy HH:mm")
+                    </small>
+                </div>
+
+                <div class="text-end">
+                    @if (!item.IsRead)
+                    {
+                        <button type="button"
+                                class="btn btn-sm btn-outline-success"
+                                onclick="markAsRead(@item.Id)">
+                            Mark as read
+                        </button>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Read</span>
+                    }
+                </div>
+            </div>
+        }
+
+</div>
+
+}
+
+@section Scripts {
+
+    <script>
+        async function markAsRead(notificationId) {
+            try {
+                const response = await fetch(`/notifications/mark-as-read/${notificationId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Request failed');
+                }
+
+                const notif = document.getElementById(`notif-${notificationId}`);
+
+                notif.classList.remove("border-start", "border-4", "border-primary");
+                notif.classList.add("bg-light", "text-muted");
+
+                const actionDiv = notif.querySelector(".text-end");
+                actionDiv.innerHTML = '<span class="badge bg-success">Read</span>';
+
+            } catch (err) {
+                console.error(err);
+                alert("Failed to mark notification as read");
+            }
+        }
+    </script>
+
+}

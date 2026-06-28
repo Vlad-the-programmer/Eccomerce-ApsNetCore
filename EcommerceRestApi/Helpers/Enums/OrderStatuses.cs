@@ -2,10 +2,9 @@
 {
     public enum OrderStatuses
     {
-        Approved,
         Pending,
         Paid,
-        Rejected,
+        //Rejected,
         Cancelled,
         Processing,
         ReadyToShip,

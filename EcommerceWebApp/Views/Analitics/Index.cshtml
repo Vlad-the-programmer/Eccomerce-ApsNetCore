@@ -1,0 +1,265 @@
+﻿@model EcommerceWebApp.Models.Analitics.AnalyticsViewModel
+
+@{
+    ViewData["Title"] = "Analytics Dashboard";
+}
+
+<h2 class="mb-4">📊 Analytics Dashboard</h2>
+
+<form method="get" asp-action="Index" class="row mb-4 align-items-end g-2">
+
+    @{
+        var fromValue = Context.Request.Query["from"].ToString();
+        var toValue = Context.Request.Query["to"].ToString();
+
+        var fromDate = string.IsNullOrEmpty(fromValue)
+            ? DateTime.Today.AddMonths(-1).ToString("yyyy-MM-dd")
+            : fromValue;
+
+        var toDate = string.IsNullOrEmpty(toValue)
+            ? DateTime.Today.ToString("yyyy-MM-dd")
+            : toValue;
+
+    }
+
+    <div class="col-md-3">
+        <label>From</label>
+        <input type="date" name="from" class="form-control"
+               value="@fromDate" />
+    </div>
+
+    <div class="col-md-3">
+        <label>To</label>
+        <input type="date" name="to" class="form-control"
+               value="@toDate" />
+    </div>
+
+    <div class="col-md-2 d-flex gap-2">
+
+        <button type="submit" class="btn btn-primary btn-sm w-100">
+            Filter
+        </button>
+
+        <a href="@Url.Action("Index", "Analitics")"
+           class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center">
+            <i class="bi bi-arrow-repeat"></i>
+        </a>
+
+    </div>
+
+    <div class="col-md-4">
+        <a class="btn btn-success w-100 btn-sm"
+           asp-action="ExportOrders"
+           asp-route-from="@Context.Request.Query["from"]"
+           asp-route-to="@Context.Request.Query["to"]">
+            Export Orders
+        </a>
+    </div>
+
+</form>
+
+<!-- ========================= -->
+<!-- SUMMARY CARDS -->
+<!-- ========================= -->
+<div class="row mb-4">
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6>Total Revenue</h6>
+            <h4>$@Model.Revenue?.TotalRevenue</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6>Monthly Revenue</h6>
+            <h4>$@Model.Revenue?.MonthlyRevenue</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6>Total Orders</h6>
+            <h4>@Model.Orders?.TotalOrders</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6>Total Completed Orders</h6>
+            <h4>@Model.Orders?.CompletedOrders</h4>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========================= -->
+<!-- SECOND ROW -->
+<!-- ========================= -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6>Customers</h6>
+            <h4>@Model.Customers?.TotalCustomers</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6>Refunds</h6>
+            <h4>@Model.Refunds?.TotalRefunds</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6>Returns</h6>
+            <h4>@Model.Returns?.TotalReturns</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm p-3">
+            <h6>Weekly Revenue</h6>
+            <h4>$@Model.Revenue?.WeeklyRevenue</h4>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========================= -->
+<!-- CHARTS -->
+<!-- ========================= -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>📈 Revenue Trend</h5>
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>📦 Orders Trend</h5>
+            <canvas id="ordersChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>💸 Refunds by Status</h5>
+            <canvas id="refundChart"></canvas>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>🔄 Returns by Status</h5>
+            <canvas id="returnChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- ========================= -->
+<!-- TOP PRODUCTS -->
+<!-- ========================= -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card p-3">
+            <h5>🏆 Top Products</h5>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Sold</th>
+                        <th>Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.TopProducts)
+                    {
+                        <tr>
+                            <td>@p.ProductName</td>
+                            <td>@p.QuantitySold</td>
+                            <td>$@p.Revenue</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // =========================
+        // REVENUE CHART
+        // =========================
+        new Chart(document.getElementById("revenueChart"), {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.Revenue?.RevenueByDate.Select(x => x.Label))),
+                datasets: [{
+                    label: 'Revenue',
+                    data: @Html.Raw(Json.Serialize(Model.Revenue?.RevenueByDate.Select(x => x.Value))),
+                    fill: false,
+                    tension: 0.3
+                }]
+            }
+        });
+
+        // =========================
+        // ORDERS CHART
+        // =========================
+        new Chart(document.getElementById("ordersChart"), {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.Orders?.OrdersByDate.Select(x => x.Label))),
+                datasets: [{
+                    label: 'Orders',
+                    data: @Html.Raw(Json.Serialize(Model.Orders?.OrdersByDate.Select(x => x.Value)))
+                }]
+            }
+        });
+
+        // =========================
+        // REFUND CHART
+        // =========================
+                new Chart(document.getElementById("refundChart"), {
+            type: 'pie',
+            data: {
+                labels: ["Pending", "Approved", "Rejected"],
+                datasets: [{
+                    data: [
+                        @Model.Refunds?.Pending,
+                        @Model.Refunds?.Approved,
+                        @Model.Refunds?.Rejected
+                    ]
+                }]
+            }
+        });
+
+        // =========================
+        // RETURN CHART
+        // =========================
+                new Chart(document.getElementById("returnChart"), {
+            type: 'pie',
+            data: {
+                labels: ["Pending", "Processing", "Delivered", "Cancelled"],
+                datasets: [{
+                    data: [
+                        @Model.Returns?.Pending,
+                        @Model.Returns?.Processing,
+                        @Model.Returns?.Delivered,
+                        @Model.Returns?.Cancelled
+                    ]
+                }]
+            }
+        });
+    </script>
+}

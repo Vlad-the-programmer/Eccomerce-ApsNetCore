@@ -440,8 +440,9 @@ CREATE TABLE ShoppingCartItems (
     Id INT IDENTITY PRIMARY KEY,
     ProductId INT NOT NULL,
     Amount INT NOT NULL,
-    ShoppingCartId NVARCHAR(50) NOT NULL,
-
+    ShoppingCartId NVARCHAR(350) NOT NULL,
+    UserId nvarchar(50) NULL,
+    LastActivity datetime2 NULL,
     IsActive BIT DEFAULT 1,
     DateCreated DATETIME DEFAULT GETDATE(),
     DateUpdated DATETIME NULL,
@@ -452,6 +453,264 @@ CREATE TABLE ShoppingCartItems (
 );
 
 CREATE INDEX IX_ShoppingCartItems_ProductId ON ShoppingCartItems(ProductId);
+CREATE INDEX IX_ShoppingCartItems_UserId ON ShoppingCartItems(UserId);
+CREATE INDEX IX_ShoppingCartItems_ShoppingCartId ON ShoppingCartItems(ShoppingCartId);
+
+
+GO
+CREATE TABLE ShopCoins (
+    Id INT IDENTITY PRIMARY KEY,
+    CustomerId INT NOT NULL,
+    Balance INT DEFAULT 0,
+
+    IsActive BIT DEFAULT 1,
+    DateCreated DATETIME DEFAULT GETDATE(),
+    DateUpdated DATETIME NULL,
+    DateDeleted DATETIME NULL
+
+    CONSTRAINT FK_ShopCoins_Customers FOREIGN KEY (CustomerId)
+        REFERENCES Customers(Id) ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX IX_ShopCoins_CustomerId
+ON ShopCoins(CustomerId);
+
+
+GO
+CREATE TABLE ShopCoinTransactionHistory (
+    Id INT IDENTITY PRIMARY KEY,
+    CustomerId INT NOT NULL,
+    Coins INT NOT NULL,
+    Type NVARCHAR(50) NOT NULL,
+    Description NVARCHAR(255),
+    OrderId INT NULL,
+    IsActive BIT DEFAULT 1,
+
+    DateCreated DATETIME DEFAULT GETDATE(),
+    DateUpdated DATETIME NULL,
+    DateDeleted DATETIME NULL
+
+    CONSTRAINT FK_ShopCoinTH_Customers FOREIGN KEY (CustomerId)
+        REFERENCES Customers(Id) ON DELETE CASCADE,
+
+    CONSTRAINT FK_ShopCoinTH_Orders FOREIGN KEY (OrderId)
+        REFERENCES Orders(Id) ON DELETE NO ACTION
+);
+
+
+GO
+CREATE TABLE ShopCoinSettings (
+    Id INT PRIMARY KEY,
+    EarnRate DECIMAL(10,2),
+    SpendRate DECIMAL(10,2),
+    MaxSpendPercentage DECIMAL(5,2),
+
+    IsActive BIT DEFAULT 1,
+    DateCreated DATETIME DEFAULT GETDATE(),
+    DateUpdated DATETIME NULL,
+    DateDeleted DATETIME NULL
+);
+
+
+GO
+CREATE TABLE Notifications (
+    Id INT IDENTITY PRIMARY KEY,
+    CustomerId INT NOT NULL,
+    Message NVARCHAR(500),
+    IsRead BIT DEFAULT 0,
+    IsActive BIT DEFAULT 1,
+
+    DateCreated DATETIME DEFAULT GETDATE(),
+    DateUpdated DATETIME NULL,
+    DateDeleted DATETIME NULL
+
+    FOREIGN KEY (CustomerId) REFERENCES Customers(Id)
+);
+
+
+GO
+CREATE TABLE Refunds (
+    Id INT IDENTITY PRIMARY KEY,
+    PaymentId INT NULL,
+    CustomerId INT NOT NULL,
+    Amount MONEY NOT NULL,
+    Code NVARCHAR(255) NOT NULL,
+    Status NVARCHAR(50) DEFAULT 'Pending', -- Pending, Approved, Rejected
+    IsActive BIT DEFAULT 1,
+    ProcessedDate DATETIME NULL,
+    DateCreated DATETIME DEFAULT GETDATE(),
+    DateUpdated DATETIME NULL,
+    DateDeleted DATETIME NULL
+
+    CONSTRAINT FK_Refunds_Payment FOREIGN KEY (PaymentId) REFERENCES Payments(Id)
+    CONSTRAINT FK_Refunds_Customer FOREIGN KEY (CustomerId) REFERENCES Customers(Id)
+
+);
+
+ALTER TABLE Refunds
+ADD CONSTRAINT UQ_Refunds_Code UNIQUE (Code);
+
+CREATE UNIQUE INDEX IX_Refunds_ReturnId ON Refunds(ReturnId);
+CREATE INDEX IX_Refunds_CustomerId ON Refunds(CustomerId);
+CREATE INDEX IX_Refunds_Status ON Refunds(Status);
+CREATE INDEX IX_Refunds_DateCreated ON Refunds(DateCreated DESC);
+
+-- Create RefundItems Table
+GO
+CREATE TABLE [dbo].[RefundItems] (
+    [Id] INT IDENTITY(1,1) NOT NULL,
+    [RefundId] INT NOT NULL,
+    [OrderItemId] INT NOT NULL,
+    [Quantity] INT NOT NULL,
+    [RefundAmount] DECIMAL(18,2) NOT NULL,
+    [DateCreated] DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    [DateUpdated] DATETIME2 NULL,
+    [DateDeleted] DATETIME2 NULL,
+    [IsActive] BIT NOT NULL DEFAULT 1,
+    CONSTRAINT [PK_RefundItems] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_RefundItems_Refunds_RefundId] FOREIGN KEY ([RefundId]) 
+        REFERENCES [dbo].[Refunds] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_RefundItems_OrderItems_OrderItemId] FOREIGN KEY ([OrderItemId]) 
+        REFERENCES [dbo].[OrderItems] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [CHK_RefundItems_Quantity] CHECK ([Quantity] > 0),
+    CONSTRAINT [CHK_RefundItems_RefundAmount] CHECK ([RefundAmount] > 0),
+    CONSTRAINT [CHK_RefundItems_TaxAmount] CHECK ([TaxAmount] >= 0)
+);
+
+GO
+CREATE TABLE Returns (
+    Id INT IDENTITY PRIMARY KEY,
+    OrderId INT NOT NULL,
+    CustomerId INT NOT NULL,
+    Reason NVARCHAR(500),
+    Status NVARCHAR(50) DEFAULT 'Pending', -- Pending, Approved, Rejected
+    RefundAmount MONEY,
+    IsActive BIT DEFAULT 1,
+
+    DateCreated DATETIME DEFAULT GETDATE(),
+    DateUpdated DATETIME NULL,
+    DateDeleted DATETIME NULL
+
+    CONSTRAINT FK_Returns_Order FOREIGN KEY (OrderId) REFERENCES Orders(Id),
+    CONSTRAINT FK_Returns_Customer FOREIGN KEY (CustomerId) REFERENCES Customers(Id)
+);
+
+CREATE INDEX IX_Returns_OrderId ON Returns(OrderId);
+CREATE INDEX IX_Returns_CustomerId ON Returns(CustomerId);
+
+GO
+CREATE TABLE OrderStatusHistory (
+    Id INT IDENTITY PRIMARY KEY,
+    OrderId INT NOT NULL,
+    Status NVARCHAR(50),
+    ChangedBy NVARCHAR(100)  NOT NULL,
+    IsActive BIT DEFAULT 1,
+    DateCreated DATETIME DEFAULT GETDATE(),
+    DateUpdated DATETIME NULL,
+    DateDeleted DATETIME NULL
+
+    FOREIGN KEY (OrderId) REFERENCES Orders(Id)
+);
+
+GO
+CREATE TABLE RefundStatusHistory (
+    Id INT IDENTITY PRIMARY KEY,
+    RefundId INT NOT NULL,
+    Status NVARCHAR(50),
+    RefundCode NVARCHAR(250),
+    ChangedBy NVARCHAR(100)  NOT NULL,
+    IsActive BIT DEFAULT 1,
+    DateCreated DATETIME DEFAULT GETDATE(),
+    DateUpdated DATETIME NULL,
+    DateDeleted DATETIME NULL
+
+    FOREIGN KEY (RefundId) REFERENCES Refunds(Id)
+);
+
+CREATE UNIQUE INDEX IX_Refunds_Code
+ON Refunds(Code);
+
+CREATE INDEX IX_Refunds_CustomerId
+ON Refunds(CustomerId);
+
+CREATE INDEX IX_Refunds_IsActive
+ON Refunds(IsActive);
+
+CREATE INDEX IX_Refunds_CustomerId_IsActive
+ON Refunds(CustomerId, IsActive);
+
+CREATE INDEX IX_Refunds_DateCreated
+ON Refunds(DateCreated DESC);
+
+ALTER TABLE Refunds
+ADD CONSTRAINT UQ_Refunds_Code UNIQUE (Code);
+
+ALTER TABLE Refunds
+ADD CONSTRAINT CK_Refunds_Status
+CHECK (Status IN ('Pending', 'Approved', 'Rejected', 'Cancelled'));
+
+ALTER TABLE Refunds
+ADD CONSTRAINT CK_Refunds_Amount
+CHECK (Amount >= 0);
+
+CREATE INDEX IX_RefundStatusHistory_RefundCode
+ON RefundStatusHistory(RefundCode);
+
+CREATE INDEX IX_RefundStatusHistory_DateCreated
+ON RefundStatusHistory(DateCreated DESC);
+
+
+ALTER TABLE RefundStatusHistory
+ADD CONSTRAINT FK_RefundStatusHistory_Refunds
+FOREIGN KEY (RefundCode)
+REFERENCES Refunds(Code)
+ON DELETE CASCADE;
+
+ALTER TABLE RefundStatusHistory
+ADD CONSTRAINT CK_RefundStatusHistory_Status
+CHECK (Status IN ('Pending', 'Approved', 'Rejected', 'Cancelled'));
+
+CREATE INDEX IX_Notifications_CustomerId
+ON Notifications(CustomerId);
+
+CREATE INDEX IX_Notifications_UserId
+ON Notifications(UserId);
+
+CREATE INDEX IX_Notifications_DateCreated
+ON Notifications(DateCreated DESC);
+
+CREATE INDEX IX_Notifications_IsRead
+ON Notifications(IsRead);
+
+CREATE INDEX IX_Notifications_CustomerId_IsRead_Date
+ON Notifications(CustomerId, IsRead, DateCreated DESC);
+
+ALTER TABLE Notifications
+ADD CONSTRAINT CK_Notifications_Target
+CHECK (
+    CustomerId IS NOT NULL OR UserId IS NOT NULL
+);
+
+ALTER TABLE Notifications
+ADD CONSTRAINT CK_Notifications_Message_Length
+CHECK (LEN(Message) > 0);
+
+CREATE INDEX IX_RefundItems_RefundCode
+ON RefundItems(RefundCode);
+
+CREATE INDEX IX_RefundItems_OrderItemId
+ON RefundItems(OrderItemId);
+
+ALTER TABLE RefundItems
+ADD CONSTRAINT FK_RefundItems_Refunds
+FOREIGN KEY (RefundCode)
+REFERENCES Refunds(Code)
+ON DELETE CASCADE;
+
+ALTER TABLE RefundItems
+ADD CONSTRAINT CK_RefundItems_Quantity
+CHECK (Quantity > 0);
+
 
 
 ----  Views  ---->
@@ -723,7 +982,58 @@ FROM ShoppingCartItems sci
 JOIN Products p ON sci.ProductId = p.Id;
 
 
+GO
+CREATE VIEW vw_CustomerRefundsSummary AS
+SELECT 
+    r.CustomerId,
+    COUNT(*) AS TotalRefunds,
+    SUM(r.Amount) AS TotalRefundAmount,
+    MAX(r.DateCreated) AS LastRefundDate
+FROM Refunds r
+GROUP BY r.CustomerId;
+
+
+GO
+CREATE VIEW vw_RefundWithLatestStatus AS
+SELECT r.*,
+       h.Status AS LatestStatus,
+       h.DateCreated AS StatusDate
+FROM Refunds r
+OUTER APPLY (
+    SELECT TOP 1 *
+    FROM RefundStatusHistory h
+    WHERE h.RefundCode = r.Code
+    ORDER BY h.DateCreated DESC
+) h;
+
+
 ----  Functions  ---->
+
+GO
+CREATE FUNCTION fn_TotalRefundAmount (@CustomerId INT)
+RETURNS DECIMAL(18,2)
+AS
+BEGIN
+    RETURN (
+        SELECT ISNULL(SUM(Amount), 0)
+        FROM Refunds
+        WHERE CustomerId = @CustomerId
+    );
+END;
+
+
+GO
+CREATE FUNCTION fn_CanCancelRefund (@Status NVARCHAR(50))
+RETURNS BIT
+AS
+BEGIN
+    RETURN (
+        CASE 
+            WHEN @Status IN ('Pending', 'Approved') THEN 1
+            ELSE 0
+        END
+    );
+END;
 
 GO
 CREATE FUNCTION fn_Customers_GetActive()
@@ -1318,3 +1628,68 @@ BEGIN
     FROM vw_ShoppingCart_Detailed
     WHERE ShoppingCartId = @CartId;
 END
+
+
+GO
+CREATE PROCEDURE sp_CreateRefund
+    @CustomerId INT,
+    @OrderCode NVARCHAR(100),
+    @Amount DECIMAL(18,2)
+AS
+BEGIN
+    INSERT INTO Refunds (CustomerId, Code, Amount, Status, DateCreated)
+    VALUES (@CustomerId, NEWID(), @Amount, 'Pending', GETDATE());
+END;
+
+
+GO
+CREATE PROCEDURE sp_ChangeRefundStatus
+    @RefundCode NVARCHAR(100),
+    @Status NVARCHAR(50)
+AS
+BEGIN
+    UPDATE Refunds
+    SET Status = @Status,
+        ProcessedDate = CASE 
+            WHEN @Status IN ('Approved', 'Rejected') THEN GETDATE()
+            ELSE ProcessedDate
+        END
+    WHERE Code = @RefundCode;
+
+    INSERT INTO RefundStatusHistory (RefundCode, Status, DateCreated)
+    VALUES (@RefundCode, @Status, GETDATE());
+END;
+
+
+GO
+CREATE PROCEDURE sp_CancelRefund
+    @RefundCode NVARCHAR(100)
+AS
+BEGIN
+    UPDATE Refunds
+    SET Status = 'Cancelled'
+    WHERE Code = @RefundCode;
+
+    INSERT INTO RefundStatusHistory (RefundCode, Status, DateCreated)
+    VALUES (@RefundCode, 'Cancelled', GETDATE());
+END;
+
+
+Go
+CREATE PROCEDURE sp_MarkNotificationAsRead
+    @NotificationId INT
+AS
+BEGIN
+    UPDATE Notifications
+    SET IsRead = 1
+    WHERE Id = @NotificationId;
+END;
+
+
+
+ALTER TABLE Notifications
+ADD CONSTRAINT CK_Notification_Target
+CHECK (
+    CustomerId IS NOT NULL OR UserId IS NOT NULL
+);
+

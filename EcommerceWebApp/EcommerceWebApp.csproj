@@ -19,6 +19,8 @@
     <Folder Include="Views\NewFolder4\" />
     <Folder Include="Views\NewFolder5\" />
     <Folder Include="Views\NewFolder\" />
+    <Folder Include="Views\Shared\Components\NewFolder1\" />
+    <Folder Include="Views\Shared\Components\NewFolder\" />
   </ItemGroup>
 
 </Project>

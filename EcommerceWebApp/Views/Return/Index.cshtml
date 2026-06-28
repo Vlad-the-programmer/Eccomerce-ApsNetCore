@@ -1,0 +1,44 @@
+﻿@model List<EcommerceWebApp.Models.Dtos.ReturnDto>
+
+@{
+    ViewData["Title"] = "My Returns";
+}
+
+<h2 class="mb-4">📦 My Returns</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No returns found.</div>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var item in Model)
+        {
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+
+                <div>
+                    <div><strong>Refund:</strong> @item.RefundCode</div>
+                    <div>@item.Reason</div>
+
+                    <small class="text-muted">
+                        @item.DateCreated.ToLocalTime().ToString("dd MMM yyyy HH:mm")
+                    </small>
+                </div>
+
+                <div class="text-end">
+                    <span class="badge bg-@(item.Status == "Delivered" ? "success" :
+                                                                     item.Status == "Cancelled" ? "secondary" :
+                                                                     item.Status == "Rejected" ? "danger" :
+                                                                     item.Status == "Processing" ? "warning" :
+                                                                     "primary")">
+                @item.Status
+            </span>
+            <a asp-action="Details" asp-route-code="@item.RefundCode" class="btn btn-sm btn-outline-primary">
+                View
+            </a>
+        </div>
+    </div>
+        }
+    </div>
+}

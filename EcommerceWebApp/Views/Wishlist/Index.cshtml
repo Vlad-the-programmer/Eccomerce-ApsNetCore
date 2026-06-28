@@ -1,0 +1,57 @@
+﻿@model EcommerceWebApp.Models.Dtos.WishListDto
+
+@{
+    ViewData["Title"] = "My Wishlist";
+}
+
+<h2 class="mb-4">My Wishlist</h2>
+
+@if (Model == null || !Model.WishlistItems.Any())
+{
+    <p>Your wishlist is empty.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Brand</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.WishlistItems)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.ProductBrand</td>
+                    <td>€ @item.Price</td>
+
+                    <!-- 🔹 Remove -->
+                    <td>
+                        <form asp-action="Remove" method="post">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button class="btn btn-danger btn-sm">
+                                Remove
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        <td>
+            <form asp-action="AddItemsToCart" method="post" style="display:inline">
+                <button class="btn btn-success btn-sm">
+                    Add Wishlist items To Cart
+                </button>
+            </form>
+            <form asp-action="Clear" method="post" style="display:inline">
+                <button class="btn btn-danger btn-sm">
+                    Clear Wishlist
+                </button>
+            </form>
+        </td>
+        </tbody>
+    </table>
+}

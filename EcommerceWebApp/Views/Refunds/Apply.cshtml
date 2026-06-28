@@ -1,0 +1,425 @@
+﻿@using EcommerceWebApp.AppGlobals
+@using EcommerceWebApp.Models.ViewModels
+@model RefundApplicationViewModel
+@{
+    ViewData["Title"] = "Apply for Refund";
+    Layout = "_Layout";
+}
+
+<style>
+    .product-refund-card {
+        border: 2px solid #dee2e6;
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+        .product-refund-card:hover {
+            border-color: #0d6efd;
+            box-shadow: 0 2px 12px rgba(13, 110, 253, 0.1);
+        }
+
+        .product-refund-card.selected {
+            border-color: #0d6efd;
+            background: #f0f7ff;
+            box-shadow: 0 2px 12px rgba(13, 110, 253, 0.15);
+        }
+
+        .product-refund-card .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .product-refund-card .product-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+
+        .product-refund-card .quantity-input {
+            width: 80px;
+            display: inline-block;
+        }
+
+        .product-refund-card .product-price {
+            font-weight: 600;
+            color: #28a745;
+        }
+
+        .product-refund-card .refund-reason-input {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+    .refund-summary {
+        position: sticky;
+        top: 20px;
+    }
+
+        .refund-summary .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+            .refund-summary .summary-item.total {
+                font-size: 1.2rem;
+                font-weight: 700;
+                border-bottom: none;
+                padding-top: 1rem;
+            }
+
+            .refund-summary .summary-item .label {
+                color: #6c757d;
+            }
+
+            .refund-summary .summary-item .value {
+                font-weight: 600;
+            }
+
+                .refund-summary .summary-item .value.text-success {
+                    color: #28a745;
+                }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 1rem;
+        }
+
+    @@media (max-width: 768px) {
+        .product-refund-card .product-image {
+            width: 60px;
+            height: 60px;
+        }
+
+        .refund-summary {
+            position: relative;
+            top: 0;
+        }
+    }
+</style>
+
+@section top {
+    <div class="bg-light py-4 border-bottom shadow-sm mb-4">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-0">Apply for Refund</h1>
+                    <p class="text-muted small mb-0">Order #@Model.OrderCode</p>
+                </div>
+                <a asp-controller="Orders" asp-action="Status" asp-route-code="@Model.OrderCode" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Order
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container">
+    <form asp-action="Apply" asp-controller="Refunds" asp-route-orderCode="" method="post" id="refundForm">
+        @Html.AntiForgeryToken() 
+        <input type="hidden" asp-for="OrderCode" />
+
+        <div class="row">
+            <!-- Products Column -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-box-seam"></i> Select Items to Refund</h5>
+                        <span class="badge bg-light text-dark" id="selectedCount">0 items selected</span>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.OrderItems != null && Model.OrderItems.Any())
+                        {
+                            for (int i = 0; i < Model.OrderItems.Count; i++)
+                            {
+                                <input type="hidden" asp-for="@Model.OrderItems[i].OrderItemId" />
+
+                                var item = Model.OrderItems[i];
+                                <div class="product-refund-card" data-item-index="@i">
+                                    <div class="row align-items-start">
+                                        <div class="col-md-12">
+                                            <div class="d-flex gap-3">
+                                                <!-- Checkbox -->
+                                                <input type="checkbox"
+                                                       class="product-checkbox mt-1"
+                                                       asp-for="@Model.OrderItems[i].IsSelected"
+                                                       id="item_@item.OrderItemId" />
+
+                                                <!-- Product Image -->
+                                                @if (!string.IsNullOrEmpty(item.ProductPhoto))
+                                                {
+                                                    var photoUrl = $"{AppConstants.RESTAPI_BASE_URL}/{item.ProductPhoto}";
+                                                    <img src="@photoUrl" alt="@item.ProductName" class="product-image" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="product-image d-flex align-items-center justify-content-center bg-light">
+                                                        <i class="bi bi-box text-muted fs-2"></i>
+                                                    </div>
+                                                }
+
+                                                <!-- Product Info -->
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1">@item.ProductName</h6>
+                                                    <small class="text-muted d-block">@item.ProductBrand</small>
+                                                    <span class="product-price">@item.UnitPrice.ToString("C")</span>
+                                                    <small class="text-muted d-block">Available: @item.Quantity units</small>
+
+                                                    <!-- Quantity Input -->
+                                                    <div class="row mt-2">
+                                                        <div class="col-md-4">
+                                                            <label class="small text-muted">Quantity to refund:</label>
+                                                            <input type="number"
+                                                                   class="form-control form-control-sm quantity-input"
+                                                                   asp-for="@Model.OrderItems[i].RefundQuantity"
+                                                                   min="1"
+                                                                   max="@item.Quantity"
+                                                                   disabled />
+                                                            <span asp-validation-for="@Model.OrderItems[i].RefundQuantity" class="text-danger small"></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Reason Input -->
+                                                    <div class="mt-2">
+                                                        <label class="small text-muted">Reason for refund (optional):</label>
+                                                        <textarea class="form-control form-control-sm refund-reason-input"
+                                                                  asp-for="@Model.OrderItems[i].Reason"
+                                                                  placeholder="Why are you refunding this item?"
+                                                                  disabled
+                                                                  rows="2"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="empty-state">
+                                <i class="bi bi-box-seam"></i>
+                                <h4>No Items Available</h4>
+                                <p class="text-muted">This order does not have any items eligible for refund.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Column -->
+            <div class="col-lg-4">
+                <div class="refund-summary">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-calculator"></i> Refund Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="summary-item">
+                                <span class="label">Selected Items:</span>
+                                <span class="value" id="summaryItemsCount">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="label">Total Refund Amount:</span>
+                                <span class="value text-success" id="summaryTotalAmount">$0.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="label">Items to Refund:</span>
+                                <span class="value" id="summaryItemsList">None selected</span>
+                            </div>
+
+                            <hr />
+
+                            <div class="summary-item total">
+                                <span class="label">Estimated Refund:</span>
+                                <span class="value text-success" id="summaryEstimatedRefund">$0.00</span>
+                            </div>
+
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-success w-100 btn-lg" id="submitRefundBtn" disabled>
+                                    <i class="bi bi-send-check"></i> Submit Refund Request
+                                </button>
+                                <div class="form-text text-center mt-2">
+                                    <i class="bi bi-shield-check"></i> Your request will be reviewed by our team
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Information Card -->
+                    <div class="card mt-3">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="mb-0"><i class="bi bi-info-circle"></i> Important Information</h6>
+                        </div>
+                        <div class="card-body small">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                    Refund requests are typically processed within 3-5 business days.
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                    You will be notified via email about the status of your refund.
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                    Refunds will be issued to your original payment method.
+                                </li>
+                                <li>
+                                    <i class="bi bi-exclamation-triangle text-warning"></i>
+                                    Items must be returned within 14 days of approval.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.product-checkbox').on('change', function() {
+                const card = $(this).closest('.product-refund-card');
+                const quantityInput = card.find('.quantity-input');
+                const reasonInput = card.find('.refund-reason-input');
+                const isChecked = $(this).prop('checked');
+
+                quantityInput.prop('disabled', !isChecked);
+                reasonInput.prop('disabled', !isChecked);
+
+                card.toggleClass('selected', isChecked);
+
+                if (!isChecked) {
+                    const maxQty = parseInt(quantityInput.attr('max'));
+                    quantityInput.val(1);
+                    reasonInput.val('');
+                }
+
+                updateSummary();
+            });
+
+            $('.quantity-input').on('change input', function() {
+                const maxQty = parseInt($(this).attr('max'));
+                let value = parseInt($(this).val());
+
+                if (isNaN(value) || value < 1) {
+                    $(this).val(1);
+                } else if (value > maxQty) {
+                    $(this).val(maxQty);
+                    alert(`Maximum quantity available is ${maxQty}`);
+                }
+
+                updateSummary();
+            });
+
+            $('.refund-reason-input').on('input', function() {
+                updateSummary();
+            });
+
+            function updateSummary() {
+                let selectedCount = 0;
+                let totalAmount = 0;
+                let itemsList = [];
+                let totalRefundAmount = 0;
+
+                $('.product-refund-card.selected').each(function() {
+                    const checkbox = $(this).find('.product-checkbox');
+                    const quantityInput = $(this).find('.quantity-input');
+                    const priceText = $(this).find('.product-price').text();
+                    const productName = $(this).find('h6').text().trim();
+
+                    if (checkbox.prop('checked')) {
+                        const quantity = parseInt(quantityInput.val()) || 0;
+                        const price = parseFloat(priceText.replace(/[^0-9.-]+/g, ''));
+
+                        if (quantity > 0) {
+                            selectedCount++;
+                            const itemTotal = price * quantity;
+                            totalAmount += itemTotal;
+                            totalRefundAmount += itemTotal;
+
+                            itemsList.push(`${productName} (x${quantity})`);
+                        }
+                    }
+                });
+
+                // Update UI
+                $('#summaryItemsCount').text(selectedCount);
+                $('#summaryTotalAmount').text(totalAmount.toFixed(2));
+                $('#summaryEstimatedRefund').text(totalRefundAmount.toFixed(2));
+                $('#selectedCount').text(`${selectedCount} items selected`);
+
+                if (itemsList.length > 0) {
+                    $('#summaryItemsList').text(itemsList.join(', '));
+                } else {
+                    $('#summaryItemsList').text('None selected');
+                }
+
+                // Enable/disable submit button
+                $('#submitRefundBtn').prop('disabled', selectedCount === 0);
+            }
+
+            // Form validation before submit
+            $('#refundForm').submit(function(e) {
+                const selectedItems = $('.product-refund-card.selected');
+
+                if (selectedItems.length === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one item to refund.');
+                    return false;
+                }
+
+                // Validate quantities
+                let hasInvalidQuantity = false;
+                selectedItems.each(function() {
+                    const quantity = parseInt($(this).find('.quantity-input').val());
+                    const maxQuantity = parseInt($(this).find('.quantity-input').attr('max'));
+
+                    if (isNaN(quantity) || quantity < 1 || quantity > maxQuantity) {
+                        hasInvalidQuantity = true;
+                        $(this).find('.quantity-input').addClass('is-invalid');
+                    } else {
+                        $(this).find('.quantity-input').removeClass('is-invalid');
+                    }
+                });
+
+                if (hasInvalidQuantity) {
+                    e.preventDefault();
+                    alert('Please ensure all quantities are valid (1 to max available).');
+                    return false;
+                }
+
+                // Show loading state
+                const submitBtn = $('#submitRefundBtn');
+                submitBtn.prop('disabled', true);
+                submitBtn.html('<span class="spinner-border spinner-border-sm" role="status"></span> Submitting...');
+
+                return true;
+            });
+
+            // Initial update
+            updateSummary();
+        });
+    </script>
+}

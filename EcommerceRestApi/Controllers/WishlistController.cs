@@ -1,5 +1,4 @@
-﻿using EcommerceRestApi.Models.Dtos;
-using EcommerceRestApi.Services;
+﻿using EcommerceRestApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -26,51 +25,113 @@ namespace EcommerceRestApi.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateWishlist()
         {
-            var userId = GetUserId();
+            try
+            {
+                var userId = GetUserId();
 
-            await _service.CreateWishListAsync(userId);
+                var wishlist = await _service.CreateWishListAsync(userId);
 
-            return Ok(new { message = "Wishlist created (if not exists)" });
+                return Ok(wishlist);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
         }
 
-        [HttpPost("add-item")]
-        public async Task<IActionResult> AddItem([FromBody] WishListItemDto item)
+        [HttpPost("add-item/{productId}")]
+        public async Task<IActionResult> AddItem(int productId)
         {
-            var userId = GetUserId();
+            try
+            {
+                var userId = GetUserId();
 
-            await _service.AddWishlistItem(item, userId);
-
+                await _service.AddWishlistItem(productId, userId);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok(new { message = "Item added to wishlist" });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetWishlist()
         {
-            var userId = GetUserId();
+            try
+            {
+                var userId = GetUserId();
 
-            var wishlist = await _service.GetWishlistByUserId(userId);
-
-            return Ok(wishlist);
+                var wishlist = await _service.GetWishlistByUserId(userId);
+                return Ok(wishlist);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpGet("items")]
         public async Task<IActionResult> GetItems()
         {
-            var userId = GetUserId();
+            try
+            {
+                var userId = GetUserId();
+                var items = await _service.GetWishlistItemsByUserIdAsync(userId);
 
-            var items = await _service.GetWishlistItemsByUserIdAsync(userId);
-
-            return Ok(items);
+                return Ok(items);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpDelete("remove/{id}")]
         public async Task<IActionResult> RemoveItem(int id)
         {
-            var userId = GetUserId();
+            try
+            {
+                var userId = GetUserId();
+                await _service.RemoveWishlistItemAsync(id, userId);
 
-            await _service.RemoveWishlistItemAsync(id, userId);
+                return Ok(new { message = "Item removed from wishlist" });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
 
-            return Ok(new { message = "Item removed from wishlist" });
+        [HttpPost("transfer-to-cart")]
+        public async Task<IActionResult> TransferToCart()
+        {
+            try
+            {
+                var userId = GetUserId();
+                await _service.TransferWishlistToCartAsync(userId);
+                return Ok(new { message = "Wishlist items transferred to cart" });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete("clear")]
+        public async Task<IActionResult> ClearWishlist()
+        {
+            try
+            {
+                var userId = GetUserId();
+                await _service.ClearWishlistAsync(userId);
+                return Ok(new { message = "Wishlist cleared" });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

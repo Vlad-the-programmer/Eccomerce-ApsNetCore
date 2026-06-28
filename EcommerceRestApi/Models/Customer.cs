@@ -23,6 +23,9 @@ public partial class Customer : EntityBase
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+    public virtual ICollection<Return> Returns { get; set; } = new List<Return>();
+    public virtual ICollection<Refund> Refunds { get; set; } = new List<Refund>();
 
     [ForeignKey("UserId")]
     public virtual ApplicationUser User { get; set; } = null!;

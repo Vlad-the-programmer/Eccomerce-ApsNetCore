@@ -1,0 +1,29 @@
+<Shell
+    x:Class="EcommerceMobileApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:EcommerceMobileApp"
+    xmlns:views="clr-namespace:EcommerceMobileApp.Views">
+
+    <!-- HOME -->
+    <FlyoutItem Title="Home" Route="MainPage">
+        <ShellContent ContentTemplate="{DataTemplate local:MainPage}" />
+    </FlyoutItem>
+
+    <!-- ORDERS -->
+    <FlyoutItem Title="Orders" Route="OrdersPage">
+        <ShellContent ContentTemplate="{DataTemplate views:OrdersPage}" />
+    </FlyoutItem>
+
+    <!-- LOGIN -->
+    <FlyoutItem Title="Login" Route="LoginPage">
+        <ShellContent ContentTemplate="{DataTemplate views:LoginPage}" />
+    </FlyoutItem>
+
+    <!-- ORDER DETAILS (HIDDEN PAGE) -->
+    <ShellContent
+        Route="OrderDetailsPage"
+        ContentTemplate="{DataTemplate views:OrderDetailsPage}"
+        FlyoutItemIsVisible="False" />
+
+</Shell>

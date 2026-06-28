@@ -16,5 +16,8 @@
         // Points user get for making an order
         public const decimal POINTS_PER_DOLLAR = 1.5m;
         public const decimal TAXES_RATE = 0.23m; // POLAND
+        public const decimal ShopCoinRate = 0.1m;
+        public const decimal ShopCoinSpendingRatePercentage = 0.01m;
+        public const decimal MaxSpendPercentage = 0.2m; // Max 20% of order total can be discounted by shop coins
     }
 }

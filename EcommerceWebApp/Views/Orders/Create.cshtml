@@ -64,106 +64,145 @@
 
 <script>
     function OnShippingUpdate() {
-            const deliverySelect = document.getElementById("ShippingType");
-            const selectedOption = deliverySelect.options[deliverySelect.selectedIndex];
-            const deliveryCost = parseFloat(selectedOption.getAttribute("data-cost")) || 0;
-
-            const baseTotal = parseFloat('@Model.TotalAmount'.replace('$', '').replace(',', '')) || 0;
-
-            const couponDiscount = @(ViewBag.CouponDiscount != null ? ViewBag.CouponDiscount : 0);
-            const newTotal = baseTotal + deliveryCost - couponDiscount;
-
-            document.getElementById("DeliveryCostDisplay").textContent =
-                deliveryCost.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-
-            document.getElementById("CouponDiscountDisplay").textContent =
-                couponDiscount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-
-            document.getElementById("OrderTotal").textContent =
-                newTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-
-            document.getElementById("TotalAmount").value = newTotal;
+        // Check if the element exists before accessing it
+        const deliverySelect = document.getElementById("ShippingType");
+        if (!deliverySelect) {
+            console.warn("ShippingType element not found yet");
+            return;
         }
 
-    document.addEventListener("DOMContentLoaded", OnShippingUpdate);
+        const selectedOption = deliverySelect.options[deliverySelect.selectedIndex];
+        if (!selectedOption) {
+            console.warn("No option selected in ShippingType");
+            return;
+        }
+
+        const deliveryCost = parseFloat(selectedOption.getAttribute("data-cost")) || 0;
+
+        // Get base total - remove $ and commas
+        const baseTotal = parseFloat('@Model.TotalAmount'.replace('$', '').replace(',', '')) || 0;
+
+        // Get coupon discount and coins
+        const couponDiscount = @(ViewBag.CouponDiscount != null ? ViewBag.CouponDiscount : 0);
+        const coinsUsed = @(ViewBag.MaxCoinsUsed != null && (int)ViewBag.MaxCoinsUsed > 0 ? ViewBag.MaxCoinsUsed : 0);
+
+        // Calculate new total
+        const newTotal = baseTotal + deliveryCost - couponDiscount - coinsUsed;
+
+        // Update delivery cost display
+        const deliveryDisplay = document.getElementById("DeliveryCostDisplay");
+        if (deliveryDisplay) {
+            deliveryDisplay.textContent = deliveryCost.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        }
+
+        // Update coupon discount display
+        const couponDisplay = document.getElementById("CouponDiscountDisplay");
+        if (couponDisplay) {
+            couponDisplay.textContent = couponDiscount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        }
+
+        // Update coins display - just show the count, not currency
+        const coinsDisplayElement = document.getElementById("CoinsDiscountDisplay");
+        if (coinsDisplayElement) {
+            coinsDisplayElement.textContent = `- ${coinsUsed} coins`;
+        }
+
+        console.log("Coins: ", coinsUsed, @ViewBag.MaxCoinsUsed);
+        // Update order total
+        const orderTotalDisplay = document.getElementById("OrderTotal");
+        if (orderTotalDisplay) {
+            orderTotalDisplay.textContent = newTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        }
+
+        // Update hidden total amount
+        const totalAmountInput = document.getElementById("TotalAmount");
+        if (totalAmountInput) {
+            totalAmountInput.value = newTotal;
+        }
+    }
+
+    // Wait for DOM to be fully loaded before calling OnShippingUpdate
+    document.addEventListener("DOMContentLoaded", function() {
+        OnShippingUpdate();
+    });
 
     function applyCoupon() {
-            const couponCode = document.getElementById("CouponCode").value;
-            if (!couponCode) {
-                alert("Please enter a coupon code");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('couponCode', couponCode);
-
-            fetch('@Url.Action("ApplyCoupon", "Coupon")', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value,
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => {
-                return response.json().then(data => {
-                    if (!response.ok) {
-                        throw data;
-                    }
-                    return data;
-                });
-            })
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert(data.message || 'Failed to apply coupon');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert(error.message || 'An error occurred while applying the coupon');
-            });
+        const couponCode = document.getElementById("CouponCode").value;
+        if (!couponCode) {
+            alert("Please enter a coupon code");
+            return;
         }
+
+        const formData = new FormData();
+        formData.append('couponCode', couponCode);
+
+        fetch('@Url.Action("ApplyCoupon", "Coupon")', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    throw data;
+                }
+                return data;
+            });
+        })
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.message || 'Failed to apply coupon');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message || 'An error occurred while applying the coupon');
+        });
+    }
 
     function removeCoupon() {
-            const couponCode = document.getElementById("CouponCode").value;
-            if (!couponCode) {
-                alert("No coupon code found to remove");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('code', couponCode);  
-
-            fetch('@Url.Action("RemoveCoupon", "Coupon")', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value,
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error(`Server returned ${response.status}: ${text.substring(0, 200)}`);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert(data.message || 'Failed to remove coupon');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while removing the coupon: ' + error.message);
-            });
+        const couponCode = document.getElementById("CouponCode").value;
+        if (!couponCode) {
+            alert("No coupon code found to remove");
+            return;
         }
+
+        const formData = new FormData();
+        formData.append('code', couponCode);
+
+        fetch('@Url.Action("RemoveCoupon", "Coupon")', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Server returned ${response.status}: ${text.substring(0, 200)}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.message || 'Failed to remove coupon');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while removing the coupon: ' + error.message);
+        });
+    }
 </script>
 
 @section top {
@@ -201,7 +240,7 @@ else
         </div>
     }
 
-    <form method="post" id="orderForm">
+    <form method="post" id="orderForm" action="@Url.Action("Create", "Orders")">
         @Html.AntiForgeryToken()
 
         @if (!User.Identity.IsAuthenticated)
@@ -331,7 +370,7 @@ else
             </div>
         </div>
 
-        <div class="form-group" id="info" style="">
+        <div class="form-group" id="info">
             <p><strong>Delivery Cost: </strong></p>
             <p id="DeliveryCostDisplay">@Decimal.Zero.ToString("C")</p>
 
@@ -343,6 +382,11 @@ else
                     : "$0.00";
                 }
                 @couponDiscount
+            </p>
+
+            <p><strong>Coins applied: </strong></p>
+            <p id="CoinsDiscountDisplay">
+                - @(ViewBag.MaxCoinsUsed != null && (int)ViewBag.MaxCoinsUsed > 0 ? ViewBag.MaxCoinsUsed : 0) coins
             </p>
 
             <p><strong>VAT Included: </strong></p>
@@ -357,6 +401,10 @@ else
                     if (ViewBag.CouponDiscount != null)
                     {
                         total = Model.TotalAmount - (decimal)ViewBag.CouponDiscount;
+                    }
+                    if (ViewBag.MaxCoinsUsed != null && (int)ViewBag.MaxCoinsUsed > 0)
+                    {
+                        total = total - (int)ViewBag.MaxCoinsUsed;
                     }
                 }
                 @total.ToString("C")

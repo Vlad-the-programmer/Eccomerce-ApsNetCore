@@ -3,6 +3,7 @@ using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Helpers.Data.ViewModels.UpdateViewModels;
 using EcommerceRestApi.Models;
 using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -104,6 +105,56 @@ namespace EcommerceRestApi.Services
                 await _context.SaveChangesAsync();
             }
             ;
+        }
+
+        public async Task<UserProfileDto?> GetUserProfile(string userId)
+        {
+            var user = await GetUserByIDAsync(userId);
+
+            if (user == null)
+                throw new Exception("User not found");
+
+            return await _context.Users
+                .Where(u => u.Id == userId)
+                 .Include(u => u.Customers)
+                    .ThenInclude(c => c.Addresses)
+                        .ThenInclude(c => c.Country)
+                .Select(
+                u => new UserProfileDto
+                {
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Email = u.Email,
+                    UserName = u.UserName,
+                    PhoneNumber = u.PhoneNumber,
+                    Nip = u.Customers.FirstOrDefault() != null ? u.Customers.FirstOrDefault().Nip : string.Empty,
+                    Role = u.Role,
+                    CoinsBalance = u.Customers.FirstOrDefault() != null ? u.Customers.FirstOrDefault().Points : 0,
+                    IsActive = u.IsActive,
+                    IsAdmin = u.IsAdmin,
+                    IsAuthenticated = true,
+                    CountryName = u.Customers.FirstOrDefault() != null && u.Customers.FirstOrDefault().Addresses.FirstOrDefault() != null && u.Customers.FirstOrDefault().Addresses.FirstOrDefault().Country != null
+                                    ? u.Customers.FirstOrDefault().Addresses.FirstOrDefault().Country.CountryName
+                                    : string.Empty,
+                    Street = u.Customers.FirstOrDefault() != null && u.Customers.FirstOrDefault().Addresses.FirstOrDefault() != null
+                                    ? u.Customers.FirstOrDefault().Addresses.FirstOrDefault().Street
+                                    : string.Empty,
+                    HouseNumber = u.Customers.FirstOrDefault() != null && u.Customers.FirstOrDefault().Addresses.FirstOrDefault() != null
+                                    ? u.Customers.FirstOrDefault().Addresses.FirstOrDefault().HouseNumber
+                                    : string.Empty,
+                    FlatNumber = u.Customers.FirstOrDefault() != null && u.Customers.FirstOrDefault().Addresses.FirstOrDefault() != null
+                                    ? u.Customers.FirstOrDefault().Addresses.FirstOrDefault().FlatNumber
+                                    : string.Empty,
+                    City = u.Customers.FirstOrDefault() != null && u.Customers.FirstOrDefault().Addresses.FirstOrDefault() != null
+                                    ? u.Customers.FirstOrDefault().Addresses.FirstOrDefault().City
+                                    : string.Empty,
+                    State = u.Customers.FirstOrDefault() != null && u.Customers.FirstOrDefault().Addresses.FirstOrDefault() != null
+                                    ? u.Customers.FirstOrDefault().Addresses.FirstOrDefault().State
+                                    : string.Empty,
+                    PostalCode = u.Customers.FirstOrDefault() != null && u.Customers.FirstOrDefault().Addresses.FirstOrDefault() != null
+                                    ? u.Customers.FirstOrDefault().Addresses.FirstOrDefault().PostalCode : string.Empty
+                }
+            ).FirstOrDefaultAsync();
         }
     }
 }

@@ -11,8 +11,8 @@ namespace EcommerceRestApi.Helpers.Data.Functions
             return status switch
             {
                 OrderStatuses.Pending => "Pending",
-                OrderStatuses.Approved => "Approved",
-                OrderStatuses.Rejected => "Rejected",
+                //OrderStatuses.Approved => "Approved",
+                //OrderStatuses.Rejected => "Rejected",
                 OrderStatuses.Paid => "Paid",
                 OrderStatuses.Cancelled => "Cancelled",
 

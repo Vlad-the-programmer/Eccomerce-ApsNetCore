@@ -38,7 +38,7 @@ builder.Services.AddScoped<ShoppingCart>(sp =>
     var session = httpContextAccessor.HttpContext!.Session;
     var context = sp.GetRequiredService<AppDbContext>();
 
-    return new ShoppingCart(context, session);
+    return new ShoppingCart(context, session, httpContextAccessor);
 });
 
 //Services Configuration
@@ -53,6 +53,14 @@ builder.Services.AddScoped<IReviewsService, ReviewService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddScoped<IUsersManagementService, UsersManagementService>();
+builder.Services.AddScoped<IWishListService, WishlistService>();
+builder.Services.AddScoped<IShopCoinsService, ShopCoinsService>();
+builder.Services.AddScoped<IShopCoinSettingsService, ShopCoinSettingsService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IRefundService, RefundService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IReturnService, ReturnService>();
+builder.Services.AddScoped<IAnaliticsService, AnanliticsService>();
 
 
 //authontication and authorization
@@ -66,6 +74,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = "SmartScheme";
     options.DefaultAuthenticateScheme = "SmartScheme";
     options.DefaultChallengeScheme = "SmartScheme";
+    options.DefaultForbidScheme = "SmartScheme";
 })
 .AddPolicyScheme("SmartScheme", "JWT or Cookie", options =>
 {
@@ -138,6 +147,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(Permissions.ManageProduct, policy =>
         policy.RequireClaim("Permission", Permissions.ManageProduct));
 
+    options.AddPolicy(Permissions.ManageRefunds, policy =>
+        policy.RequireClaim("Permission", Permissions.ManageRefunds));
 });
 
 builder.Services.AddDistributedMemoryCache(); // Required for session storage
@@ -163,10 +174,20 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins(AppConstants.CLIENT_URLS) // Replace with your actual client URL
+        policy.WithOrigins(AppConstants.CLIENT_URLS)
               .AllowAnyMethod()
               .AllowAnyHeader()
-              .AllowCredentials(); // Required for authentication cookies
+              .AllowCredentials();
+    });
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Mobile", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
@@ -208,15 +229,20 @@ if (app.Environment.IsDevelopment())
         c.DisplayOperationId();
         c.DisplayRequestDuration();
     });
+
 }
 else
 {
     app.UseDeveloperExceptionPage();
+    builder.Logging.ClearProviders();
+    builder.Logging.AddConsole();
+    builder.Logging.AddDebug();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseCors("AllowSpecificOrigins");
+app.UseCors("Mobile");
 app.UseRouting();
 app.UseSession();
 app.UseAuthentication(); // Enable authentication

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EcommerceRestApi.Helpers.Data.ViewModels
 {
-    public class NewOrderViewModel : BaseViewModel
+    public class NewOrderViewModel
     {
         public CreateOrderCustomerDto Customer { get; set; } = new CreateOrderCustomerDto();
         public decimal TotalAmount { get; set; }
@@ -19,6 +19,8 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
         public int OrderStatus { get; set; }
 
         public string? CouponCode { get; set; }
+
+        public List<int> SelectedItemsIds { get; set; } = new List<int>();
 
         public static NewOrderViewModel OrderToVm(Order order, AppDbContext context, UserManager<ApplicationUser> userManager)
         {

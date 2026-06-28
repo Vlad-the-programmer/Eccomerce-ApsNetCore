@@ -24,8 +24,7 @@ namespace EcommerceRestApi.Models.Dtos
 
         public async Task<(bool Success, decimal Discount, string Message)> ApplyCouponAsync(string couponCode)
         {
-            var cart = _cart.GetShoppingCart();
-            var cartTotal = await cart.GetTotal();
+            var cartTotal = await _cart.GetTotal();
 
             var coupon = await _context.Coupons
                 .FirstOrDefaultAsync(c => c.Code == couponCode && c.IsActive);

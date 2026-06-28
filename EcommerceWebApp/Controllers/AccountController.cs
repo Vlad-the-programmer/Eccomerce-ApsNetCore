@@ -49,6 +49,7 @@ namespace EcommerceWebApp.Controllers
                 if (loginResponse.Success)
                 {
                     HttpContext.Session.SetString("CurrentUser", JsonSerializer.Serialize(loginResponse.User));
+
                     var user = loginResponse.User;
 
                     var claims = new List<Claim>
@@ -159,10 +160,7 @@ namespace EcommerceWebApp.Controllers
         [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(string id)
         {
-            var permissions = User.Claims
-                .Where(c => c.Type == "Permission")
-                .Select(c => c.Value)
-                .ToList();
+            Console.WriteLine(User);
             var updateModel = await AccountEndpointsHelperFuncs.GetUserUpdateModelObj(
                 $"{GlobalConstants.GetUserUpdateModelEndpoint}/{id}", _apiService);
 
@@ -213,6 +211,18 @@ namespace EcommerceWebApp.Controllers
             }
 
             return RedirectToAction("Index", "Products");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details()
+        {
+            var userDetails = await AccountEndpointsHelperFuncs.GetUserProfile(
+                                    $"{GlobalConstants.GetUserProfile}", _apiService);
+            if (userDetails == null)
+            {
+                return View("NotFound");
+            }
+            return View(userDetails);
         }
     }
 }

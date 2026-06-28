@@ -289,14 +289,10 @@ namespace EcommerceRestApi.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -578,6 +574,53 @@ namespace EcommerceRestApi.Migrations
                     b.ToTable("InvoiceItem");
                 });
 
+            modelBuilder.Entity("EcommerceRestApi.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRead")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications", (string)null);
+                });
+
             modelBuilder.Entity("EcommerceRestApi.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -659,14 +702,10 @@ namespace EcommerceRestApi.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<decimal>("DiscountApplied")
                         .HasColumnType("decimal(18,2)");
@@ -735,6 +774,47 @@ namespace EcommerceRestApi.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.OrderStatusHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ChangedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderStatusHistory", (string)null);
                 });
 
             modelBuilder.Entity("EcommerceRestApi.Models.Payment", b =>
@@ -938,6 +1018,215 @@ namespace EcommerceRestApi.Migrations
                     b.ToTable("ProductCategories");
                 });
 
+            modelBuilder.Entity("EcommerceRestApi.Models.Refund", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("PaymentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ProcessedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Pending");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("PaymentId");
+
+                    b.ToTable("Refunds", (string)null);
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.RefundItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OrderItemId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<decimal>("RefundAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RefundId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "DateCreated" }, "IX_RefundItems_DateCreated");
+
+                    b.HasIndex(new[] { "OrderItemId" }, "IX_RefundItems_OrderItemId");
+
+                    b.HasIndex(new[] { "RefundId" }, "IX_RefundItems_RefundId");
+
+                    b.HasIndex(new[] { "RefundId", "OrderItemId" }, "IX_RefundItems_Refund_OrderItem")
+                        .IsUnique();
+
+                    b.ToTable("RefundItems", (string)null);
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.RefundStatusHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ChangedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RefundCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RefundId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RefundId");
+
+                    b.ToTable("RefundStatusHistory", (string)null);
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.Return", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal?>("RefundAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RefundId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Pending");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("RefundId")
+                        .IsUnique();
+
+                    b.ToTable("Returns", (string)null);
+                });
+
             modelBuilder.Entity("EcommerceRestApi.Models.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -1033,6 +1322,120 @@ namespace EcommerceRestApi.Migrations
                     b.ToTable("Shipments");
                 });
 
+            modelBuilder.Entity("EcommerceRestApi.Models.ShopCoin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Balance")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("ShopCoins");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.ShopCoinSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("datetime");
+
+                    b.Property<decimal>("EarnRate")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("MaxSpendPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("SpendRate")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShopCoinSettings", (string)null);
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.ShopCoinTransactionHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Coins")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("ShopCoinTransactions");
+                });
+
             modelBuilder.Entity("EcommerceRestApi.Models.ShoppingCartItem", b =>
                 {
                     b.Property<int>("Id")
@@ -1056,17 +1459,28 @@ namespace EcommerceRestApi.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("LastActivity")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<string>("ShoppingCartId")
                         .IsRequired()
+                        .HasMaxLength(350)
+                        .HasColumnType("nvarchar(350)");
+
+                    b.Property<string>("UserId")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
                     b.HasIndex(new[] { "ProductId" }, "IX_ShoppingCartItems_ProductId");
+
+                    b.HasIndex(new[] { "ShoppingCartId" }, "IX_ShoppingCartItems_ShoppingCartId");
+
+                    b.HasIndex(new[] { "UserId" }, "IX_ShoppingCartItems_UserId");
 
                     b.ToTable("ShoppingCartItems");
                 });
@@ -1137,14 +1551,10 @@ namespace EcommerceRestApi.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -1186,14 +1596,10 @@ namespace EcommerceRestApi.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateTime?>("DateDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -1434,6 +1840,23 @@ namespace EcommerceRestApi.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("EcommerceRestApi.Models.Notification", b =>
+                {
+                    b.HasOne("EcommerceRestApi.Models.Customer", "Customer")
+                        .WithMany("Notifications")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("EcommerceRestApi.Helpers.Data.ViewModels.ApplicationUser", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("EcommerceRestApi.Models.Order", b =>
                 {
                     b.HasOne("EcommerceRestApi.Models.Customer", "Customer")
@@ -1486,6 +1909,17 @@ namespace EcommerceRestApi.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("EcommerceRestApi.Models.OrderStatusHistory", b =>
+                {
+                    b.HasOne("EcommerceRestApi.Models.Order", "Order")
+                        .WithMany("StatusHistory")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("EcommerceRestApi.Models.Payment", b =>
                 {
                     b.HasOne("EcommerceRestApi.Models.Order", "Order")
@@ -1533,6 +1967,81 @@ namespace EcommerceRestApi.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("EcommerceRestApi.Models.Refund", b =>
+                {
+                    b.HasOne("EcommerceRestApi.Models.Customer", "Customer")
+                        .WithMany("Refunds")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EcommerceRestApi.Models.Payment", "Payment")
+                        .WithMany("Refunds")
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Payment");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.RefundItem", b =>
+                {
+                    b.HasOne("EcommerceRestApi.Models.OrderItem", "OrderItem")
+                        .WithMany()
+                        .HasForeignKey("OrderItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EcommerceRestApi.Models.Refund", "Refund")
+                        .WithMany("RefundItems")
+                        .HasForeignKey("RefundId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderItem");
+
+                    b.Navigation("Refund");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.RefundStatusHistory", b =>
+                {
+                    b.HasOne("EcommerceRestApi.Models.Refund", "Refund")
+                        .WithMany("RefundStatusHistory")
+                        .HasForeignKey("RefundId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Refund");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.Return", b =>
+                {
+                    b.HasOne("EcommerceRestApi.Models.Customer", "Customer")
+                        .WithMany("Returns")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("EcommerceRestApi.Models.Order", "Order")
+                        .WithMany("Returns")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("EcommerceRestApi.Models.Refund", "Refund")
+                        .WithOne("Return")
+                        .HasForeignKey("EcommerceRestApi.Models.Return", "RefundId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Refund");
+                });
+
             modelBuilder.Entity("EcommerceRestApi.Models.Review", b =>
                 {
                     b.HasOne("EcommerceRestApi.Models.Customer", "Customer")
@@ -1571,6 +2080,35 @@ namespace EcommerceRestApi.Migrations
                         .HasConstraintName("FK__Shipments__Order__1EA48E88");
 
                     b.Navigation("DeliveryMethod");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.ShopCoin", b =>
+                {
+                    b.HasOne("EcommerceRestApi.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.ShopCoinTransactionHistory", b =>
+                {
+                    b.HasOne("EcommerceRestApi.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EcommerceRestApi.Models.Order", "Order")
+                        .WithMany("ShopCoinTransactionHistory")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Customer");
 
                     b.Navigation("Order");
                 });
@@ -1633,6 +2171,8 @@ namespace EcommerceRestApi.Migrations
             modelBuilder.Entity("EcommerceRestApi.Helpers.Data.ViewModels.ApplicationUser", b =>
                 {
                     b.Navigation("Customers");
+
+                    b.Navigation("Notifications");
                 });
 
             modelBuilder.Entity("EcommerceRestApi.Models.Category", b =>
@@ -1658,7 +2198,13 @@ namespace EcommerceRestApi.Migrations
 
                     b.Navigation("Invoices");
 
+                    b.Navigation("Notifications");
+
                     b.Navigation("Orders");
+
+                    b.Navigation("Refunds");
+
+                    b.Navigation("Returns");
 
                     b.Navigation("Reviews");
 
@@ -1689,12 +2235,20 @@ namespace EcommerceRestApi.Migrations
 
                     b.Navigation("Payments");
 
+                    b.Navigation("Returns");
+
                     b.Navigation("Shipments");
+
+                    b.Navigation("ShopCoinTransactionHistory");
+
+                    b.Navigation("StatusHistory");
                 });
 
             modelBuilder.Entity("EcommerceRestApi.Models.Payment", b =>
                 {
                     b.Navigation("Invoices");
+
+                    b.Navigation("Refunds");
                 });
 
             modelBuilder.Entity("EcommerceRestApi.Models.PaymentMethod", b =>
@@ -1715,6 +2269,16 @@ namespace EcommerceRestApi.Migrations
                     b.Navigation("ShoppingCartItems");
 
                     b.Navigation("WishlistItems");
+                });
+
+            modelBuilder.Entity("EcommerceRestApi.Models.Refund", b =>
+                {
+                    b.Navigation("RefundItems");
+
+                    b.Navigation("RefundStatusHistory");
+
+                    b.Navigation("Return")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("EcommerceRestApi.Models.Subcategory", b =>

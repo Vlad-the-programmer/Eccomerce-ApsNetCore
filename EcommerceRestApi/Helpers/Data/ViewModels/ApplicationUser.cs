@@ -34,5 +34,7 @@ namespace EcommerceRestApi.Helpers.Data.ViewModels
 
         [InverseProperty("User")]
         public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
+        [InverseProperty("User")]
+        public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     }
 }

@@ -139,9 +139,9 @@ namespace EcommerceRestApi.Helpers.Data.DbInitializer
                     {
                         context.Orders.AddRange(new List<Order>
                         {
-                            new Order { Code = Guid.NewGuid().ToString(),  Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Approved), IsActive = true,  CustomerId = context.Customers.First().Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
-                            new Order { Code = Guid.NewGuid().ToString(), Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Approved), IsActive = true, CustomerId = context.Customers.ToArray()[2].Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
-                            new Order { Code = Guid.NewGuid().ToString(), Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Approved), IsActive = true, CustomerId = context.Customers.ToArray()[2].Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
+                            new Order { Code = Guid.NewGuid().ToString(),  Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Paid), IsActive = true,  CustomerId = context.Customers.First().Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
+                            new Order { Code = Guid.NewGuid().ToString(), Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Pending), IsActive = true, CustomerId = context.Customers.ToArray()[2].Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
+                            new Order { Code = Guid.NewGuid().ToString(), Status = OrderProcessingFuncs.GetStringValue(Enums.OrderStatuses.Processing), IsActive = true, CustomerId = context.Customers.ToArray()[2].Id, TotalAmount = 0, OrderDate = DateTime.Now, DateCreated = DateTime.Now },
 
                         });
                         context.SaveChanges();

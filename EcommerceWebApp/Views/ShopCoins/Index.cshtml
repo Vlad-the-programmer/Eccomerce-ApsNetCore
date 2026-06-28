@@ -1,0 +1,93 @@
+﻿@model List<EcommerceWebApp.Models.Dtos.ShopCoinTransactionHistoryDto>
+
+@{
+    ViewData["Title"] = "Shop Coins";
+}
+
+<h2 class="mb-4">💰 Shop Coins</h2>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <h4>Your Balance:</h4>
+        <h2 class="text-success">@(ViewBag.CustomerBalance != null ? ViewBag.CustomerBalance : 0) coins</h2>
+    </div>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        No transaction history yet.
+    </div>
+}
+else
+{
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Coins</th>
+                        <th>Order</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var coinClass = item.Coins >= 0 ? "text-success" : "text-danger";
+                        var sign = item.Coins >= 0 ? "+" : "";
+
+                        <tr>
+                            <td>@item.DateCreated.ToString("yyyy-MM-dd HH:mm")</td>
+
+                            <td>
+                                @if (item.Type == "EarnOrder")
+                                {
+                                    <span class="badge bg-success">Earned</span>
+                                }
+                                else if (item.Type == "SpendOrder")
+                                {
+                                    <span class="badge bg-warning text-dark">Spent</span>
+                                }
+                                else if (item.Type == "Refund")
+                                {
+                                    <span class="badge bg-info text-dark">Refund</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@item.Type</span>
+                                }
+                            </td>
+
+                            <td class="@coinClass fw-bold">
+                                @($"{sign}{item.Coins}")
+                            </td>
+
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.OrderCode))
+                                {
+                                    <span>#@item.OrderCode</span>
+                                }
+                                else
+                                {
+                                    <span>-</span>
+                                }
+                            </td>
+
+                            <td>@item.Description</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

@@ -1,0 +1,165 @@
+﻿@model EcommerceWebApp.Models.Dtos.ReturnDto
+
+@{
+    ViewData["Title"] = "Return Details";
+}
+
+<h2 class="mb-4">📦 Return Details</h2>
+
+@if (Model == null)
+{
+    <div class="alert alert-danger">Return not found.</div>
+}
+else
+{
+    <!-- 🔹 HEADER -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Refund Code:</strong> @Model.RefundCode
+            </div>
+
+            <span class="badge bg-@(
+                  Model.Status == "Delivered" ? "success" :
+                  Model.Status == "Cancelled" ? "secondary" :
+                  Model.Status == "Rejected" ? "danger" :
+                  Model.Status == "Processing" ? "warning" :
+                  Model.Status == "Shipped" ? "info" :
+                  "primary"
+                        )">
+            @Model.Status
+        </span>
+    </div>
+
+        <div class="card-body">
+            <p><strong>Reason:</strong> @Model.Reason</p>
+            <p><strong>Refund Amount:</strong> @Model.RefundAmount?.ToString("C")</p>
+
+            <p>
+                <strong>Created:</strong>
+                @Model.DateCreated.ToLocalTime().ToString("dd MMM yyyy HH:mm")
+            </p>
+        </div>
+    </div>
+
+    <!-- 🔹 STATUS TIMELINE (basic for now) -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+            <strong>📜 Status Timeline</strong>
+        </div>
+
+        <div class="card-body">
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>@Model.Status</strong>
+                    <small>@Model.DateCreated.ToLocalTime().ToString("dd MMM yyyy HH:mm")</small>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 🔹 ACTIONS -->
+    <div class="mt-4 d-flex gap-2">
+
+        <a asp-action="Index" class="btn btn-secondary">⬅ Back</a>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Stuff"))
+        {
+            <select class="form-select w-auto"
+                    onchange="changeStatus('@Model.RefundCode', this.value)">
+
+                @foreach (var status in Enum.GetValues(typeof(EcommerceWebApp.Helpers.Enums.ReturnStatuses)))
+                {
+                    <option value="@status" selected="@(status.ToString() == Model.Status)">
+                        @status
+                    </option>
+                }
+            </select>
+        }
+
+        @if (Model.Status != "Delivered" && Model.Status != "Cancelled")
+        {
+            <button class="btn btn-outline-danger"
+                    onclick="cancelReturn('@Model.RefundCode')">
+                ❌ Cancel Return
+            </button>
+        }
+    </div>
+}
+
+<!-- 🔴 Cancel Modal -->
+<div class="modal fade" id="cancelReturnModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Cancel Return</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to cancel this return?
+                <input type="hidden" id="cancelReturnCode" />
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-danger" onclick="confirmCancel()">Yes, Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeStatus(refundCode, status) {
+
+            fetch('/Return/change-status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    refundCode: refundCode,
+                    status: status
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('success', 'Status updated');
+                    location.reload();
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(err => showToast('error', err.message));
+        }
+
+        function cancelReturn(code) {
+            document.getElementById('cancelReturnCode').value = code;
+            new bootstrap.Modal(document.getElementById('cancelReturnModal')).show();
+        }
+
+        function confirmCancel() {
+            const code = document.getElementById('cancelReturnCode').value;
+
+            fetch(`/Return/${code}`, {
+                method: 'DELETE'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('success', 'Return cancelled');
+                    setTimeout(() => window.location.href = '/Return', 1200);
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(err => showToast('error', err.message));
+        }
+
+        function showToast(type, message) {
+            alert(message); // replace with your toast system
+        }
+    </script>
+}

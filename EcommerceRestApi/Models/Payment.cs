@@ -19,6 +19,7 @@ public partial class Payment : EntityBase
     public DateTime PaymentDate { get; set; }
 
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
+    public virtual ICollection<Refund> Refunds { get; set; } = new List<Refund>();
 
     [ForeignKey("OrderId")]
     public virtual Order? Order { get; set; }

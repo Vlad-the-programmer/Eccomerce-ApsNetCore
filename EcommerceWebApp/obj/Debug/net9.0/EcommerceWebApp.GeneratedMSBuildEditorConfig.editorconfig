@@ -32,6 +32,10 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxBY2Nlc3NEZW5pZWQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Account/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Account/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -46,6 +50,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Account/RegisterCompleted.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3RlckNvbXBsZXRlZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Analitics/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQW5hbGl0aWNzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Cart/Index.cshtml]
@@ -84,6 +92,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52b2ljZVxHZW5lcmF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Notification/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTm90aWZpY2F0aW9uXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Orders/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -94,6 +106,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Orders/OrderCompleted.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXE9yZGVyQ29tcGxldGVkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Orders/ProcessOrderStaff.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXFByb2Nlc3NPcmRlclN0YWZmLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Orders/Status.cshtml]
@@ -116,8 +132,44 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Refunds/AllRefundsAdmin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVmdW5kc1xBbGxSZWZ1bmRzQWRtaW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Refunds/Apply.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVmdW5kc1xBcHBseS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Refunds/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVmdW5kc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Refunds/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVmdW5kc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Return/AllReturnsAdmin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV0dXJuXEFsbFJldHVybnNBZG1pbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Return/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV0dXJuXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Return/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV0dXJuXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Shared/Components/NotificationSummary/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcTm90aWZpY2F0aW9uU3VtbWFyeVxEZWZhdWx0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Shared/Components/ShoppingCartSummary/Default.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcU2hvcHBpbmdDYXJ0U3VtbWFyeVxEZWZhdWx0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Shared/Components/WishListSummary/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcV2lzaExpc3RTdW1tYXJ5XERlZmF1bHQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Shared/Error.cshtml]
@@ -156,6 +208,22 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/ShopCoinSettings/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hvcENvaW5TZXR0aW5nc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/ShopCoinSettings/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hvcENvaW5TZXR0aW5nc1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/ShopCoinSettings/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hvcENvaW5TZXR0aW5nc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/ShopCoins/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hvcENvaW5zXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Subcategory/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3ViY2F0ZWdvcnlcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -174,6 +242,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/UsersManagement/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNNYW5hZ2VtZW50XEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/Wishlist/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV2lzaGxpc3RcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/klamc/source/repos/EcommerceWeb/EcommerceWebApp/Views/_ViewImports.cshtml]
