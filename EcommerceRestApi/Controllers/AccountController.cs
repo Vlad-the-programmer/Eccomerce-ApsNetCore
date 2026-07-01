@@ -319,7 +319,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpGet("user-profile")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetUserProfile()
         {
             try

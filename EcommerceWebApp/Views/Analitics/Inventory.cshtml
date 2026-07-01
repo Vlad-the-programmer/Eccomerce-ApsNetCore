@@ -1,0 +1,97 @@
+﻿@model EcommerceWebApp.Models.Dtos.Analitics.InventoryDashboardDto
+
+@{
+    ViewData["Title"] = "Inventory Dashboard";
+}
+
+<h2 class="mb-4">📊 Inventory Dashboard</h2>
+
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h6>Total Products</h6>
+            <h4>@Model.TotalProducts</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h6>Low Stock</h6>
+            <h4>@Model.LowStockCount</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h6>Out of Stock</h6>
+            <h4>@Model.OutOfStockCount</h4>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h6>Total Inventory Value</h6>
+            <h4>$@Model.TotalInventoryValue</h4>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Stock</th>
+            <th>Reserved</th>
+            <th>Available</th>
+            <th>Unit Cost</th>
+            <th>Inventory Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr class="@(item.Stock < 10 ? "table-warning" : "") @(item.Stock <= 0 ? "table-danger" : "")">
+                <td>@item.ProductName</td>
+                <td>@item.Category</td>
+                <td>@item.Stock</td>
+                <td>@item.Reserved</td>
+                <td>@item.Available</td>
+                <td>$@item.UnitCost</td>
+                <td>$@item.InventoryValue</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="card p-3 mt-4">
+    <h5>⚠️ Low Stock Items</h5>
+
+    <ul>
+        @foreach (var item in Model.LowStockItems)
+        {
+            <li>@item.ProductName — @item.Stock left</li>
+        }
+    </ul>
+</div>
+
+<canvas id="inventoryChart"></canvas>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+    new Chart(document.getElementById("inventoryChart"), {
+        type: 'bar',
+        data: {
+            labels: @Html.Raw(Json.Serialize(Model.Items.Select(i => i.ProductName))),
+            datasets: [{
+                label: 'Available Stock',
+                data: @Html.Raw(Json.Serialize(Model.Items.Select(i => i.Available))),
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        }
+    });
+</script>
+}

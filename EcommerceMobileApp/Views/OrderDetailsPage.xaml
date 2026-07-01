@@ -1,33 +1,225 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+﻿<ContentPage
     x:Class="EcommerceMobileApp.Views.OrderDetailsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="#F5F5F5">
 
-    <CollectionView x:Name="OrdersList"
-                    SelectionMode="Single">
-        <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <Frame Padding="10" Margin="5">
-                    <VerticalStackLayout Padding="20">
-                        <Label Text="{Binding Code}" FontSize="24" FontAttributes="Bold"/>
-                        <Label Text="{Binding TotalAmount}"/>
-                        <Label Text="{Binding OrderStatus}"/>
-                        <CollectionView ItemsSource="{Binding Items}">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <HorizontalStackLayout>
-                                        <Label Text="{Binding ProductName}" />
-                                        <Label Text="{Binding Quantity}" />
-                                        <Label Text="{Binding Price}" />
-                                    </HorizontalStackLayout>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
+    <ScrollView>
+        <VerticalStackLayout Padding="15" Spacing="15">
+
+            <!-- HEADER -->
+            <Frame CornerRadius="12" Padding="15" BackgroundColor="White">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{Binding Code}"
+                           FontSize="20"
+                           FontAttributes="Bold"/>
+
+                    <Label Text="{Binding OrderDate, StringFormat='Date: {0:yyyy-MM-dd}'}"
+                           FontSize="13"
+                           TextColor="Gray"/>
+
+                    <Frame Padding="10,4"
+       CornerRadius="10"
+       HasShadow="False"
+       HorizontalOptions="Start"
+       VerticalOptions="Center">
+
+                        <Label Text="{Binding OrderStatus}"
+           FontSize="12"
+           FontAttributes="Bold"
+           TextColor="White"/>
+
+                        <Frame.Triggers>
+
+                            <!-- Pending -->
+                            <DataTrigger TargetType="Frame"
+                     Binding="{Binding OrderStatus}"
+                     Value="Pending">
+                                <Setter Property="BackgroundColor" Value="#9E9E9E"/>
+                            </DataTrigger>
+
+                            <!-- Paid -->
+                            <DataTrigger TargetType="Frame"
+                     Binding="{Binding OrderStatus}"
+                     Value="Paid">
+                                <Setter Property="BackgroundColor" Value="#4CAF50"/>
+                            </DataTrigger>
+
+                            <!-- Cancelled -->
+                            <DataTrigger TargetType="Frame"
+                     Binding="{Binding OrderStatus}"
+                     Value="Cancelled">
+                                <Setter Property="BackgroundColor" Value="#F44336"/>
+                            </DataTrigger>
+
+                            <!-- Processing -->
+                            <DataTrigger TargetType="Frame"
+                     Binding="{Binding OrderStatus}"
+                     Value="Processing">
+                                <Setter Property="BackgroundColor" Value="#FF9800"/>
+                            </DataTrigger>
+
+                            <!-- ReadyToShip -->
+                            <DataTrigger TargetType="Frame"
+                     Binding="{Binding OrderStatus}"
+                     Value="ReadyToShip">
+                                <Setter Property="BackgroundColor" Value="#3F51B5"/>
+                            </DataTrigger>
+
+                            <!-- Shipped -->
+                            <DataTrigger TargetType="Frame"
+                     Binding="{Binding OrderStatus}"
+                     Value="Shipped">
+                                <Setter Property="BackgroundColor" Value="#2196F3"/>
+                            </DataTrigger>
+
+                            <!-- InDelivery -->
+                            <DataTrigger TargetType="Frame"
+                     Binding="{Binding OrderStatus}"
+                     Value="InDelivery">
+                                <Setter Property="BackgroundColor" Value="#00BCD4"/>
+                            </DataTrigger>
+
+                            <!-- Delivered -->
+                            <DataTrigger TargetType="Frame"
+                     Binding="{Binding OrderStatus}"
+                     Value="Delivered">
+                                <Setter Property="BackgroundColor" Value="#2E7D32"/>
+                            </DataTrigger>
+
+                        </Frame.Triggers>
+
+                    </Frame>
+
+                    <Label Text="{Binding TotalAmount, StringFormat='Total: €{0:F2}'}"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="Green"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- CUSTOMER -->
+            <Frame CornerRadius="12" Padding="15" BackgroundColor="White">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Customer" FontAttributes="Bold"/>
+
+                    <Label Text="{Binding Customer.FirstName}" />
+                    <Label Text="{Binding Customer.LastName}" />
+
+                    <Label Text="{Binding Customer.Email}" FontSize="12" TextColor="Gray"/>
+
+                    <Label Text="{Binding Customer.PhoneNumber}" FontSize="12"/>
+
+                    <!-- ADDRESS -->
+                    <Label Text="{Binding Customer.Street}" FontSize="12"/>
+                    <Label Text="{Binding Customer.City}" FontSize="12"/>
+                    <Label Text="{Binding Customer.CountryName}" FontSize="12"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- PAYMENT + DELIVERY -->
+            <Frame CornerRadius="12" Padding="15" BackgroundColor="White">
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout>
+                        <Label Text="Payment" FontAttributes="Bold"/>
+                        <Label Text="{Binding PaymentMethod}" />
+                        <Label Text="{Binding IsPaid, StringFormat='Paid: {0}'}" FontSize="12"/>
                     </VerticalStackLayout>
-                </Frame>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
 
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Delivery" FontAttributes="Bold"/>
+                        <Label Text="{Binding DeliveryMethod}" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Frame>
+
+            <!-- ITEMS -->
+            <Frame CornerRadius="12" Padding="15" BackgroundColor="White">
+                <VerticalStackLayout>
+                    <Label Text="Items" FontAttributes="Bold" Margin="0,0,0,10"/>
+
+                    <CollectionView ItemsSource="{Binding OrderItems}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Padding="10" Margin="0,5" BackgroundColor="#FAFAFA">
+                                    <Grid ColumnDefinitions="*,Auto">
+
+                                        <!-- LEFT -->
+                                        <VerticalStackLayout>
+                                            <Label Text="{Binding ProductName}"
+                                                   FontAttributes="Bold"/>
+
+                                            <Label Text="{Binding ProductBrand}"
+                                                   FontSize="12"
+                                                   TextColor="Gray"/>
+
+                                            <Label Text="{Binding Quantity, StringFormat='Qty: {0}'}"
+                                                   FontSize="12"/>
+                                        </VerticalStackLayout>
+
+                                        <!-- RIGHT -->
+                                        <Label Grid.Column="1"
+                                               Text="{Binding UnitPrice, StringFormat='€{0:F2}'}"
+                                               FontAttributes="Bold"
+                                               VerticalOptions="Center"/>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- STATUS HISTORY -->
+            <Frame CornerRadius="12"
+       Padding="15"
+       BackgroundColor="White">
+
+                <VerticalStackLayout Spacing="10">
+
+                    <Label Text="Status History"
+               FontAttributes="Bold"
+               FontSize="18"
+               Margin="0,0,0,10"/>
+
+                    <CollectionView ItemsSource="{Binding StatusHistory}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+
+                                <Grid ColumnDefinitions="Auto,*"
+                          RowDefinitions="Auto,Auto"
+                          ColumnSpacing="10"
+                          Padding="0,5">
+
+                                    <!-- Bullet -->
+                                    <Label Text="•"
+                               FontSize="20"
+                               VerticalOptions="Start" />
+
+                                    <!-- Status -->
+                                    <Label Text="{Binding Status}"
+                               Grid.Column="1"
+                               FontAttributes="Bold"
+                               FontSize="15"/>
+
+                                    <!-- Timestamp -->
+                                    <Label Text="{Binding DateCreated, StringFormat='{0:yyyy-MM-dd HH:mm}'}"
+                               Grid.Column="1"
+                               Grid.Row="1"
+                               FontSize="12"
+                               TextColor="Gray"
+                               Margin="0,-2,0,0"/>
+
+                                </Grid>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </Frame>
+
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EcommerceMobileApp.Views.RefundDetailsPage"
+             Title="Refund Details"
+             BackgroundColor="#F5F6F8">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="15" Spacing="15">
+
+            <!-- MAIN CARD -->
+            <Frame BackgroundColor="White"
+                   CornerRadius="14"
+                   Padding="15"
+                   HasShadow="True"
+                   HorizontalOptions="FillAndExpand">
+
+                <VerticalStackLayout Spacing="12">
+
+                    <!-- TOP ROW -->
+                    <Grid ColumnDefinitions="*,Auto">
+
+                        <Label Text="{Binding Code}"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#111"
+                               LineBreakMode="TailTruncation"/>
+
+                        <Label Grid.Column="1"
+                               Text="{Binding Amount, StringFormat='€{0:F2}'}"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#2E7D32"
+                               HorizontalOptions="End"/>
+                    </Grid>
+
+                    <!-- STATUS BADGE -->
+                    <Label Text="{Binding Status}"
+                           HorizontalOptions="Start"
+                           Padding="10,4"
+                           FontSize="12"
+                           TextColor="White">
+
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Pending">
+                                <Setter Property="BackgroundColor" Value="#FF9800"/>
+                            </DataTrigger>
+
+                            <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Approved">
+                                <Setter Property="BackgroundColor" Value="#4CAF50"/>
+                            </DataTrigger>
+
+                            <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Rejected">
+                                <Setter Property="BackgroundColor" Value="#F44336"/>
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+
+                    <!-- DATES -->
+                    <VerticalStackLayout Spacing="4">
+
+                        <Label Text="{Binding DateCreated, StringFormat='Created: {0:dd MMM yyyy}'}"
+                               FontSize="12"
+                               TextColor="Gray"/>
+
+                        <Label Text="{Binding ProcessedDate,
+                                              StringFormat='Processed: {0:dd MMM yyyy}',
+                                              TargetNullValue='Processed: Not yet'}"
+                               FontSize="12"
+                               TextColor="Gray"/>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- ITEMS SECTION -->
+            <Label Text="Items"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="#111"/>
+
+            <CollectionView ItemsSource="{Binding RefundItems}"
+                            HorizontalOptions="Fill">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Frame BackgroundColor="White"
+                               CornerRadius="12"
+                               Padding="12"
+                               Margin="0,6"
+                               HasShadow="False"
+                               HorizontalOptions="FillAndExpand">
+
+                            <VerticalStackLayout Spacing="5">
+
+                                <Grid ColumnDefinitions="*,Auto">
+
+                                    <Label Text="{Binding ProductName}"
+                                           FontAttributes="Bold"
+                                           FontSize="15"
+                                           TextColor="#111"/>
+
+                                    <Label Grid.Column="1"
+                                           Text="{Binding RefundAmount, StringFormat='€{0:F2}'}"
+                                           FontAttributes="Bold"
+                                           TextColor="#2E7D32"/>
+                                </Grid>
+
+                                <Label Text="{Binding ProductBrand}"
+                                       FontSize="12"
+                                       TextColor="Gray"/>
+
+                                <Label Text="{Binding Quantity, StringFormat='Qty: {0}'}"
+                                       FontSize="12"
+                                       TextColor="#444"/>
+
+                                <Label Text="{Binding Reason}"
+                                       FontSize="12"
+                                       TextColor="#777"
+                                       LineBreakMode="WordWrap"/>
+
+                            </VerticalStackLayout>
+
+                        </Frame>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+            <!-- STATUS HISTORY -->
+            <Label Text="Status History"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="#111"/>
+
+            <CollectionView ItemsSource="{Binding RefundStatusHistory}">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Frame BackgroundColor="White"
+                               CornerRadius="10"
+                               Padding="10"
+                               Margin="0,5"
+                               HorizontalOptions="FillAndExpand">
+
+                            <Grid ColumnDefinitions="*,Auto">
+
+                                <Label Text="{Binding Status}"
+                                       FontAttributes="Bold"
+                                       FontSize="14"
+                                       TextColor="#111"/>
+
+                                <Label Grid.Column="1"
+                                       Text="{Binding DateCreated, StringFormat='{0:dd MMM yyyy}'}"
+                                       FontSize="12"
+                                       TextColor="Gray"
+                                       HorizontalOptions="End"/>
+                            </Grid>
+
+                        </Frame>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

@@ -26,6 +26,29 @@ namespace EcommerceMobileApp.Helpers.Session
             }
         }
 
+        private UserProfileDto _userProfile;
+
+        public UserProfileDto UserProfile
+        {
+            get => _userProfile;
+            set
+            {
+                _userProfile = value;
+
+                if (value != null)
+                {
+                    Task.Run(async () => await SaveProfileToStorageAsync());
+                }
+                else
+                {
+                    SecureStorage.Remove("user_profile");
+                }
+            }
+        }
+
+        public event Action AuthChanged;
+
+
         private CurrentUserViewModel _currentUser;
         public CurrentUserViewModel CurrentUser
         {
@@ -35,14 +58,14 @@ namespace EcommerceMobileApp.Helpers.Session
                 _currentUser = value;
                 if (value != null)
                 {
-                    // Save to storage
                     Task.Run(async () => await SaveToStorageAsync());
+
                 }
                 else
                 {
-                    // Clear storage
                     Task.Run(async () => await ClearStorageAsync());
                 }
+                AuthChanged?.Invoke();
             }
         }
 
@@ -60,7 +83,7 @@ namespace EcommerceMobileApp.Helpers.Session
         private SessionService()
         {
             // Load synchronously in constructor
-            LoadFromStorageSync();
+            //LoadFromStorageSync();
         }
 
         private void LoadFromStorageSync()
@@ -95,6 +118,21 @@ namespace EcommerceMobileApp.Helpers.Session
                     System.Diagnostics.Debug.WriteLine($"Loaded {_userOrders.Count} orders from storage");
                 }
 
+                var profileTask = SecureStorage.GetAsync("user_profile");
+                profileTask.Wait();
+                var profileJson = profileTask.Result;
+
+                if (!string.IsNullOrEmpty(profileJson))
+                {
+                    _userProfile = JsonSerializer.Deserialize<UserProfileDto>(profileJson);
+                    System.Diagnostics.Debug.WriteLine($"Loaded user profile: {_userProfile?.LastName}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("No user profile found in storage");
+                }
+
+
                 _isLoaded = true;
             }
             catch (Exception ex)
@@ -113,31 +151,44 @@ namespace EcommerceMobileApp.Helpers.Session
             {
                 System.Diagnostics.Debug.WriteLine("Loading from storage (async)...");
 
+                // USER
                 var userJson = await SecureStorage.GetAsync("current_user");
                 if (!string.IsNullOrEmpty(userJson))
                 {
                     _currentUser = JsonSerializer.Deserialize<CurrentUserViewModel>(userJson);
-                    System.Diagnostics.Debug.WriteLine($"Loaded user from storage: {_currentUser?.Email}");
-                    System.Diagnostics.Debug.WriteLine($"User IsAuthenticated: {_currentUser?.IsAuthenticated}");
-                    System.Diagnostics.Debug.WriteLine($"User Id: {_currentUser?.UserId}");
+                    System.Diagnostics.Debug.WriteLine($"Loaded user: {_currentUser?.Email}");
                 }
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("No user found in storage");
                 }
 
+                // ORDERS
                 var ordersJson = await SecureStorage.GetAsync("user_orders");
                 if (!string.IsNullOrEmpty(ordersJson))
                 {
                     _userOrders = JsonSerializer.Deserialize<List<OrderDto>>(ordersJson) ?? new List<OrderDto>();
-                    System.Diagnostics.Debug.WriteLine($"Loaded {_userOrders.Count} orders from storage");
+                    System.Diagnostics.Debug.WriteLine($"Loaded {_userOrders.Count} orders");
+                }
+
+                // PROFILE (FIXED - no Wait!)
+                var profileJson = await SecureStorage.GetAsync("user_profile");
+
+                if (!string.IsNullOrEmpty(profileJson))
+                {
+                    _userProfile = JsonSerializer.Deserialize<UserProfileDto>(profileJson);
+                    System.Diagnostics.Debug.WriteLine($"Loaded profile: {_userProfile?.LastName}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("No user profile found in storage");
                 }
 
                 _isLoaded = true;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"LoadFromStorageAsync error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"LoadFromStorageAsync error: {ex}");
                 _isLoaded = true;
             }
             finally
@@ -171,6 +222,32 @@ namespace EcommerceMobileApp.Helpers.Session
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"SaveToStorageAsync error: {ex.Message}");
+            }
+            finally
+            {
+                _saveLock.Release();
+            }
+        }
+
+        public async Task SaveProfileToStorageAsync()
+        {
+            await _saveLock.WaitAsync();
+            try
+            {
+                if (_userProfile != null)
+                {
+                    var json = JsonSerializer.Serialize(_userProfile);
+                    await SecureStorage.SetAsync("user_profile", json);
+                    System.Diagnostics.Debug.WriteLine("Saved user profile to storage");
+                }
+                else
+                {
+                    SecureStorage.Remove("user_profile");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"SaveProfileToStorageAsync error: {ex.Message}");
             }
             finally
             {
@@ -225,6 +302,8 @@ namespace EcommerceMobileApp.Helpers.Session
             {
                 _currentUser = null;
                 _userOrders = new List<OrderDto>();
+                SecureStorage.Remove("user_profile");
+                _userProfile = null;
 
                 SecureStorage.Remove("current_user");
                 SecureStorage.Remove("user_orders");
@@ -232,6 +311,7 @@ namespace EcommerceMobileApp.Helpers.Session
 
                 System.Diagnostics.Debug.WriteLine("Logged out successfully");
                 _isLoaded = true;
+                AuthChanged?.Invoke();
             }
             catch (Exception ex)
             {

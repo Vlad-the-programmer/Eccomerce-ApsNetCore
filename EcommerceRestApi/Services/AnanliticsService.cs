@@ -1,5 +1,6 @@
 ﻿using EcommerceRestApi.Helpers.Enums;
 using EcommerceRestApi.Models.Context;
+using EcommerceRestApi.Models.Dtos;
 using EcommerceRestApi.Models.Dtos.Analitics;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
@@ -248,7 +249,20 @@ namespace EcommerceRestApi.Services
 
         public async Task<byte[]> ExportOrdersData(DateTime? from = null, DateTime? to = null)
         {
-            var query = _context.Orders.AsQueryable();
+            var query = _context.Orders
+                .Include(o => o.Customer)
+                    .ThenInclude(c => c.User)
+                .Include(o => o.Customer)
+                    .ThenInclude(c => c.Addresses)
+                        .ThenInclude(a => a.Country)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(i => i.Product)
+                        .ThenInclude(p => p.ProductCategories)
+                .Include(o => o.OrderCoupons)
+                .Include(o => o.ShopCoinTransactionHistory)
+                .Include(o => o.DeliveryMethodOrders)
+                .ThenInclude(d => d.DeliveryMethod)
+                .AsQueryable();
 
             if (from.HasValue)
                 query = query.Where(o => o.OrderDate >= from);
@@ -256,54 +270,60 @@ namespace EcommerceRestApi.Services
             if (to.HasValue)
                 query = query.Where(o => o.OrderDate <= to);
 
+            var spendType = ShopCoinTransactionType.SpendOrder.ToString();
 
             var data = await query
-                .SelectMany(o => o.OrderItems.Select(item => new OrderExportDto
-                {
-                    OrderId = o.Code,
-                    OrderDate = o.OrderDate,
-                    CustomerName = o.Customer.User.FullName,
-                    Region = o.Customer.Addresses
-                        .Where(a => a.IsActive)
-                        .Select(a => a.State)
-                        .FirstOrDefault() ?? "N/A",
-
-                    ProductName = item.Product.Name,
-                    Category = item.Product.ProductCategories
-                        .Select(pc => pc.Category.Name)
-                        .FirstOrDefault(),
-
-                    Quantity = item.Quantity,
-                    UnitPrice = item.UnitPrice,
-
-                    DiscountPercent = (o.OrderCoupons
-                        .Select(c => (decimal?)c.DiscountApplied)
-                        .FirstOrDefault() ?? 0) * 100,
-
-                    TotalRevenue =
-                        (item.Quantity * item.UnitPrice)
-                        - o.OrderCoupons.Select(c => (decimal?)c.DiscountApplied).FirstOrDefault() ?? 0
-                        - o.ShopCoinTransactionHistory
-                            .Where(s => s.Type == ShopCoinTransactionType.SpendOrder.ToString())
-                            .Select(s => (decimal?)s.Coins)
+                    .Select(o => new
+                    {
+                        Order = o,
+                        Discount = o.OrderCoupons
+                            .Select(c => (decimal?)c.DiscountApplied)
                             .FirstOrDefault() ?? 0,
 
-                    Profit =
-                        ((item.Quantity * item.UnitPrice)
-                        - o.OrderCoupons.Select(c => (decimal?)c.DiscountApplied).FirstOrDefault() ?? 0
-                        - o.ShopCoinTransactionHistory
-                            .Where(s => s.Type == ShopCoinTransactionType.SpendOrder.ToString())
+                        Coins = o.ShopCoinTransactionHistory
+                            .Where(s => s.Type == spendType)
                             .Select(s => (decimal?)s.Coins)
-                            .FirstOrDefault() ?? 0)
-                        - item.Product.Price,
+                            .FirstOrDefault() ?? 0
+                    })
+                    .SelectMany(x => x.Order.OrderItems.Select(item => new OrderExportDto
+                    {
+                        OrderId = x.Order.Code,
+                        OrderDate = x.Order.OrderDate,
+                        CustomerName = x.Order.Customer.User.FullName,
 
-                    ShipMode = o.DeliveryMethodOrders
-                        .Select(d => d.DeliveryMethod.MethodName)
-                        .FirstOrDefault()
-                }))
-                .ToListAsync();
+                        Region = x.Order.Customer.Addresses
+                            .Where(a => a.IsActive)
+                            .Select(a => a.Country.CountryName)
+                            .FirstOrDefault() ?? "N/A",
 
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                        ProductName = item.Product.Name,
+
+                        Category = item.Product.ProductCategories
+                            .Select(pc => pc.Category.Name)
+                            .FirstOrDefault() ?? "N/A",
+
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice,
+
+                        DiscountPercent = x.Discount,
+
+                        TotalRevenue =
+                            (item.Quantity * item.UnitPrice)
+                            - x.Discount
+                            - x.Coins,
+
+                        Profit =
+                            (item.Quantity * item.UnitPrice)
+                            - x.Discount
+                            - x.Coins,
+
+                        ShipMode = x.Order.DeliveryMethodOrders
+                            .Select(d => d.DeliveryMethod.MethodName)
+                            .FirstOrDefault() ?? "N/A"
+                    }))
+                    .ToListAsync();
+
+            ExcelPackage.License.SetNonCommercialOrganization("Ecommerce");
 
             using var package = new ExcelPackage();
             var ws = package.Workbook.Worksheets.Add("Orders");
@@ -339,5 +359,43 @@ namespace EcommerceRestApi.Services
 
             return package.GetAsByteArray();
         }
+
+        public async Task<InventoryDashboardDto> GetInventoryDashboard()
+        {
+            var products = await _context.Products
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                .Include(p => p.OrderItems)
+                    .ThenInclude(oi => oi.Order)
+                .ToListAsync();
+
+            var items = products.Select(p => new InventoryItemDto
+            {
+                ProductId = p.Id,
+                ProductName = p.Name,
+                Category = p.ProductCategories.FirstOrDefault()?.Category?.Name ?? "",
+                Stock = p.Stock,
+                Reserved = p.OrderItems.Where(oi => oi.Order.Status == "Pending").Sum(oi => oi.Quantity),
+                UnitCost = p.Price
+            }).ToList();
+
+            var dto = new InventoryDashboardDto
+            {
+                TotalProducts = items.Count,
+                LowStockCount = items.Count(i => i.Stock < 10),
+                OutOfStockCount = items.Count(i => i.Stock <= 0),
+                TotalInventoryValue = items.Sum(i => i.InventoryValue),
+                Items = items,
+                LowStockItems = items.Where(i => i.Stock < 10).Select(i => new LowStockItemDto
+                {
+                    ProductId = i.ProductId,
+                    ProductName = i.ProductName,
+                    Stock = i.Stock
+                }).ToList()
+            };
+
+            return dto;
+        }
+
     }
 }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EcommerceMobileApp.Views.ShopCoinHistoryPage"
+             Title="Shop Coins">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- TRANSACTION HISTORY -->
+            <Frame Padding="0" CornerRadius="12" BorderColor="#e0e0e0">
+                <VerticalStackLayout>
+
+                    <!-- Table Header -->
+                    <Grid ColumnDefinitions="2*,*,*,2*,3*" Padding="15" BackgroundColor="#1e1e1e">
+                        <Label Text="Date" TextColor="White" FontAttributes="Bold"/>
+                        <Label Grid.Column="1" Text="Type" TextColor="White" FontAttributes="Bold"/>
+                        <Label Grid.Column="2" Text="Coins" TextColor="White" FontAttributes="Bold"/>
+                        <Label Grid.Column="3" Text="Order" TextColor="White" FontAttributes="Bold"/>
+                        <Label Grid.Column="4" Text="Description" TextColor="White" FontAttributes="Bold"/>
+                    </Grid>
+
+                    <!-- Transactions -->
+                    <CollectionView ItemsSource="{Binding Transactions}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="2*,*,*,2*,3*" 
+                              Padding="10" 
+                              RowSpacing="0"
+                              VerticalOptions="Center"
+                              HorizontalOptions="Fill">
+
+                                                            <!-- DATE -->
+                                                            <Label Grid.Column="0"
+                                   Text="{Binding DateCreated, StringFormat='{0:yyyy-MM-dd HH:mm}'}"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Start" />
+
+                                                            <!-- TYPE BADGE -->
+                                                            <Frame Grid.Column="1"
+                                   Padding="2"
+                                   BackgroundColor="LightGreen"
+                                   CornerRadius="6"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center"
+                                   MinimumWidthRequest="50">
+                                                                <Label Text="{Binding Type}"
+                                       FontAttributes="Bold"
+                                       FontSize="12"
+                                       TextColor="White"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"/>
+                                                            </Frame>
+
+                                                            <!-- COINS -->
+                                                            <Label Grid.Column="2"
+                                   Text="{Binding Coins, StringFormat='+{0}'}"
+                                   TextColor="Green"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center" />
+
+                                                            <!-- ORDER CODE -->
+                                                            <Label Grid.Column="3"
+                                   Text="{Binding OrderCode}"
+                                   FontSize="12"
+                                   Padding="2"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center" />
+
+                                                            <!-- DESCRIPTION -->
+                                                            <Label Grid.Column="4"
+                                   Text="{Binding Description}"
+                                   FontSize="12"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Start" />
+                                </Grid>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

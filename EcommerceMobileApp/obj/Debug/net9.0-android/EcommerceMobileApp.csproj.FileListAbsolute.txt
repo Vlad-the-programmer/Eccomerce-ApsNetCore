@@ -1,11 +1,3 @@
-C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\EcommerceMobileApp.runtimeconfig.json
-C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\EcommerceMobileApp.dll
-C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\EcommerceMobileApp.pdb
-C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\com.companyname.ecommercemobileapp.apk
-C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\com.companyname.ecommercemobileapp.aab
-C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\com.companyname.ecommercemobileapp-Signed.aab
-C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\com.companyname.ecommercemobileapp-Signed.apk
-C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\com.companyname.ecommercemobileapp-Signed.apk.idsig
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\.NETCoreApp,Version=v9.0.AssemblyAttributes.cs
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\build.props
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\adb.props
@@ -26,6 +18,7 @@ C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-and
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\mauifont.stamp
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\resizetizer\f\OpenSans-Regular.ttf
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\resizetizer\f\OpenSans-Semibold.ttf
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\resizetizer\r\drawable\store_banner.png
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\resizetizer\r\drawable-xxxhdpi\dotnet_bot.png
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\resizetizer\r\drawable-xxhdpi\dotnet_bot.png
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\resizetizer\r\drawable-xhdpi\dotnet_bot.png
@@ -127,6 +120,14 @@ C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-and
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\EcommerceMobileApp.AssemblyInfo.cs
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\EcommerceMobileApp.csproj.CoreCompileInputs.cache
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\EcommerceMobileApp.sourcelink.json
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\EcommerceMobileApp.runtimeconfig.json
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\EcommerceMobileApp.dll
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\EcommerceMobileApp.pdb
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\com.companyname.ecommercemobileapp.apk
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\com.companyname.ecommercemobileapp.aab
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\com.companyname.ecommercemobileapp-Signed.aab
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\com.companyname.ecommercemobileapp-Signed.apk
+C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\bin\Debug\net9.0-android\com.companyname.ecommercemobileapp-Signed.apk.idsig
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\XamlC.stamp
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\EcommerceMobileApp.dll
 C:\Users\klamc\source\repos\EcommerceWeb\EcommerceMobileApp\obj\Debug\net9.0-android\EcommerceMobileApp.pdb

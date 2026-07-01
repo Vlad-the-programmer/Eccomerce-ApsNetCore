@@ -27,10 +27,16 @@ namespace EcommerceRestApi.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
-                new Claim("CustomerId", $"{user.Customers.FirstOrDefault()?.Id}" ),
                 new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
                 new Claim(ClaimTypes.Role, user.Role ?? UserRoles.User)
             };
+
+            var customerId = user.Customers.FirstOrDefault()?.Id;
+
+            if (customerId != null)
+            {
+                claims.Add(new Claim("CustomerId", customerId.ToString()));
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

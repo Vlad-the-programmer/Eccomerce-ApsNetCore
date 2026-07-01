@@ -264,6 +264,16 @@
   },
   {
     "ContainingType": "EcommerceRestApi.Controllers.AnaliticsController",
+    "Method": "GetInventoryDashboard",
+    "RelativePath": "api/Analitics/inventory-dashboard",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.AnaliticsController",
     "Method": "GetOrders",
     "RelativePath": "api/Analitics/orders",
     "HttpMethod": "GET",
@@ -1841,6 +1851,26 @@
         "IsRequired": false
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.ReturnController",
+    "Method": "GetOrderByComboBoxDtos",
+    "RelativePath": "api/Return/order-by-combo-box-dtos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EcommerceRestApi.Controllers.ReturnController",
+    "Method": "GetSearchComboBoxDtos",
+    "RelativePath": "api/Return/search-combo-box-dtos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {

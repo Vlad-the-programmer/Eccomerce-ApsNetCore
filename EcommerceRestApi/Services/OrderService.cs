@@ -422,6 +422,61 @@ namespace EcommerceRestApi.Services
             return orders;
         }
 
+        public async Task<IEnumerable<OrderDto>> GetUserOrdersAsync(int customerId)
+        {
+            var orders = await _context.Orders
+            .Where(o => o.CustomerId == customerId)
+           .Select(order => new OrderDto
+           {
+               Code = order.Code,
+               CustomerId = order.CustomerId,
+               OrderDate = order.OrderDate,
+               TotalAmount = order.TotalAmount,
+               OrderStatus = order.Status,
+               PaymentMethod = order.Payments.FirstOrDefault().PaymentMethod.PaymentType ?? string.Empty,
+               DeliveryMethod = order.DeliveryMethodOrders.FirstOrDefault().DeliveryMethod.MethodName ?? string.Empty,
+               OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
+               {
+                   ProductId = oi.ProductId,
+                   Quantity = oi.Quantity,
+                   UnitPrice = oi.Product.Price,
+                   OrderId = oi.OrderId,
+                   ProductName = oi.Product.Name,
+                   ProductBrand = oi.Product.Brand,
+               }).ToList(),
+               Customer = new OrderCustomerDTO
+               {
+                   FlatNumber = order.Customer.Addresses.FirstOrDefault().FlatNumber ?? string.Empty,
+                   HouseNumber = order.Customer.Addresses.FirstOrDefault().HouseNumber ?? string.Empty,
+                   City = order.Customer.Addresses.FirstOrDefault().City ?? string.Empty,
+                   PostalCode = order.Customer.Addresses.FirstOrDefault().PostalCode ?? string.Empty,
+                   State = order.Customer.Addresses.FirstOrDefault().State ?? string.Empty,
+                   Street = order.Customer.Addresses.FirstOrDefault().Street ?? string.Empty,
+                   CountryName = order.Customer.Addresses.FirstOrDefault().Country.CountryName ?? string.Empty,
+                   Email = order.Customer.User.Email ?? string.Empty,
+                   FirstName = order.Customer.User.FirstName ?? string.Empty,
+                   LastName = order.Customer.User.LastName ?? string.Empty,
+                   PhoneNumber = order.Customer.User.PhoneNumber ?? string.Empty,
+                   Nip = order.Customer.Nip ?? string.Empty,
+                   IsActive = order.Customer.IsActive,
+                   IsAdmin = order.Customer.User.IsAdmin,
+                   IsAuthenticated = order.Customer.User.IsAuthenticated,
+                   Role = order.Customer.User.Role,
+                   UserName = order.Customer.User.UserName,
+               },
+               IsPaid = order.IsPaid,
+               StatusHistory = order.StatusHistory.Select(s => new OrderStatusHistoryDto
+               {
+                   Status = s.Status,
+                   DateCreated = s.DateCreated
+               }).ToList()
+           })
+           .OrderByDescending(o => o.OrderDate)
+           .ToListAsync();
+
+            return orders;
+        }
+
         public async Task ChangeOrderStatusAsync(ChangeOrderStatusDto dto, string? currentUserId)
         {
             if (string.IsNullOrEmpty(currentUserId)) return;

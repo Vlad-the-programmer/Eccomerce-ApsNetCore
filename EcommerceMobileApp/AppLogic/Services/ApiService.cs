@@ -14,7 +14,7 @@ namespace EcommerceMobileApp.AppLogic.Services
 
         static ApiService()
         {
-            _baseUrl = "http://10.0.2.2:5000";
+            _baseUrl = "http://localhost:5000";
 
             // Disable SSL validation for development
             var handler = new HttpClientHandler();
@@ -25,6 +25,7 @@ namespace EcommerceMobileApp.AppLogic.Services
             _client.BaseAddress = new Uri(_baseUrl.TrimEnd('/') + '/');
             _client.DefaultRequestHeaders.Add("Accept", "application/json");
             _client.DefaultRequestHeaders.Add("User-Agent", "EcommerceMobileApp");
+            _client.DefaultRequestHeaders.Add("X-Client-Type", "mobile");
             _client.Timeout = TimeSpan.FromSeconds(30);
 
             System.Diagnostics.Debug.WriteLine($"API Base URL: {_baseUrl}");
@@ -39,8 +40,6 @@ namespace EcommerceMobileApp.AppLogic.Services
             try
             {
                 _client.DefaultRequestHeaders.Authorization = null;
-                _client.DefaultRequestHeaders.Add("X-Client-Type", "mobile");
-                _client.DefaultRequestHeaders.Add("Accept", "application/json");
 
                 var response = await _client.PostAsJsonAsync("api/account/login", model);
 
@@ -69,6 +68,7 @@ namespace EcommerceMobileApp.AppLogic.Services
 
                     var session = SessionService.Instance;
                     session.CurrentUser = result.User;
+                    session.UserProfile = await new AccountDetailsViewModel().LoadUserAsync() ?? null!;
 
                     await Task.Delay(500);
 

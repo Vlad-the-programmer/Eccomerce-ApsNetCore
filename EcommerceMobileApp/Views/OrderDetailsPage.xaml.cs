@@ -1,18 +1,21 @@
-﻿namespace EcommerceMobileApp.Views
+﻿using EcommerceMobileApp.AppLogic.Dtos;
+
+namespace EcommerceMobileApp.Views
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
+    [QueryProperty(nameof(Order), "Order")]
     public partial class OrderDetailsPage : ContentPage
     {
-        public OrderDetailsPage(string code)
+        public OrderDto Order
         {
-            InitializeComponent();
-            LoadOrder(code);
+            set
+            {
+                BindingContext = value;
+            }
         }
 
-        private async void LoadOrder(string code)
+        public OrderDetailsPage()
         {
-            var order = await AppLogic.Services.OrdersService.GetOrder(code);
-            BindingContext = order;
+            InitializeComponent();
         }
     }
 

@@ -158,24 +158,25 @@ namespace EcommerceRestApi.Controllers
         [HttpGet("export-orders")]
         public async Task<IActionResult> ExportOrders(DateTime? from, DateTime? to)
         {
-            try
-            {
-                var bytes = await _analiticsService.ExportOrdersData(from, to);
 
-                var fromStr = from?.ToString("yyyyMMdd") ?? "all";
-                var toStr = to?.ToString("yyyyMMdd") ?? "now";
-                Console.WriteLine($"Bytes: {bytes.ToString()}");
-                return File(
-                    bytes,
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    $"Orders_{fromStr}_{toStr}.xlsx"
-                );
+            var bytes = await _analiticsService.ExportOrdersData(from, to);
 
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResponseModel { Message = ex.Message });
-            }
+            var fromStr = from?.ToString("yyyyMMdd") ?? "all";
+            var toStr = to?.ToString("yyyyMMdd") ?? "now";
+            Console.WriteLine($"Bytes: {bytes.ToString()}");
+            return File(
+                bytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"Orders_{fromStr}_{toStr}.xlsx"
+            );
+        }
+
+        [HttpGet("inventory-dashboard")]
+        public async Task<IActionResult> GetInventoryDashboard()
+        {
+            var dto = await _analiticsService.GetInventoryDashboard();
+
+            return Ok(dto);
         }
     }
 }

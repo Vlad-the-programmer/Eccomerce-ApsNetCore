@@ -101,6 +101,13 @@ else
                        asp-route-to="@to">
                         📊 Analytics Dashboard
                     </a>
+                    <a asp-action="Inventory"
+                       asp-controller="Analitics"
+                       class="dropdown-item">
+                        <i class="bi bi-box-seam"></i>
+                        <span>Inventory Analytics</span>
+                    </a>
+
                 }
 
                 @if (User.Identity.IsAuthenticated)

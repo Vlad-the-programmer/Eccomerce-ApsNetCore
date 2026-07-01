@@ -16,6 +16,7 @@ namespace EcommerceRestApi.Services
         Task UpdateOrderAsync(string code, NewOrderViewModel data);
         Task DeleteOrderAsync(string code);
         Task<IEnumerable<OrderDto>> GetOrdersAsync();
+        Task<IEnumerable<OrderDto>> GetUserOrdersAsync(int customerId);
         Task ChangeOrderStatusAsync(ChangeOrderStatusDto dto, string? currentUserId);
         Task<List<OrderDto>> FilterOrdersAsync(string searchString, string? searchProperty,
             string? sortProperty, DateTime? fromDate, DateTime? toDate, bool sortAscending);

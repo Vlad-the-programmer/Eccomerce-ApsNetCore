@@ -15,9 +15,26 @@
         <ShellContent ContentTemplate="{DataTemplate views:OrdersPage}" />
     </FlyoutItem>
 
+    <FlyoutItem Title="Refunds" Route="RefundsPage">
+        <ShellContent ContentTemplate="{DataTemplate views:RefundsPage}" />
+    </FlyoutItem>
+    
+    <!-- Account -->
+    <FlyoutItem Title="Account Details" Route="AccountDetails">
+        <ShellContent ContentTemplate="{DataTemplate views:AccountDetails}" />
+    </FlyoutItem>
+    
     <!-- LOGIN -->
     <FlyoutItem Title="Login" Route="LoginPage">
         <ShellContent ContentTemplate="{DataTemplate views:LoginPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Logout"
+            Route="Logout"
+            x:Name="LogoutItem"
+            FlyoutItemIsVisible="False">
+
+        <ShellContent ContentTemplate="{DataTemplate local:MainPage}" />
     </FlyoutItem>
 
     <!-- ORDER DETAILS (HIDDEN PAGE) -->
@@ -26,4 +43,7 @@
         ContentTemplate="{DataTemplate views:OrderDetailsPage}"
         FlyoutItemIsVisible="False" />
 
+    <ShellContent
+        Route="ShopCoinHistoryPage"
+        ContentTemplate="{DataTemplate views:ShopCoinHistoryPage}" />
 </Shell>

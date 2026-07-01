@@ -3,12 +3,14 @@ using EcommerceRestApi.Helpers.Cart;
 using EcommerceRestApi.Helpers.Data.Auth;
 using EcommerceRestApi.Helpers.Data.DbInitializer;
 using EcommerceRestApi.Helpers.Data.Permissions;
+using EcommerceRestApi.Helpers.Data.ResponseModels;
 using EcommerceRestApi.Helpers.Data.ViewModels;
 using EcommerceRestApi.Models.Context;
 using EcommerceRestApi.Models.Dtos;
 using EcommerceRestApi.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -80,6 +82,11 @@ builder.Services.AddAuthentication(options =>
 {
     options.ForwardDefaultSelector = context =>
     {
+        var clientType = context.Request.Headers["X-Client-Type"].FirstOrDefault();
+
+        //if (clientType == "mobile")
+        //    return "NoAuthScheme";
+
         var hasBearer = context.Request.Headers["Authorization"]
             .FirstOrDefault()?.StartsWith("Bearer ") == true;
 
@@ -114,6 +121,7 @@ builder.Services.AddAuthentication(options =>
         }
     };
 })
+//.AddScheme<AuthenticationSchemeOptions, NoAuthHandler>("NoAuthScheme", options => { })
 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -126,6 +134,19 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+    };
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = ctx =>
+        {
+            Console.WriteLine("JWT FAILED: " + ctx.Exception.Message);
+            return Task.CompletedTask;
+        },
+        OnChallenge = ctx =>
+        {
+            Console.WriteLine("JWT CHALLENGE");
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -181,16 +202,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("Mobile", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
-
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -217,10 +228,10 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseDeveloperExceptionPage();
+
     app.UseSwagger();
+
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyAPI");
@@ -233,16 +244,41 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseDeveloperExceptionPage();
+    app.UseHsts();
+    app.UseExceptionHandler("/Home/Error");
+
+    app.UseHttpsRedirection();
+
     builder.Logging.ClearProviders();
     builder.Logging.AddConsole();
     builder.Logging.AddDebug();
 }
 
-app.UseHttpsRedirection();
+app.UseExceptionHandler(appBuilder =>
+{
+    appBuilder.Run(async context =>
+    {
+        var ex = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+
+        context.Response.ContentType = "application/json";
+
+        context.Response.StatusCode = ex switch
+        {
+            ArgumentException => 400,
+            InvalidOperationException => 409,
+            TimeoutException => 504,
+            _ => 500
+        };
+
+        await context.Response.WriteAsJsonAsync(new ResponseModel
+        {
+            Message = ex?.Message ?? "Unexpected error"
+        });
+    });
+});
+
 app.UseStaticFiles();
 app.UseCors("AllowSpecificOrigins");
-app.UseCors("Mobile");
 app.UseRouting();
 app.UseSession();
 app.UseAuthentication(); // Enable authentication

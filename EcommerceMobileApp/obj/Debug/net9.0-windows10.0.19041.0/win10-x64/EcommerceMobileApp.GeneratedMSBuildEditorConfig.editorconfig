@@ -52,6 +52,12 @@ build_metadata.AdditionalFiles.ManifestResourceName = EcommerceMobileApp.Resourc
 build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Styles.xaml
 build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Styles.xaml
 
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceMobileApp/Views/AccountDetails.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = EcommerceMobileApp.Views.AccountDetails.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\AccountDetails.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\AccountDetails.xaml
+
 [C:/Users/klamc/source/repos/EcommerceWeb/EcommerceMobileApp/Views/LoginPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = EcommerceMobileApp.Views.LoginPage.xaml
@@ -69,3 +75,21 @@ build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = EcommerceMobileApp.Views.OrdersPage.xaml
 build_metadata.AdditionalFiles.TargetPath = Views\OrdersPage.xaml
 build_metadata.AdditionalFiles.RelativePath = Views\OrdersPage.xaml
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceMobileApp/Views/RefundDetailsPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = EcommerceMobileApp.Views.RefundDetailsPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\RefundDetailsPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\RefundDetailsPage.xaml
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceMobileApp/Views/RefundsPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = EcommerceMobileApp.Views.RefundsPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\RefundsPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\RefundsPage.xaml
+
+[C:/Users/klamc/source/repos/EcommerceWeb/EcommerceMobileApp/Views/ShopCoinHistoryPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = EcommerceMobileApp.Views.ShopCoinHistoryPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\ShopCoinHistoryPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\ShopCoinHistoryPage.xaml

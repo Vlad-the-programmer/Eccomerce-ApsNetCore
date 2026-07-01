@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EcommerceMobileApp.Views.RefundsPage"
+             Title="My Refunds"
+             BackgroundColor="#F5F5F5">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="15" Spacing="15">
+
+            <!-- REFUND LIST -->
+            <CollectionView x:Name="RefundsList"
+                            ItemsSource="{Binding Refunds}"
+                            SelectionMode="None">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Frame Padding="15"
+                               Margin="0,8"
+                               CornerRadius="12"
+                               BackgroundColor="White"
+                               HasShadow="True">
+
+                            <VerticalStackLayout Spacing="10">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding Code}"
+                                            FontAttributes="Bold"
+                                            FontSize="16"/>
+
+                                    <!-- STATUS BADGE -->
+                                    <Frame Padding="8,4"
+       CornerRadius="10"
+       HasShadow="False"
+       HorizontalOptions="End"
+       VerticalOptions="Center">
+
+                                        <Label Text="{Binding Status}"
+           FontSize="13"
+           TextColor="White"
+           FontAttributes="Bold"/>
+
+                                        <Frame.Triggers>
+
+                                            <DataTrigger TargetType="Frame"
+                     Binding="{Binding Status}"
+                     Value="Pending">
+                                                <Setter Property="BackgroundColor" Value="#FF9800"/>
+                                            </DataTrigger>
+
+                                            <DataTrigger TargetType="Frame"
+                     Binding="{Binding Status}"
+                     Value="Approved">
+                                                <Setter Property="BackgroundColor" Value="#4CAF50"/>
+                                            </DataTrigger>
+
+                                            <DataTrigger TargetType="Frame"
+                     Binding="{Binding Status}"
+                     Value="Rejected">
+                                                <Setter Property="BackgroundColor" Value="#F44336"/>
+                                            </DataTrigger>
+
+                                        </Frame.Triggers>
+
+                                    </Frame>
+                                </Grid>
+                                <!-- AMOUNT -->
+                                <Label Text="{Binding Amount, StringFormat='Amount: €{0:F2}'}"
+                                       FontSize="14"
+                                       TextColor="Green"
+                                       FontAttributes="Bold"/>
+
+                              
+
+                                <!-- TIMESTAMP -->
+                                <Label Text="{Binding DateCreated, StringFormat='Created: {0:yyyy-MM-dd HH:mm}'}"
+                                       FontSize="12"
+                                       TextColor="Gray"/>
+
+                                <!-- BUTTON -->
+                                <Button Text="View Details"
+                                        BackgroundColor="#4CAF50"
+                                        TextColor="White"
+                                        CornerRadius="10"
+                                        HeightRequest="45"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewRefundCommand}"
+                                        CommandParameter="{Binding .}" />
+
+                            </VerticalStackLayout>
+
+                        </Frame>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

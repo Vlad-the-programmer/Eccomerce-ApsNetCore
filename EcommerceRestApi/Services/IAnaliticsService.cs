@@ -1,4 +1,5 @@
-﻿using EcommerceRestApi.Models.Dtos.Analitics;
+﻿using EcommerceRestApi.Models.Dtos;
+using EcommerceRestApi.Models.Dtos.Analitics;
 
 namespace EcommerceRestApi.Services
 {
@@ -25,5 +26,6 @@ namespace EcommerceRestApi.Services
         // 🔹 Customers analytics
         Task<CustomerAnalyticsDto> GetCustomerAnalytics();
         Task<byte[]> ExportOrdersData(DateTime? from = null, DateTime? to = null);
+        Task<InventoryDashboardDto> GetInventoryDashboard();
     }
 }

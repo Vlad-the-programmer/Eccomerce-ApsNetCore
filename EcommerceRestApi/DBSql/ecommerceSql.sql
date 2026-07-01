@@ -550,7 +550,6 @@ CREATE TABLE Refunds (
 ALTER TABLE Refunds
 ADD CONSTRAINT UQ_Refunds_Code UNIQUE (Code);
 
-CREATE UNIQUE INDEX IX_Refunds_ReturnId ON Refunds(ReturnId);
 CREATE INDEX IX_Refunds_CustomerId ON Refunds(CustomerId);
 CREATE INDEX IX_Refunds_Status ON Refunds(Status);
 CREATE INDEX IX_Refunds_DateCreated ON Refunds(DateCreated DESC);

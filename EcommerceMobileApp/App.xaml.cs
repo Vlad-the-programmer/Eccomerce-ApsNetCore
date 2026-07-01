@@ -18,6 +18,11 @@ namespace EcommerceMobileApp
         {
             base.OnStart();
             await SessionService.Instance.LoadFromStorageAsync();
+
+            if (!await SessionService.Instance.IsLoggedInAsync())
+            {
+                await Shell.Current.GoToAsync("//LoginPage");
+            }
         }
     }
 }

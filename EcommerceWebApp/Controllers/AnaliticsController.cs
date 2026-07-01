@@ -6,6 +6,7 @@ using System.Text.Json;
 
 namespace EcommerceWebApp.Controllers
 {
+    [Route("analytics")]
     public class AnaliticsController : Controller
     {
         private readonly IApiService _apiService;
@@ -63,9 +64,16 @@ namespace EcommerceWebApp.Controllers
                 var url = $"{GlobalConstants.AnaliticsEndpoint}/export-orders";
 
                 url += BuildDateQuery(from, to);
-                Console.WriteLine(url);
 
-                await _apiService.GetFileAsync(url);
+                var response = await _apiService.GetFileAsync(url);
+
+                var fromStr = from?.ToString("yyyyMMdd") ?? "all";
+                var toStr = to?.ToString("yyyyMMdd") ?? "now";
+
+                return File(response,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    $"Orders_{from}_{to}.xlsx");
+
             }
             catch (HttpRequestException ex)
             {
@@ -75,6 +83,24 @@ namespace EcommerceWebApp.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet("inventory-dashboard")]
+        public async Task<IActionResult> Inventory()
+        {
+            try
+            {
+                var json = await _apiService.GetDataAsync($"{GlobalConstants.AnaliticsEndpoint}/inventory-dashboard");
+
+                var vm = JsonSerializer.Deserialize<InventoryDashboardDto>(json, GlobalConstants.JsonSerializerOptions);
+
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Something went wrong!";
+                return RedirectToAction("Index");
+            }
         }
 
         // ================================

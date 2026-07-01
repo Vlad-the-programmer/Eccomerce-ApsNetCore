@@ -55,7 +55,7 @@ namespace EcommerceRestApi.Controllers
         /// <param name="customerId">The customer ID</param>
         /// <returns>List of refunds</returns>
         [HttpGet("customer/{customerId}")]
-        [Authorize]
+        //[Authorize]
         [ProducesResponseType(typeof(List<RefundDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -112,7 +112,7 @@ namespace EcommerceRestApi.Controllers
         }
 
         [HttpGet("order/{code}")]
-        [Authorize]
+        //[Authorize]
         [ProducesResponseType(typeof(List<RefundDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

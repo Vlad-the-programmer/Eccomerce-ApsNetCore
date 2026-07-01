@@ -437,7 +437,12 @@ namespace EcommerceRestApi.Models.Context
                 entity.HasMany(o => o.Invoices)
                     .WithOne(i => i.Order)
                     .HasForeignKey(i => i.OrderId)
-                    .OnDelete(DeleteBehavior.NoAction);  // Changed from Restrict
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasMany(o => o.Returns)
+                    .WithOne(i => i.Order)
+                    .HasForeignKey(i => i.OrderId)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<OrderItem>(entity =>
